@@ -1,5 +1,5 @@
 import React from 'react';
-
+/* eslint-disable-next-line */
 import { load } from 'web-component-load';
 import { PanelProps } from '@grafana/data';
 import { SimpleOptions } from 'types';
@@ -10,6 +10,18 @@ import {
 } from '@grafana/ui';
 
 interface Props extends PanelProps<SimpleOptions> { }
+
+type CustomElement<T> = Partial<T & React.DOMAttributes<T> & { children: any }>;
+
+declare global {
+  /* eslint-disable-next-line */
+  namespace JSX {
+    interface IntrinsicElements {
+      ['ngx-flow-out']: CustomElement<any>;
+    }
+  }
+}
+
 
 const getStyles = () => {
   return {
@@ -70,39 +82,40 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
   });
   React.useEffect(() => {
     load("http://localhost:4200");
-    const outData = (data as any)?.series?.[0]?.fields[0].values.buffer ;
-    if(outData) {
-      setFlowData({actors: [], data: outData.map(i => {
-        /*
-        container
-        : 
-        "elegant-kalam"
-        dst
-        : 
-        "charming-pascal"
-        level
-        : 
-        "info"
-        sender
-        : 
-        "logtest"
-        src
-        : 
-        "goofy-merkle"
-        */
-        return {
-          messageID: `${i.container} / ${i.level} / ${i.sender}`,
-          source: i.src,
-          destination: i.dst,
-          // sourceLabel: 'S L',
-          // destinationLabel: 'D L'
-        }
-      })
-    }
-    )
+    const outData = (data as any)?.series?.[0]?.fields[0].values.buffer;
+    if (outData) {
+      setFlowData({
+        actors: [], data: outData.map((i: any) => {
+          /*
+          container
+          : 
+          "elegant-kalam"
+          dst
+          : 
+          "charming-pascal"
+          level
+          : 
+          "info"
+          sender
+          : 
+          "logtest"
+          src
+          : 
+          "goofy-merkle"
+          */
+          return {
+            messageID: `${i.container} / ${i.level} / ${i.sender}`,
+            source: i.src,
+            destination: i.dst,
+            // sourceLabel: 'S L',
+            // destinationLabel: 'D L'
+          }
+        })
+      }
+      )
     }
     console.log(data, outData)
-
+    /* eslint-disable-next-line */
   }, []);
 
   return (
@@ -116,7 +129,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
       )}
     >
       {/* <h1>TEST3 EDIK</h1> */}
-      
+
 
       <ngx-flow-out data-flow={JSON.stringify(flowData)} />
 
