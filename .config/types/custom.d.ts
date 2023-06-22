@@ -35,3 +35,9 @@ declare module '*.woff2';
 declare module '*.eot';
 declare module '*.ttf';
 declare module '*.otf';
+
+
+// custom js modules
+declare module 'web-component-load' {
+  export function load(url: string): any
+}
