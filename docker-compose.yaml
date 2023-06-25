@@ -2,7 +2,7 @@ version: '3.0'
 
 services:
   grafana:
-    container_name: 'qxip-qxiptest-panel'
+    container_name: 'qxip-flow'
     build:
       context: ./.config
       args:
@@ -10,5 +10,5 @@ services:
     ports:
       - 3000:3000/tcp
     volumes:
-      - ./dist:/var/lib/grafana/plugins/qxip-qxiptest-panel
+      - ./dist:/var/lib/grafana/plugins/qxip-flow
       - ./provisioning:/etc/grafana/provisioning
