@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "test-lib-flow": {
+    "lib-flow": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/test-lib-flow",
+            "outputPath": "dist/lib-flow",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -73,10 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "test-lib-flow:build:production"
+              "browserTarget": "lib-flow:build:production"
             },
             "development": {
-              "browserTarget": "test-lib-flow:build:development"
+              "browserTarget": "lib-flow:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -84,7 +84,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "test-lib-flow:build"
+            "browserTarget": "lib-flow:build"
           }
         },
         "test": {
@@ -207,5 +207,5 @@
         }
     }
   },
-  "defaultProject": "test-lib-flow"
+  "defaultProject": "lib-flow"
 }

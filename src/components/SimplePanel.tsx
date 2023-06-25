@@ -1,9 +1,10 @@
 import React from 'react';
 /* eslint-disable-next-line */
-import { load } from 'web-component-load';
+// import { load } from 'web-component-load';
 import { PanelProps } from '@grafana/data';
 import { SimpleOptions } from 'types';
 import { css, cx } from '@emotion/css';
+import './../../ngx-flow/widget/ngx-flow.js';
 import {
   useStyles2,
   //  useTheme2 
@@ -81,7 +82,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
     }]
   });
   React.useEffect(() => {
-    load("http://localhost:4200");
+    // load("http://localhost:4200");
     const outData = (data as any)?.series?.[0]?.fields[0].values.buffer;
     if (outData) {
       setFlowData({

@@ -1,5 +1,5 @@
 {
-  "name": "test-lib-flow",
+  "name": "lib-flow",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "build:elements": "cd projects/elements && sh buildElements.sh",
-    "test": "ng test"
+    "test": "ng test",
+    "build:component": "ng build --prod --output-hashing none && node build-component.js"
   },
   "private": true,
   "dependencies": {
@@ -38,6 +39,8 @@
     "@angular/compiler-cli": "~12.2.0",
     "@types/jasmine": "~3.8.0",
     "@types/node": "^12.11.1",
+    "concat": "^1.0.3",
+    "fs-extra": "^11.1.1",
     "jasmine-core": "~3.8.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
