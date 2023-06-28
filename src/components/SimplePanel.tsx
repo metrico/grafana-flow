@@ -39,7 +39,7 @@ const getStyles = () => {
   };
 };
 
-export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) => {
+export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: any) => {
   const styles = useStyles2(getStyles);
   const [flowData, setFlowData] = React.useState({
     actors: [],
@@ -57,19 +57,34 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
       if (outData) {
         setFlowData({
           actors: [], data: outData.map((i: any, k: number) => {
+            console.log(fields.find((j: any) => j.name === 'Line')?.values);
             const message = fields.find((j: any) => j.name === 'Line')?.values?.buffer?.[k];
+            const id = '_'+Math.random().toString(32);
+            // return {
+            //   messageID: `${i.container} / ${i.level} / ${i.sender}`,
+            //   source: i.src || '...',
+            //   destination: i.dst || '...',
+            //   title: i.container,
+            //   subTitle: message,
+            //   aboveArrow: i.level,
+            //   belowArrow: i.sender,
+            //   sourceLabel: '',
+            //   destinationLabel: ''
+            // }
+            
             return {
-              messageID: `${i.container} / ${i.level} / ${i.sender}`,
-              source: i.src || '...',
-              destination: i.dst || '...',
-              title: i.container,
+              messageID: `${id}`,
               subTitle: message,
-              aboveArrow: i.level,
-              belowArrow: i.sender,
+              source: i[options.source] || '...',
+              destination: i[options.destination] || '...',
+              title: i[options.title] || '',
+              aboveArrow: i[options.aboveArrow] || '',
+              belowArrow: i[options.belowArrow] || '',
+              sourceLabel: i[options.sourceLabel] || '',
+              destinationLabel: i[options.destinationLabel] || ''
             }
           })
-        }
-        )
+        })
         console.log(data, outData)
       }
     }
@@ -87,6 +102,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
       )}
     >
       <ngx-flow-out data-flow={JSON.stringify(flowData)} />
+      {/* <pre>{JSON.stringify(flowData)}</pre> */}
       <div className={styles.textBox}>
         {options.showSeriesCount && <div>Number of series: {data.series.length}</div>}
         <div>Text option value: {options.text}</div>
