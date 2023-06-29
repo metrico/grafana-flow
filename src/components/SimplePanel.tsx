@@ -1,6 +1,4 @@
 import React from 'react';
-/* eslint-disable-next-line */
-// import { load } from 'web-component-load';
 import { PanelProps } from '@grafana/data';
 import { SimpleOptions } from 'types';
 import { css, cx } from '@emotion/css';
@@ -43,37 +41,20 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
   const styles = useStyles2(getStyles);
   const [flowData, setFlowData] = React.useState({
     actors: [],
-    data: [{
-      messageID: 1,
-      source: 'A',
-      destination: 'B',
-    }]
+    data: []
   });
   React.useEffect(() => {
     const fields = (data as any)?.series?.[0]?.fields;
-    console.log({ fields })
     if (fields) {
       const outData = fields[0]?.values.buffer;
       if (outData) {
         setFlowData({
           actors: [], data: outData.map((i: any, k: number) => {
             console.log(fields.find((j: any) => j.name === 'Line')?.values);
-            const message = fields.find((j: any) => j.name === 'Line')?.values?.buffer?.[k];
-            const id = '_'+Math.random().toString(32);
-            // return {
-            //   messageID: `${i.container} / ${i.level} / ${i.sender}`,
-            //   source: i.src || '...',
-            //   destination: i.dst || '...',
-            //   title: i.container,
-            //   subTitle: message,
-            //   aboveArrow: i.level,
-            //   belowArrow: i.sender,
-            //   sourceLabel: '',
-            //   destinationLabel: ''
-            // }
+            const message = fields.find((j: any) => j.name === 'Line')?.values?.buffer?.[k] || '';
             
             return {
-              messageID: `${id}`,
+              messageID: `${i[options.source]}${i[options.title]}`,
               subTitle: message,
               source: i[options.source] || '...',
               destination: i[options.destination] || '...',
@@ -89,7 +70,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
       }
     }
     /* eslint-disable-next-line */
-  }, []);
+  }, [data, options]);
 
   return (
     <div
@@ -102,7 +83,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
       )}
     >
       <ngx-flow-out data-flow={JSON.stringify(flowData)} />
-      {/* <pre>{JSON.stringify(flowData)}</pre> */}
       <div className={styles.textBox}>
         {options.showSeriesCount && <div>Number of series: {data.series.length}</div>}
         <div>Text option value: {options.text}</div>
