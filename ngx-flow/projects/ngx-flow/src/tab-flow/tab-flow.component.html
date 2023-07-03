@@ -7,11 +7,9 @@
     #flowscreen
 >
     <ng-container *ngIf="arrayItemsVisible?.length === 0">
-        <h1 style="text-align: center; padding: 8rem; color: #aaa">
-            {{ "tabCallFlow.item_was_filtered"  }}
-        </h1>
+        <h1 style="text-align: center; padding: 8rem; color: #aaa">No Data</h1>
         <!-- <fa-icon icon="filter"></fa-icon> -->
-        <mat-icon>filter</mat-icon>
+        <!-- <mat-icon>filter</mat-icon> -->
     </ng-container>
 
     <div class="flow-grid-lines" [style.min-width.px]="pageWidth - 16 * 2">

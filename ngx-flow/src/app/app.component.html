@@ -3,7 +3,7 @@
     <h1>TEST LIB [ngx-flow]</h1>
 
 </div> -->
-<div class="base" *ngIf="isReady">
+<div class="base" [ngClass]="{'dark-theme': isDarkTheme}" *ngIf="isReady">
     <!-- <div > -->
         <!-- <div class="container"> -->
             <ngx-flow [data]="_dataFlow"></ngx-flow>

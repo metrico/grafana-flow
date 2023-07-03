@@ -8,6 +8,7 @@ import { Component, Input, ChangeDetectorRef } from '@angular/core';
 export class AppComponent {
     isReady = true;
     _dataFlow: any = {};
+    isDarkTheme = false;
     @Input() set dataFlow(value: any) {
         this._dataFlow = JSON.parse(value);
         console.log('DATA FLOW', this._dataFlow)
@@ -18,10 +19,17 @@ export class AppComponent {
             this.cdr.detectChanges();
         });
     }
+
+    @Input() set theme(val: any) {
+        this.isDarkTheme = val === "Dark";
+        console.log({ val }, val === "Dark");
+        requestAnimationFrame(() => {
+            this.cdr.detectChanges();
+        });
+
+    }
     constructor(private cdr: ChangeDetectorRef) {
-
-        console.log('DATA FLOW', this._dataFlow)
-
+        // console.log('DATA FLOW', this._dataFlow)
     }
     /*{
         actors: [

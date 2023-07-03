@@ -624,30 +624,34 @@ export class TabFlowComponent
     }
 
     onClickMessage(id: any, event: any = null, sitem: any = null) {
-        const arrData: Array<any> = this.arrayItemsVisible as Array<any>;
-        if (!sitem) {
-            sitem = arrData[id];
-        }
-        const index = arrData.findIndex(
-            ({ __item__index__ }) => __item__index__ === sitem.__item__index__
-        );
-        const data: any = arrData[index];
-        this.onClickMessageRow(
-            data,
-            {
-                clientX:
-                    (event && event.pageX) ||
-                    Math.ceil((screen.availWidth * Math.random()) / 2),
-                clientY:
-                    (event && event.pageY) ||
-                    Math.ceil((screen.availHeight * Math.random()) / 2),
-            },
-            {
-                isLeft: !!arrData[index - 1],
-                isRight: !!arrData[index + 1],
-                itemId: index,
-            }
-        );
+        console.log('onClickMessage', { id, event, sitem });
+
+        document.dispatchEvent(new CustomEvent('ngx-flow-click-item', { detail: id }));
+        return;
+        // const arrData: Array<any> = this.arrayItemsVisible as Array<any>;
+        // if (!sitem) {
+        //     sitem = arrData[id];
+        // }
+        // const index = arrData.findIndex(
+        //     ({ __item__index__ }) => __item__index__ === sitem.__item__index__
+        // );
+        // const data: any = arrData[index];
+        // this.onClickMessageRow(
+        //     data,
+        //     {
+        //         clientX:
+        //             (event && event.pageX) ||
+        //             Math.ceil((screen.availWidth * Math.random()) / 2),
+        //         clientY:
+        //             (event && event.pageY) ||
+        //             Math.ceil((screen.availHeight * Math.random()) / 2),
+        //     },
+        //     {
+        //         isLeft: !!arrData[index - 1],
+        //         isRight: !!arrData[index + 1],
+        //         itemId: index,
+        //     }
+        // );
     }
     onClickMessageRow(
         item: any,
@@ -699,6 +703,15 @@ export class TabFlowComponent
         row.id =
             row.id || `(${item.typeItem}) ${item.info_date} ${item.description}`;
         row.mouseEventData = event;
+        console.log('--flow-item-click::--', {
+            isLeft,
+            isRight,
+            itemId,
+            channelId: this.channelIdMessageDetails,
+            isBrowserWindow: !!this.messageDetailsService.getParentWindowData(
+                this._dataItem.data.callid.join('---')
+            ).isBrowserWindow,
+        })
         this.messageDetailsService.open(row, {
             isLeft,
             isRight,
