@@ -1,6 +1,11 @@
 # grafana-flow
 Grafana Flow plugin for HEPIC, HOMER and QRYN
 
+## Status
+
+- Work in Progress. Do not use this yet.
+
+## Development
 
 how to run DEMO (development mode):
 
