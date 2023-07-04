@@ -1,5 +1,4 @@
 import {
-    CdkVirtualScrollViewport,
     FixedSizeVirtualScrollStrategy,
     VIRTUAL_SCROLL_STRATEGY
 } from '@angular/cdk/scrolling';
@@ -7,23 +6,15 @@ import {
     AfterViewChecked, AfterViewInit, ChangeDetectionStrategy,
     ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation
 } from '@angular/core';
-// import { FlowFilter } from '../components/controls/transaction-filter/transaction-filter.component';
 import { TransactionFilterService } from '../transaction-filter/transaction-filter.service';
-// import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
 import { cloneObject, getColorByString, getMethodColor, isIpInSubnet, JSON_parse, md5 } from '../helpers/functions';
 import { getStorage, setStorage } from '../helpers/functions';
 import { UserConstValue } from '../models/const-value.model';
-import { CallIDColor } from '../models/CallIDColor.model';
 import { FlowItemType } from '../models/flow-item-type.model';
-// import { CopyService } from '../services';
 import {
     ArrowEventState, MessageDetailsService
 } from '../services/message-details.service';
-// import { TooltipService } from '../services/tooltip.service';
-// import { RouterParser } from '@it-app/router-module/router-parser';
-// import * as html2canvas from 'html2canvas';
 import { Subscription } from 'rxjs';
-// import { appType } from '@it-app/app.component';
 import { isExternalUrl } from '../helpers/functions';
 
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
@@ -160,14 +151,11 @@ export class TabFlowComponent
                 dataItemValue = dataItemValueInput;
             }
         }
-        console.log('test')
-        console.log(dataItemValue)
         if (this.hashDataItem === _hash) {
             return;
         } else {
             this.hashDataItem = _hash;
         }
-        console.log('FLOW:dataItemValue', dataItemValue);
         this._dataItem = dataItemValue;
 
         this.color_sid = getColorByString(this.callid);
@@ -191,8 +179,6 @@ export class TabFlowComponent
                 aliasCollection.find(({ port }) => port === host.port) ||
                 aliasCollection.find(({ port }) => port === 0) ||
                 aliasCollection.find(({ alias }) => alias === host.alias);
-            //
-            // console.log(aliasItem)
             if (aliasItem) {
                 /** add here the filtered params for display in flow tooltip*/
                 if (Object.keys(aliasItem).includes('custom_fields')) {
@@ -230,7 +216,7 @@ export class TabFlowComponent
         if (val) {
             this.isExport = true;
             this.cdr.detectChanges();
-            setTimeout(this.onSavePng.bind(this), 500);
+            // setTimeout(this.onSavePng.bind(this), 500);
         }
     }
 
@@ -242,36 +228,12 @@ export class TabFlowComponent
     @Output() ready: EventEmitter<any> = new EventEmitter();
 
     constructor(
-        // private tooltipService: TooltipService,
         private messageDetailsService: MessageDetailsService,
-        // private copyService: CopyService,
         private transactionFilterService: TransactionFilterService,
-        // private routerParser: RouterParser,
         private cdr: ChangeDetectorRef,
     ) { }
     public isDataReady() {
-        // setTimeout(() => {
-        // if (
-        //   this.routerParser_events_subscribe ||
-        //   !this.routerParser?.isCustomPage
-        // ) {
-        //   return;
-        // }
-        // this.routerParser_events_subscribe = this.routerParser.events.subscribe(
-        //   (eventData: any) => {
-        //     const arrEvents: any[] =
-        //       (cloneObject(Object.values(eventData)) as any[]) || [];
-        //     arrEvents?.forEach(({ type, value }) => {
-        //       switch (type) {
-        //         case 'm':
-        //           this.onClickMessage(value);
-        //           this.cdr.detectChanges();
-        //           break;
-        //       }
-        //     });
-        //   }
-        // );
-        // }, 100);
+
     }
 
     ngOnInit() {
@@ -282,26 +244,7 @@ export class TabFlowComponent
             }
         );
         this.isDataReady();
-        this.messageDetailsService.arrows.subscribe((data: any) => {
-            const { channelId } = data.metadata.data;
-            let { itemId } = data.metadata.data;
-            if (data && this.channelIdMessageDetails === channelId) {
-                const arrData: Array<any> = this.arrayItemsVisible as Array<any>;
-                switch (data.eventType) {
-                    case ArrowEventState.PREVIOUS:
-                        itemId--;
-                        break;
-                    case ArrowEventState.FOLLOWING:
-                        itemId++;
-                        break;
-                }
-                this.onClickMessageRow(arrData[itemId], data.metadata.mouseEventData, {
-                    isLeft: !!arrData[itemId - 1],
-                    isRight: !!arrData[itemId + 1],
-                    itemId,
-                });
-            }
-        });
+
         this.visible = getStorage(UserConstValue.FLOW_LEGEND_VISIBILITY);
         this.outEvent();
         this.cdr.detectChanges();
@@ -628,100 +571,8 @@ export class TabFlowComponent
 
         document.dispatchEvent(new CustomEvent('ngx-flow-click-item', { detail: id }));
         return;
-        // const arrData: Array<any> = this.arrayItemsVisible as Array<any>;
-        // if (!sitem) {
-        //     sitem = arrData[id];
-        // }
-        // const index = arrData.findIndex(
-        //     ({ __item__index__ }) => __item__index__ === sitem.__item__index__
-        // );
-        // const data: any = arrData[index];
-        // this.onClickMessageRow(
-        //     data,
-        //     {
-        //         clientX:
-        //             (event && event.pageX) ||
-        //             Math.ceil((screen.availWidth * Math.random()) / 2),
-        //         clientY:
-        //             (event && event.pageY) ||
-        //             Math.ceil((screen.availHeight * Math.random()) / 2),
-        //     },
-        //     {
-        //         isLeft: !!arrData[index - 1],
-        //         isRight: !!arrData[index + 1],
-        //         itemId: index,
-        //     }
-        // );
     }
-    onClickMessageRow(
-        item: any,
-        event: any = null,
-        { isLeft = false, isRight = false, itemId = 0 }
-    ) {
-        if (!item) {
-            return;
-        }
-        let row: any;
-        switch (item.typeItem) {
-            case FlowItemType.SIP:
-                row = item.messageData;
-                break;
-            case FlowItemType.RTP:
-            case FlowItemType.RTCP:
-                row = item.QOS;
-                row.raw = item.QOS.message;
-                row.raw_source = JSON.stringify(item.QOS.message);
-                break;
-            case FlowItemType.SDP:
-                const SDPbuffer = JSON.stringify(item.source_data);
-                row = item.source_data;
-                row.raw = [
-                    item.info_date,
-                    item.description,
-                    Object.assign({}, item.source_data),
-                ];
-                row.raw_source = `${item.info_date} ${item.description} ${SDPbuffer}`;
-                break;
-            case FlowItemType.DTMF:
-                const DTMFbuffer = JSON.stringify(item.source_data.DTMFitem);
-                row = item.source_data;
-                row.raw = [
-                    item.info_date,
-                    item.description,
-                    Object.assign({}, item.source_data.DTMFitem),
-                ];
-                row.raw_source = `${item.info_date} ${item.description} ${DTMFbuffer}`;
-                break;
-            case FlowItemType.LOG:
-                row = item.source_data;
-                row.raw = item.source_data?.item?.message;
-                row.raw_source = item.source_data?.item?.message;
-                row.id = `(${item.typeItem}) ${item.description}`;
 
-                break;
-        }
-        row.id =
-            row.id || `(${item.typeItem}) ${item.info_date} ${item.description}`;
-        row.mouseEventData = event;
-        console.log('--flow-item-click::--', {
-            isLeft,
-            isRight,
-            itemId,
-            channelId: this.channelIdMessageDetails,
-            isBrowserWindow: !!this.messageDetailsService.getParentWindowData(
-                this._dataItem.data.callid.join('---')
-            ).isBrowserWindow,
-        })
-        this.messageDetailsService.open(row, {
-            isLeft,
-            isRight,
-            itemId,
-            channelId: this.channelIdMessageDetails,
-            isBrowserWindow: !!this.messageDetailsService.getParentWindowData(
-                this._dataItem.data.callid.join('---')
-            ).isBrowserWindow,
-        });
-    }
     identifyHosts(index: any, item: any) {
         return `${index}_${item.host}_${item.hidden}`;
     }
@@ -732,25 +583,8 @@ export class TabFlowComponent
         const arr = itemhost.arrip || [itemhost.IP];
         return arr.join(', ');
     }
-    onSavePng() {
-        // if (!this._flagAfterViewInit) {
-        //   setTimeout(this.onSavePng.bind(this), 1000);
-        //   return;
-        // }
-        // if (html2canvas && typeof html2canvas === 'function') {
-        //   this.cdr.detectChanges();
-        //   const f: Function = html2canvas as Function;
-        //   f(this.flowscreen.nativeElement).then((canvas: any) => {
-        //     this.canvas.nativeElement.src = canvas.toDataURL();
-        //     this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
-        //     this.downloadLink.nativeElement.download = `${this.callid}.png`;
-        //     this.downloadLink.nativeElement.click();
-        //     setTimeout(() => {
-        //       this.pngReady.emit({});
-        //     });
-        //   });
-        // }
-    }
+    // onSavePng() {
+
     labelColor(callid: any, selected: any) {
         if (selected) {
             const color = this.callIDColorList?.find(
