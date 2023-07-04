@@ -20,11 +20,13 @@
   .item-flow-packet {
     position: relative;
     width: 150px;
-
     &:hover {
       background-color: rgba(0, 0, 0, 0.2);
       border-radius: 4px;
       cursor: pointer;
+    }
+    .dark-theme &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
     }
 
     .radial-arrow {
@@ -38,7 +40,7 @@
       border-bottom-right-radius: 5rem;
 
       &::before {
-        content: "";
+        content: '';
         border: 7px solid transparent;
         border-right: 14px solid;
         position: absolute;
@@ -60,7 +62,7 @@
       border-bottom-left-radius: 5rem;
 
       &::before {
-        content: "";
+        content: '';
         border: 7px solid transparent;
         border-left: 14px solid;
         position: absolute;
@@ -74,7 +76,6 @@
       border-style: dotted;
     }
 
-
     .blinkLamp {
       display: inline-block;
       padding: 6px;
@@ -85,13 +86,13 @@
     .call_text {
       font-size: 14px;
       font-weight: 600;
-      color: #24465f;
+    //   color: #24465f;
       padding: 0 4px;
     }
 
     .call_text-mini {
       font-size: 0.7em;
-      color: #24465f;
+    //   color: #24465f;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
@@ -105,7 +106,6 @@
 
     .port-label-left,
     .port-label-right {
-      color: #000;
       width: 50px;
       position: absolute;
       padding: 2px 6px;
@@ -113,7 +113,7 @@
       margin-top: -11px;
       text-align: center;
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.5);
+    //   color: rgba(0, 0, 0, 0.5);
     }
 
     .port-label-right {
@@ -126,13 +126,13 @@
 
     .call-text-date {
       font-size: 12px;
-      color: #7e7e7e !important;
+    //   color: #7e7e7e !important;
       overflow: hidden;
       padding: 0 4px;
     }
 
     .call-text-diff {
-      color: #555;
+    //   color: #555;
     }
 
     .arrow {
@@ -149,7 +149,7 @@
       }
 
       &:before {
-        content: "";
+        content: '';
         border: 7px solid transparent;
         border-left: 14px solid;
         position: absolute;
@@ -159,7 +159,7 @@
 
       &.left {
         &:before {
-          content: "";
+          content: '';
           border: 7px solid transparent;
           border-right: 14px solid;
           position: absolute;
@@ -171,3 +171,10 @@
     }
   }
 }
+
+// .dark-theme ::ng-deep .item-flow-packet-container .item-flow-packet .call_text {
+//   color: #fff !important;
+// }
+// .dark-theme ::ng-deep .call-text-date {
+//   color: #fff !important;
+// }

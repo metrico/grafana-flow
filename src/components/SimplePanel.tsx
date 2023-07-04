@@ -45,7 +45,7 @@ const getStyles = () => {
 };
 
 export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | null => {
-  const [ key, value ]: any = item;
+  const [key, value]: any = item;
   const themeName: any = theme === 'Dark' ? 'railscasts' : 'rjv-default'
   console.log({ item })
   let isJSON = false;
@@ -64,7 +64,11 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
 
   </div>);
 }
-
+let ngxFlowClickHandler: Function = function () { };
+document.addEventListener('ngx-flow-click-item', function (e: any) {
+  console.log('ngx-flow-click-item::details');
+  ngxFlowClickHandler(e)
+});
 
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: any) => {
   const [flowData, setFlowData] = React.useState({ actors: [], data: [] });
@@ -79,7 +83,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
   const styles = useStyles2(getStyles);
   React.useEffect(() => {
     const fields = (data as any)?.series?.[0]?.fields;
-    console.log((data as any)?.series)
     setModalDataFields(fields);
     if (fields) {
       const outData = fields[0]?.values.buffer;
@@ -102,16 +105,17 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
             }
           })
         })
-        
+
       }
     }
     /* eslint-disable-next-line */
   }, [data, options]);
-  document.addEventListener('ngx-flow-click-item', function (e: any) {
+
+  ngxFlowClickHandler = (e: any) => {
     const details: any = {};
     modalDataFields.forEach((i: any) => {
       let val = i.values.buffer[e.detail];
-      if(typeof val === 'object') {
+      if (typeof val === 'object') {
         val = JSON.stringify(val);
       }
       details[i.name] = val;
@@ -119,7 +123,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
     console.log(details);
     setModalData(details);
     setModalIsOpen(true);
-  });
+  };
 
   console.log(useTheme2());
   const themeName = useTheme2().name;

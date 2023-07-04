@@ -101,18 +101,18 @@
         position: relative;
         display: inline-block;
         margin-top: 0.3rem 0;
-        background-color: white;
-        color: grey;
+        // background-color: rgba(0,0,0,0.5);
+        // color: grey;
         font-size: 12px;
-        border: 1px dotted lightgray;
+        border: 1px dotted rgba(0,0,0,0.2);
         border-radius: 6px;
         max-width: 105px;
         min-width: 105px;
 
         .ipfield {
           text-align: center;
-          background: #fafafa;
-          color: #828282;
+        //   background: #fafafa;
+        //   color: #828282;
           padding: 3px 6px;
           border-radius: 0px 0px 6px 6px;
           border-top: 1px solid #ececec;
@@ -148,7 +148,7 @@
           flex-direction: column;
           font-size: 12px;
           justify-content: center;
-          color: rgb(102, 102, 102);
+        //   color: rgb(102, 102, 102);
           border-radius: 6px 6px 0px 0px;
           padding: 3px 3px;
           text-align: center;
@@ -200,7 +200,7 @@
 }
 
 .label-callid-container {
-  background-color: hsla(0, 0%, 97%, 0.856);
+//   background-color: hsla(0, 0%, 97%, 0.856);
   backdrop-filter: blur(1px);
   position: absolute;
   left: 0;
@@ -230,7 +230,7 @@
   //     user-select: none;
   // }
   .label-callid-wrapper {
-    background-color: hsla(0, 0%, 100%, 0.7);
+    // background-color: hsla(0, 0%, 100%, 0.7);
     border: 1px solid;
     margin: 1px;
     display: inline-block;
@@ -248,7 +248,7 @@
   left: calc(50% - 25px);
   height: 20px;
   width: 50px;
-  background-color: hsla(0, 0%, 85%, 1);
+//   background-color: hsla(0, 0%, 85%, 1);
   border-radius: 3px 3px 0 0;
   transition: bottom 1s;
   cursor: pointer;
@@ -257,7 +257,7 @@
 .selected {
   transition: .3s all;
   background: hsl(162, 73%, 46%) !important;
-  color: white !important;
+//   color: white !important;
   border: 1px solid white;
   border-radius: 3px;
 
