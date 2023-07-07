@@ -5,7 +5,7 @@
   overflow: inherit;
   opacity: 1;
   margin: 0 66px 0 60px;
-
+  font-family: Inter, Helvetica, Arial, sans-serif;
   .bg-color-polygon {
     position: absolute;
     z-index: 0;
@@ -86,13 +86,13 @@
     .call_text {
       font-size: 14px;
       font-weight: 600;
-    //   color: #24465f;
+      //   color: #24465f;
       padding: 0 4px;
     }
 
     .call_text-mini {
       font-size: 0.7em;
-    //   color: #24465f;
+      //   color: #24465f;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
@@ -113,7 +113,12 @@
       margin-top: -11px;
       text-align: center;
       font-size: 12px;
-    //   color: rgba(0, 0, 0, 0.5);
+
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      //   color: rgba(0, 0, 0, 0.5);
     }
 
     .port-label-right {
@@ -126,14 +131,14 @@
 
     .call-text-date {
       font-size: 12px;
-    //   color: #7e7e7e !important;
+      //   color: #7e7e7e !important;
       overflow: hidden;
       padding: 0 4px;
     }
 
-    .call-text-diff {
-    //   color: #555;
-    }
+    // .call-text-diff {
+      //   color: #555;
+    // }
 
     .arrow {
       padding-right: 3px;
@@ -171,10 +176,3 @@
     }
   }
 }
-
-// .dark-theme ::ng-deep .item-flow-packet-container .item-flow-packet .call_text {
-//   color: #fff !important;
-// }
-// .dark-theme ::ng-deep .call-text-date {
-//   color: #fff !important;
-// }
