@@ -93,7 +93,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
             const message = fields.find((j: any) => j.name === 'Line')?.values?.buffer?.[k] || '';
 
             return {
-              messageID: `${i[options.source]}${i[options.title]}`,
+              messageID: `${i[options.source] || ''}${i[options.title] || ''}` || 'Title',
               subTitle: message,
               source: i[options.source] || '...',
               destination: i[options.destination] || '...',
