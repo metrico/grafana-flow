@@ -220,6 +220,10 @@ export class TabFlowComponent
         }
     }
 
+    set pageWidth(v: any) {
+        console.log((this.isSimplify ? 150 : 200) *this.flowGridLines.length)
+        this.cdr.detectChanges();
+    }
     get pageWidth() {
         return (this.isSimplify ? 150 : 200) * this.flowGridLines.length;
     }
@@ -525,9 +529,11 @@ export class TabFlowComponent
             _vs.style.bottom = '1px';
             setTimeout(() => {
                 _vs.style.bottom = '0px';
+                this.pageWidth = '';
                 this.setVirtualScrollHeight();
                 setTimeout(() => {
                     this.updateDOMScroller();
+                    this.pageWidth = '';
                 }, 2000);
             }, 300);
         }
