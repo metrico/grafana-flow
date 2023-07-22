@@ -85,12 +85,11 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
     const fields = (data as any)?.series?.[0]?.fields;
     setModalDataFields(fields);
     if (fields) {
-      const outData = fields[0]?.values.buffer;
+      const outData = fields[0]?.values;
       if (outData) {
         setFlowData({
           actors: [], data: outData.map((i: any, k: number) => {
-            console.log(fields.find((j: any) => j.name === 'Line')?.values);
-            const message = fields.find((j: any) => j.name === 'Line')?.values?.buffer?.[k] || '';
+            const message = fields.find((j: any) => j.name === 'Line')?.values?.[k] || '';
 
             return {
               messageID: `${i[options.source] || ''}${i[options.title] || ''}` || 'Title',
@@ -114,7 +113,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
   ngxFlowClickHandler = (e: any) => {
     const details: any = {};
     modalDataFields.forEach((i: any) => {
-      let val = i.values.buffer[e.detail];
+      let val = i.values[e.detail];
       if (typeof val === 'object') {
         val = JSON.stringify(val);
       }
