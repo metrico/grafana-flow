@@ -46,7 +46,10 @@ const getStyles = () => {
     `
   };
 };
-
+// export const FlowMemo = React.memo((props: any) => {
+//   return <ngx-flow-out data-flow={JSON.stringify(props.flowData)} theme={props.themeName} />;
+//   // <h1>Hi {props.name}!</h1>
+// });
 export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | null => {
   let [key, value]: any = item;
   const themeName: any = theme === 'Dark' ? 'railscasts' : 'rjv-default'
@@ -90,9 +93,10 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
   const onModalClose = () => {
     setModalIsOpen(false);
   };
-
+  console.log('base: rerender')
   const styles = useStyles2(getStyles);
   React.useEffect(() => {
+    console.log('useEffect: rerender')
     const [serie]: any = (data as any)?.series || [];
     const fields = serie?.fields || [];
     const [firsField]: any = fields;
@@ -139,7 +143,8 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
   };
 
   console.log(useTheme2());
-  const themeName = useTheme2().name;
+  const themeName: string = useTheme2().name;
+  const flowDataJSON = JSON.stringify(flowData);
   return (
     <div
       className={cx(
@@ -150,7 +155,9 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
         `
       )}
     >
-      <ngx-flow-out data-flow={JSON.stringify(flowData)} theme={themeName} />
+      {/* <pre>{JSON.stringify(flowData)}</pre> */}
+      {/* <FlowMemo flowData={flowData} themeName={themeName} /> */}
+      <ngx-flow-out data-flow={flowDataJSON} theme={themeName} />
 
       <Modal title="Message Details" isOpen={modalIsOpen} onDismiss={onModalClose}>
         {modalData && Object.entries(modalData).map((item: any, key: number) => (
