@@ -40,27 +40,38 @@ const getStyles = () => {
     `,
     label: css`
       background-color: rgba(128, 128, 128, 0.1);
+    `,
+    pre: css`
+      white-space: pre-wrap;
     `
   };
 };
 
 export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | null => {
-  const [key, value]: any = item;
+  let [key, value]: any = item;
   const themeName: any = theme === 'Dark' ? 'railscasts' : 'rjv-default'
   console.log({ item })
   let isJSON = false;
   const styles = useStyles2(getStyles);
-
+  const isTimestamp = (new Date(value)).getTime() > 0;
+  if (isTimestamp) {
+    value = `${new Date(value).toISOString()} | ${value}`;
+  }
   try {
     isJSON = typeof JSON.parse(value) === 'object';
   } catch (e) { }
 
   return (<div>
-    <strong className={styles.label}>{key}</strong>
-    {isJSON ?
-      <ReactJson src={JSON.parse(value)} theme={themeName} /> :
-      <p>{value}</p>
-    }
+    {value ? <>
+      <strong className={styles.label}>{key}</strong>
+      {isJSON ?
+        <pre>
+          <ReactJson src={JSON.parse(value)} theme={themeName} />
+        </pre> :
+        <pre className={styles.pre}>{value}</pre>
+      }
+    </> : <>
+    </>}
 
   </div>);
 }
@@ -82,10 +93,13 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
 
   const styles = useStyles2(getStyles);
   React.useEffect(() => {
-    const fields = (data as any)?.series?.[0]?.fields;
+    const [serie]: any = (data as any)?.series || [];
+    const fields = serie?.fields || [];
+    const [firsField]: any = fields;
+    console.log({ fields });
     setModalDataFields(fields);
     if (fields) {
-      const outData = fields[0]?.values;
+      const outData = firsField?.values;
       if (outData) {
         setFlowData({
           actors: [], data: outData.map((i: any, k: number) => {
