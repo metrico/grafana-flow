@@ -80,6 +80,29 @@
 <div class="VS-Container-horizontal">
   <div
     class="VS-Container"
+    style="overflow: auto !important"
+    (scroll)="onScrollVScrollWrapper($event)"
+  >
+    <div
+      class="VS-Container"
+      style="height: initial; overflow: initial !important"
+      [style.min-width.px]="pageWidth + 100"
+    >
+      <div style="height: 92px"></div>
+      <app-flow-item
+        *ngFor="let item of arrayItems; let idx = index"
+        [item]="item"
+        [idx]="idx"
+        [isGroupByAlias]="_isCombineByAlias"
+        [isSimplify]="isSimplify"
+        [isAbsolute]="isAbsolute"
+        (itemClick)="onClickMessage($event.idx, $event.event, item)"
+      ></app-flow-item>
+      <div style="height: 60px"></div>
+    </div>
+  </div>
+  <!-- <div
+    class="VS-Container"
     style="overflow-y: hidden !important"
     (scroll)="onScrollVScrollWrapper($event)"
     *ngIf="!isExport"
@@ -115,15 +138,14 @@
         </ng-template>
       </ng-container>
     </cdk-virtual-scroll-viewport>
-  </div>
+  </div> -->
 </div>
-
 
 <div id="download" style="display: none">
   <img #canvas />
   <a #downloadLink></a>
 </div>
-<div
+<!-- <div
   class="virtual-scrollbar"
   *ngIf="!isExport"
   (mousedown)="setScrollTarget('virtualScrollbar')"
@@ -131,4 +153,4 @@
   #virtualScrollbar
 >
   <div [style.transform]="getVirtualScrollHeight" [style.padding.px]="1"></div>
-</div>
+</div> -->
