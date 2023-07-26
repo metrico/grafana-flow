@@ -1,91 +1,73 @@
 import { PanelPlugin } from '@grafana/data';
 import { SimpleOptions } from './types';
-import { SimplePanel } from './components/SimplePanel';
+import { SimplePanel, SimpleEditor, TemplateEditor } from './components/SimplePanel';
+
 
 export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOptions((builder) => {
+  console.log('---builder---', { builder });
+
   return builder
-    .addTextInput({
+    .addCustomEditor({
+      id: 'Template',
+      path: 'Template',
+      name: 'Template',
+      editor: TemplateEditor,
+    })
+    .addCustomEditor({
+      id: 'title',
       path: 'title',
       name: 'Title',
       description: 'Title of flow item',
       defaultValue: '',
+      editor: SimpleEditor,
     })
-    .addTextInput({
+    .addCustomEditor({
+      id: 'aboveArrow',
       path: 'aboveArrow',
       name: 'Above Arrow',
       description: 'String above Arrow (Labels[key])',
       defaultValue: '',
+      editor: SimpleEditor,
     })
-    .addTextInput({
+    .addCustomEditor({
+      id: 'belowArrow',
       path: 'belowArrow',
       name: 'Below Arrow',
       description: 'String below arrow (Labels[key])',
       defaultValue: '',
+      editor: SimpleEditor,
     })
-    .addTextInput({
+    .addCustomEditor({
+      id: 'source',
       path: 'source',
       name: 'Source',
       description: 'String source (Labels[key])',
       defaultValue: '',
+      editor: SimpleEditor,
     })
-    .addTextInput({
+    .addCustomEditor({
+      id: 'sourceLabel',
       path: 'sourceLabel',
       name: 'Source Label',
       description: 'String source label (Labels[key])',
       defaultValue: '',
+      editor: SimpleEditor,
     })
-    .addTextInput({
+    .addCustomEditor({
+      id: 'destination',
       path: 'destination',
       name: 'Destination',
       description: 'String destination (Labels[key])',
       defaultValue: '',
+      editor: SimpleEditor,
     })
-    .addTextInput({
+    .addCustomEditor({
+      id: 'destinationLabel',
       path: 'destinationLabel',
       name: 'Destination Label',
       description: 'String destination label (Labels[key])',
       defaultValue: '',
+      editor: SimpleEditor,
     })
 
-
-
-    // .addTextInput({
-    //   path: 'text2',
-    //   name: 'Simple text option 2',
-    //   description: 'Description of panel option',
-    //   defaultValue: '',
-    // })
-    // .addTextInput({
-    //   path: 'text3',
-    //   name: 'Simple text option 3',
-    //   description: 'Description of panel option',
-    //   defaultValue: '',
-    // })
-    // .addBooleanSwitch({
-    //   path: 'showSeriesCount',
-    //   name: 'Show series counter',
-    //   defaultValue: false,
-    // })
-    // .addRadio({
-    //   path: 'seriesCountSize',
-    //   defaultValue: 'sm',
-    //   name: 'Series counter size',
-    //   settings: {
-    //     options: [
-    //       {
-    //         value: 'sm',
-    //         label: 'Small',
-    //       },
-    //       {
-    //         value: 'md',
-    //         label: 'Medium',
-    //       },
-    //       {
-    //         value: 'lg',
-    //         label: 'Large',
-    //       },
-    //     ],
-    //   },
-    //   showIf: (config) => config.showSeriesCount,
-    // });
 });
