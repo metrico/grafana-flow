@@ -1,5 +1,5 @@
 import React from 'react';
-import { PanelProps } from '@grafana/data';
+import { PanelProps, StandardEditorProps } from '@grafana/data';
 import { SimpleOptions } from 'types';
 import { css, cx } from '@emotion/css';
 import './../../ngx-flow/widget/ngx-flow.js';
@@ -7,6 +7,8 @@ import ReactJson from 'react-json-view';
 
 import {
   Button,
+  Select,
+  // AsyncSelect,
   Modal,
   useStyles2,
   useTheme2
@@ -25,6 +27,60 @@ declare global {
   }
 }
 
+export let valueLabelsName: string[] = [];
+export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>) => {
+  const themeName: string = useTheme2().name;
+  const styles = useStyles2(getStyles);
+  const templateData = JSON.stringify({
+    actors: [], data: [{
+      messageID: 'messageID',
+      subTitle: 'subTitle',
+      source: 'source',
+      destination: 'destination',
+      title: 'title',
+      aboveArrow: 'aboveArrow',
+      belowArrow: 'belowArrow',
+      sourceLabel: 'sourceLabel',
+      destinationLabel: 'destinationLabel',
+    }]
+  });
+  return <div className={cx(
+    styles.wrapper,
+    css`
+    height: 250px;
+  `)}>
+    <ngx-flow-out data-flow={templateData} theme={themeName} />
+  </div>;
+}
+export const SimpleEditor = ({ value, onChange }: StandardEditorProps<string>) => {
+  const [selectValue, setSelectValue] = React.useState<any>();
+  const [forRerender, setForRerender] = React.useState<any>(0);
+
+  // const loadAsyncOptions = () => {
+  //   return new Promise<any>((resolve) => {
+  //     setTimeout(() => {
+  //       resolve(valueLabelsName.map((i: any) => ({ label: i, value: i })));
+  //     }, 1);
+  //   });
+  // };
+
+  setTimeout(() => {
+    setSelectValue(value);
+    setForRerender(forRerender + 1);
+  }, 2000)
+  // React.useEffect(() => {
+  //   //
+  // }, [value]);
+  return <Select
+    options={valueLabelsName.map((i: any) => ({ label: i, value: i }))}
+    value={selectValue}
+    onChange={v => {
+      setSelectValue(v);
+
+      onChange(v.value);
+    }}
+  />;
+};
 
 const getStyles = () => {
   return {
@@ -112,12 +168,16 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
   React.useEffect(() => {
     const [serie]: any = (data as any)?.series || [];
     const fields = serie?.fields || [];
-    const [firsField]: any = fields;
-    const sortData = formatingDataAndSortIt(fields);
-    // console.log({ fields }, sortData);
-    setModalDataFields(sortData);
+    console.log({ options })
     if (fields) {
+      const [firsField]: any = fields;
+      const sortData = formatingDataAndSortIt(fields);
+      // console.log({ fields }, sortData);
+      setModalDataFields(sortData);
       const outData = firsField?.values;
+
+      valueLabelsName = Object.keys(outData[0]);
+
       if (outData) {
         setFlowData({
           actors: [], data: sortData.map((item: any) => {
