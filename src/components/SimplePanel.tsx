@@ -46,14 +46,10 @@ const getStyles = () => {
     `
   };
 };
-// export const FlowMemo = React.memo((props: any) => {
-//   return <ngx-flow-out data-flow={JSON.stringify(props.flowData)} theme={props.themeName} />;
-//   // <h1>Hi {props.name}!</h1>
-// });
+
 export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | null => {
   let [key, value]: any = item;
   const themeName: any = theme === 'Dark' ? 'railscasts' : 'rjv-default'
-  console.log({ item })
   let isJSON = false;
   const styles = useStyles2(getStyles);
   const isTimestamp = (new Date(value)).getTime() > 0;
@@ -79,10 +75,28 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
   </div>);
 }
 let ngxFlowClickHandler: Function = function () { };
+
 document.addEventListener('ngx-flow-click-item', function (e: any) {
-  console.log('ngx-flow-click-item::details');
+  // console.log('ngx-flow-click-item::details');
   ngxFlowClickHandler(e)
 });
+
+function formatingDataAndSortIt(data: any) {
+  const [firstField] = data;
+  const unSortData = firstField.values.map((i: any, k: number) => {
+    const outData: any = {};
+    data.forEach((item: any) => {
+      outData[item.name] = item.values[k];
+    })
+    return outData;
+  })
+  const sortData = unSortData.sort((itemA: any, itemB: any) => {
+    const a = itemA.Time;
+    const b = itemB.Time;
+    return a < b ? -1 : a > b ? 1 : 0;
+  }).reverse();
+  return sortData;
+}
 
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: any) => {
   const [flowData, setFlowData] = React.useState({ actors: [], data: [] });
@@ -93,22 +107,23 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
   const onModalClose = () => {
     setModalIsOpen(false);
   };
-  console.log('base: rerender')
+
   const styles = useStyles2(getStyles);
   React.useEffect(() => {
-    console.log('useEffect: rerender')
     const [serie]: any = (data as any)?.series || [];
     const fields = serie?.fields || [];
     const [firsField]: any = fields;
-    console.log({ fields });
-    setModalDataFields(fields);
+    const sortData = formatingDataAndSortIt(fields);
+    // console.log({ fields }, sortData);
+    setModalDataFields(sortData);
     if (fields) {
       const outData = firsField?.values;
       if (outData) {
         setFlowData({
-          actors: [], data: outData.map((i: any, k: number) => {
-            const message = fields.find((j: any) => j.name === 'Line')?.values?.[k] || '';
-
+          actors: [], data: sortData.map((item: any) => {
+            // const message = fields.find((j: any) => j.name === 'Line')?.values?.[k] || '';
+            const message: string = item.Line || '';
+            const i: any = item.labels;
             return {
               messageID: `${i[options.source] || ''}${i[options.title] || ''}` || 'Title',
               subTitle: message,
@@ -129,20 +144,15 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
   }, [data, options]);
 
   ngxFlowClickHandler = (e: any) => {
-    const details: any = {};
-    modalDataFields.forEach((i: any) => {
-      let val = i.values[e.detail];
-      if (typeof val === 'object') {
-        val = JSON.stringify(val);
-      }
-      details[i.name] = val;
-    })
-    console.log(details);
+    const details: any = modalDataFields[e.detail];
+    if (typeof details.labels === 'object') {
+      details.labels = JSON.stringify(details.labels);
+    }
     setModalData(details);
     setModalIsOpen(true);
   };
 
-  console.log(useTheme2());
+  // console.log(useTheme2());
   const themeName: string = useTheme2().name;
   const flowDataJSON = JSON.stringify(flowData);
   return (
@@ -161,6 +171,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
 
       <Modal title="Message Details" isOpen={modalIsOpen} onDismiss={onModalClose}>
         {modalData && Object.entries(modalData).map((item: any, key: number) => (
+          // <p>{item} | {key}</p>
           <DetaiItem item={item} key={key} theme={themeName} />
         ))}
         <Button variant="primary" onClick={onModalClose}>
