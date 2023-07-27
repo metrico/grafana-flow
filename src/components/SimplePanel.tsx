@@ -8,6 +8,7 @@ import ReactJson from 'react-json-view';
 import {
   Button,
   Select,
+  Collapse,
   // AsyncSelect,
   Modal,
   useStyles2,
@@ -29,6 +30,7 @@ declare global {
 
 export let valueLabelsName: string[] = [];
 export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>) => {
+  const [isOpen, setIsOpen] = React.useState(false);
   const themeName: string = useTheme2().name;
   const styles = useStyles2(getStyles);
   const templateData = JSON.stringify({
@@ -44,13 +46,14 @@ export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>)
       destinationLabel: 'destinationLabel',
     }]
   });
-  return <div className={cx(
-    styles.wrapper,
-    css`
+  return <Collapse label="Template" isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)}>
+    <div className={cx(
+      styles.wrapper, css`
     height: 250px;
-  `)}>
-    <ngx-flow-out data-flow={templateData} theme={themeName} />
-  </div>;
+    `)}>
+      <ngx-flow-out data-flow={templateData} theme={themeName} />
+    </div>
+  </Collapse>;
 }
 export const SimpleEditor = ({ value, onChange }: StandardEditorProps<string>) => {
   const [selectValue, setSelectValue] = React.useState<any>();
@@ -146,7 +149,7 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
     })
     return outData;
   })
-  if(sortType === 'none') {
+  if (sortType === 'none') {
     return unSortData;
   }
   const sortData = unSortData.sort((itemA: any, itemB: any) => {
@@ -154,11 +157,11 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
     const b = itemB.Time;
     return a < b ? -1 : a > b ? 1 : 0;
   });
-  if(sortType === 'time_old') {
+  if (sortType === 'time_old') {
     return sortData;
   }
-  
-  if(sortType === 'time_new') {
+
+  if (sortType === 'time_new') {
     return sortData.reverse();
   }
 
