@@ -10,7 +10,7 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
     .addCustomEditor({
       id: 'Template',
       path: 'Template',
-      name: 'Template',
+      name: '',
       editor: TemplateEditor,
     })
     .addCustomEditor({
