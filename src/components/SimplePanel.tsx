@@ -150,7 +150,7 @@ function formatingDataAndSortIt(data: any) {
     const a = itemA.Time;
     const b = itemB.Time;
     return a < b ? -1 : a > b ? 1 : 0;
-  }).reverse();
+  });
   return sortData;
 }
 
