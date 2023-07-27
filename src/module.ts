@@ -69,5 +69,18 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
       defaultValue: '',
       editor: SimpleEditor,
     })
+    .addSelect({
+      // id: 'sortoption',
+      path: 'sortoption',
+      name: 'Sort items',
+      defaultValue: 'none',
+      settings: {
+        options: [
+          { value: 'none', label: 'not sorted' },
+          { value: 'time_new', label: 'Sort by Time: Newest first' },
+          { value: 'time_old', label: 'Sort by Time: Oldest first' }
+        ]
+      },
+    })
 
 });
