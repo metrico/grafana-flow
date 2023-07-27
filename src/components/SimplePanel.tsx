@@ -137,7 +137,7 @@ document.addEventListener('ngx-flow-click-item', function (e: any) {
   ngxFlowClickHandler(e)
 });
 
-function formatingDataAndSortIt(data: any) {
+function formattingDataAndSortIt(data: any, sortType = 'none') {
   const [firstField] = data;
   const unSortData = firstField.values.map((i: any, k: number) => {
     const outData: any = {};
@@ -146,12 +146,22 @@ function formatingDataAndSortIt(data: any) {
     })
     return outData;
   })
+  if(sortType === 'none') {
+    return unSortData;
+  }
   const sortData = unSortData.sort((itemA: any, itemB: any) => {
     const a = itemA.Time;
     const b = itemB.Time;
     return a < b ? -1 : a > b ? 1 : 0;
   });
-  return sortData;
+  if(sortType === 'time_old') {
+    return sortData;
+  }
+  
+  if(sortType === 'time_new') {
+    return sortData.reverse();
+  }
+
 }
 
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: any) => {
@@ -171,7 +181,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
     console.log({ options })
     if (fields) {
       const [firsField]: any = fields;
-      const sortData = formatingDataAndSortIt(fields);
+      const sortData = formattingDataAndSortIt(fields, options.sortoption);
       // console.log({ fields }, sortData);
       setModalDataFields(sortData);
       const outData = firsField?.values;
