@@ -61,7 +61,7 @@ export const SimpleEditor = ({ value, onChange }: StandardEditorProps<string[]>)
   const [selectValue, setSelectValue] = React.useState<any>();
   const [forRerender, setForRerender] = React.useState<any>(0);
 
-  if (bufferCheck != JSON.stringify(valueLabelsName) || valueLabelsName?.length == 0) {
+  if (bufferCheck !== JSON.stringify(valueLabelsName) || valueLabelsName?.length === 0) {
     setTimeout(() => {
       bufferCheck = JSON.stringify(valueLabelsName)
       setSelectValue(value);
