@@ -15,6 +15,8 @@ import {
   useTheme2
 } from '@grafana/ui';
 
+
+
 interface Props extends PanelProps<SimpleOptions> { }
 
 type CustomElement<T> = Partial<T & React.DOMAttributes<T> & { children: any }>;
@@ -59,21 +61,11 @@ export const SimpleEditor = ({ value, onChange }: StandardEditorProps<string>) =
   const [selectValue, setSelectValue] = React.useState<any>();
   const [forRerender, setForRerender] = React.useState<any>(0);
 
-  // const loadAsyncOptions = () => {
-  //   return new Promise<any>((resolve) => {
-  //     setTimeout(() => {
-  //       resolve(valueLabelsName.map((i: any) => ({ label: i, value: i })));
-  //     }, 1);
-  //   });
-  // };
-
   setTimeout(() => {
     setSelectValue(value);
     setForRerender(forRerender + 1);
   }, 2000)
-  // React.useEffect(() => {
-  //   //
-  // }, [value]);
+
   return <Select
     options={valueLabelsName.map((i: any) => ({ label: i, value: i }))}
     value={selectValue}
@@ -124,7 +116,18 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
       <strong className={styles.label}>{key}</strong>
       {isJSON ?
         <pre>
-          <ReactJson src={JSON.parse(value)} theme={themeName} />
+          <ReactJson
+            src={JSON.parse(value)}
+            theme={themeName}
+            displayDataTypes={false}
+            displayObjectSize={false}
+            enableClipboard={({ src }) => {
+              navigator.clipboard.writeText(JSON.stringify(src))
+            }}
+            quotesOnKeys={false}
+            name={false}
+
+          />
         </pre> :
         <pre className={styles.pre}>{value}</pre>
       }
