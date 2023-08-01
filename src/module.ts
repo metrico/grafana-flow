@@ -82,5 +82,10 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
         ]
       },
     })
+    .addBooleanSwitch({
+      path: 'showbody',
+      name: 'Show body [Line] value',
+      defaultValue: false,
+    })
 
 });

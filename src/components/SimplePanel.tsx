@@ -7,7 +7,7 @@ import ReactJson from 'react-json-view';
 
 import {
   Button,
-  Select,
+  MultiSelect,
   Collapse,
   // AsyncSelect,
   Modal,
@@ -29,8 +29,8 @@ declare global {
     }
   }
 }
-
 export let valueLabelsName: string[] = [];
+let bufferCheck = '';
 export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const themeName: string = useTheme2().name;
@@ -57,22 +57,24 @@ export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>)
     </div>
   </Collapse>;
 }
-export const SimpleEditor = ({ value, onChange }: StandardEditorProps<string>) => {
+export const SimpleEditor = ({ value, onChange }: StandardEditorProps<string[]>) => {
   const [selectValue, setSelectValue] = React.useState<any>();
   const [forRerender, setForRerender] = React.useState<any>(0);
 
-  setTimeout(() => {
-    setSelectValue(value);
-    setForRerender(forRerender + 1);
-  }, 2000)
+  if (bufferCheck != JSON.stringify(valueLabelsName) || valueLabelsName?.length == 0) {
+    setTimeout(() => {
+      bufferCheck = JSON.stringify(valueLabelsName)
+      setSelectValue(value);
+      setForRerender(forRerender + 1);
+    }, 200)
+  }
 
-  return <Select
+  return <MultiSelect
     options={valueLabelsName.map((i: any) => ({ label: i, value: i }))}
     value={selectValue}
-    onChange={v => {
+    onChange={(v: any[]) => {
       setSelectValue(v);
-
-      onChange(v.value);
+      onChange(v.map((j: any) => j.value));
     }}
   />;
 };
@@ -197,19 +199,24 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
       if (outData) {
         setFlowData({
           actors: [], data: sortData.map((item: any) => {
-            // const message = fields.find((j: any) => j.name === 'Line')?.values?.[k] || '';
             const message: string = item.Line || '';
-            const i: any = item.labels;
+            const labelItem: any = item.labels;
+            const _ = (optionArr: string[] | string) => {
+              if (optionArr instanceof Array) {
+                return optionArr.map((option: string) => labelItem[option]).filter((a: any) => !!a).join(':');
+              }
+              return labelItem[optionArr];
+            };
             return {
-              messageID: `${i[options.source] || ''}${i[options.title] || ''}` || 'Title',
-              subTitle: message,
-              source: i[options.source] || '...',
-              destination: i[options.destination] || '...',
-              title: i[options.title] || '',
-              aboveArrow: i[options.aboveArrow] || '',
-              belowArrow: i[options.belowArrow] || '',
-              sourceLabel: i[options.sourceLabel] || '',
-              destinationLabel: i[options.destinationLabel] || ''
+              messageID: `${_(options.source) || ''}${_(options.title) || ''}` || 'Title',
+              subTitle: options.showbody && message,
+              source: _(options.source) || '...',
+              destination: _(options.destination) || '...',
+              title: _(options.title) || '',
+              aboveArrow: _(options.aboveArrow) || '',
+              belowArrow: _(options.belowArrow) || '',
+              sourceLabel: _(options.sourceLabel) || '',
+              destinationLabel: _(options.destinationLabel) || ''
             }
           })
         })
