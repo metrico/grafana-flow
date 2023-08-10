@@ -82,6 +82,14 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
         ]
       },
     })
+    .addCustomEditor({
+      id: 'colorGenerator',
+      path: 'colorGenerator',
+      name: 'Items for color generator',
+      description: 'String label(s) for color (Labels[key])',
+      defaultValue: '',
+      editor: SimpleEditor,
+    })
     .addBooleanSwitch({
       path: 'showbody',
       name: 'Show body [Line] value',

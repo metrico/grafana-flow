@@ -151,7 +151,10 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
     const outData: any = {};
     data.forEach((item: any) => {
       outData[item.name] = item.values[k];
-    })
+    });
+    if (outData?.Time && typeof outData?.labels === 'object') {
+      outData['labels'].timestamp = outData.Time;
+    } 
     return outData;
   })
   if (sortType === 'none') {
@@ -208,7 +211,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
               return labelItem[optionArr];
             };
             return {
-              messageID: `${_(options.source) || ''}${_(options.title) || ''}` || 'Title',
+              messageID: _(options.colorGenerator) || 'Title',
               subTitle: options.showbody && message,
               source: _(options.source) || '...',
               destination: _(options.destination) || '...',
