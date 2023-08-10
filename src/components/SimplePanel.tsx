@@ -151,7 +151,10 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
     const outData: any = {};
     data.forEach((item: any) => {
       outData[item.name] = item.values[k];
-    })
+    });
+    if (outData?.Time && typeof outData?.labels === 'object') {
+      outData['labels'].timestamp = outData.Time;
+    } 
     return outData;
   })
   if (sortType === 'none') {
