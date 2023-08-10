@@ -211,7 +211,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
               return labelItem[optionArr];
             };
             return {
-              messageID: `${_(options.source) || ''}${_(options.title) || ''}` || 'Title',
+              messageID: _(options.colorGenerator) || 'Title',
               subTitle: options.showbody && message,
               source: _(options.source) || '...',
               destination: _(options.destination) || '...',
