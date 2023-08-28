@@ -146,17 +146,17 @@ document.addEventListener('ngx-flow-click-item', function (e: any) {
 });
 
 function formattingDataAndSortIt(data: any, sortType = 'none') {
-  const [firstField] = data;
-  const unSortData = firstField.values.map((i: any, k: number) => {
+  const [firstField] = data || [];
+  const unSortData = firstField?.values?.map((i: any, k: number) => {
     const outData: any = {};
     data.forEach((item: any) => {
-      outData[item.name] = item.values[k];
+      outData[item.name] = item?.values?.[k];
     });
     if (outData?.Time && typeof outData?.labels === 'object') {
       outData['labels'].timestamp = outData.Time;
     } 
     return outData;
-  })
+  }) || [];
   if (sortType === 'none') {
     return unSortData;
   }
@@ -197,18 +197,17 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
       setModalDataFields(sortData);
       const outData = firsField?.values;
 
-      valueLabelsName = Object.keys(outData[0]);
-
       if (outData) {
+        valueLabelsName = Object.keys(outData?.[0] || {});
         setFlowData({
           actors: [], data: sortData.map((item: any) => {
             const message: string = item.Line || '';
-            const labelItem: any = item.labels;
+            const labelItem: any = item.labels || {};
             const _ = (optionArr: string[] | string) => {
               if (optionArr instanceof Array) {
                 return optionArr.map((option: string) => labelItem[option]).filter((a: any) => !!a).join(':');
               }
-              return labelItem[optionArr];
+              return labelItem[optionArr] || '';
             };
             return {
               messageID: _(options.colorGenerator) || 'Title',
