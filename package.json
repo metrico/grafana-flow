@@ -16,7 +16,7 @@
     "sign": "npx --yes @grafana/sign-plugin@latest"
   },
   "author": "Qxip",
-  "license": "Apache-2.0",
+  "license": "AGPLv3",
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@grafana/e2e": "^10.0.2",
