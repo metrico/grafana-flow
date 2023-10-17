@@ -1,22 +1,33 @@
 <img src="https://github.com/sipcapture/homer7-docker/assets/1423657/36a8e515-ab0e-482b-bf49-2156e290c764" height=150>
 
 # grafana-flow
-Grafana 10+ Flow Diagram plugin designed for HEPIC, HOMER and QRYN
+Grafana 10+ Flow Diagram Visualization plugin
 
 <img src="https://user-images.githubusercontent.com/1423657/259414028-ce4c8603-be1f-4ca9-a0fa-556d84c5660c.gif">
 
+> Designed for [hepic](https://hepic.cloud), [homer](https://sipcapture.org) and [qryn](https://qryn.dev) integrations
+
+
 ## Status
 
-- Work in Progress. Do not use this yet.
-
+- Fully Functional releases available for testing.
+- Work in Progress. Please provide feedback and report any issues.
 
 ## Usage
+### Installation
 Allow and Install the unsigned plugin, ie:
 ```
       - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=qxip-flow-panel
       - GF_INSTALL_PLUGINS=https://github.com/metrico/grafana-flow/releases/download/v10.0.8/qxip-flow-panel-10.0.8.zip;qxip-flow-panel"
 ```
 
+### Panel Options
+
+![image](https://github.com/metrico/grafana-flow/assets/1423657/788ceb63-735b-4148-98c0-bf52a10d94c0)
+
+
+
+<!--
 ## Development
 
 how to run DEMO (development mode):
@@ -66,3 +77,4 @@ npm start
 
 after all open link http://localhost:3000/ 
 
+-->
