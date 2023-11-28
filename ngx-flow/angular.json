@@ -206,6 +206,5 @@
             }
         }
     }
-  },
-  "defaultProject": "lib-flow"
+  }
 }
