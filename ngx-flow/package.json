@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "build:elements": "cd projects/elements && sh buildElements.sh",
     "test": "ng test",
-    "build:component": "ng build --prod --output-hashing none && node build-component.js"
+    "build:component": "ng build --configuration production --output-hashing none && node build-component.js"
   },
   "private": true,
   "dependencies": {
