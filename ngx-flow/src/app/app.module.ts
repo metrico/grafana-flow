@@ -15,9 +15,7 @@ import { NgxFlowModule } from 'projects/ngx-flow/src/public-api';
         BrowserAnimationsModule,
         NgxFlowModule
     ],
-    providers: [],
-    // bootstrap: [AppComponent],
-    entryComponents: [AppComponent]
+    providers: []
 })
 export class AppModule implements DoBootstrap {
     constructor(private injector: Injector) {
