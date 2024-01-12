@@ -161,9 +161,15 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
     return unSortData;
   }
   const sortData = unSortData.sort((itemA: any, itemB: any) => {
-    const a = itemA.Time;
-    const b = itemB.Time;
-    return a < b ? -1 : a > b ? 1 : 0;
+    if (itemA.tsNs && itemB.tsNs) {
+      const a = itemA.tsNs;
+      const b = itemB.tsNs;
+      return a < b ? -1 : a > b ? 1 : 0;
+    } else { 
+      const a = itemA.Time;
+      const b = itemB.Time;
+      return a < b ? -1 : a > b ? 1 : 0;
+    }
   });
   if (sortType === 'time_old') {
     return sortData;
