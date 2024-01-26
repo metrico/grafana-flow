@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "panel",
-  "name": "Flow DIagrams for Grafana",
+  "name": "Flow Diagrams for Grafana",
   "id": "qxip-flow-panel",
 
   "info": {
