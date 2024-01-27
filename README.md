@@ -1,4 +1,4 @@
-<img src="https://github.com/sipcapture/homer7-docker/assets/1423657/36a8e515-ab0e-482b-bf49-2156e290c764" height=150>
+<img src="https://user-images.githubusercontent.com/1423657/218816262-e0e8d7ad-44d0-4a7d-9497-0d383ed78b83.png" height=150>
 
 # grafana-flow
 Grafana 10+ Flow Diagram Visualization plugin
