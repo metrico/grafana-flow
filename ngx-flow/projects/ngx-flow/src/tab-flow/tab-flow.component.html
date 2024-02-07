@@ -79,13 +79,14 @@
 </div>
 <div class="VS-Container-horizontal">
   <div
+  *ngIf="isExport || isSafari"
     class="VS-Container"
     style="overflow: auto !important"
     (scroll)="onScrollVScrollWrapper($event)"
   >
     <div
       class="VS-Container"
-      style="height: initial; overflow: scroll !important"
+      style="height: initial; overflow: scroll !important; bottom:unset"
       [style.min-width.px]="pageWidth + 100"
     >
       <div style="height: 92px"></div>
@@ -101,16 +102,17 @@
       <div style="height: 60px"></div>
     </div>
   </div>
-  <!-- <div
+   <div
     class="VS-Container"
     style="overflow-y: hidden !important"
     (scroll)="onScrollVScrollWrapper($event)"
-    *ngIf="!isExport"
+    *ngIf="!isExport && !isSafari"
     #VScrollWrapper
   >
     <cdk-virtual-scroll-viewport
       class="VS-Container hidescroll"
       (wheel)="cdkWheelScroll($event)"
+
       (touchstart)="onEvent($event, 'touchstart')"
       (touchmove)="onEvent($event, 'touchmove')"
       [maxBufferPx]="500"
@@ -138,19 +140,19 @@
         </ng-template>
       </ng-container>
     </cdk-virtual-scroll-viewport>
-  </div> -->
+  </div>
 </div>
 
 <div id="download" style="display: none">
   <img #canvas />
   <a #downloadLink></a>
 </div>
-<!-- <div
+ <div
   class="virtual-scrollbar"
-  *ngIf="!isExport"
+  *ngIf="!isExport && !isSafari"
   (mousedown)="setScrollTarget('virtualScrollbar')"
   (scroll)="setVirtualScrollHeight($event)"
   #virtualScrollbar
 >
   <div [style.transform]="getVirtualScrollHeight" [style.padding.px]="1"></div>
-</div> -->
+</div>
