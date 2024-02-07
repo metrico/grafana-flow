@@ -61,46 +61,81 @@
     </div>
 </div>
 <div class="VS-Container-horizontal">
-    <div *ngIf="isExport || isSafari" class="VS-Container" style="overflow: auto !important"
-        (scroll)="onScrollVScrollWrapper($event)">
-        <div class="VS-Container" style="height: initial; overflow: scroll !important; bottom:unset"
-            [style.min-width.px]="pageWidth + 100">
-            <div style="height: 92px"></div>
-            <app-flow-item *ngFor="let item of arrayItems; let idx = index" [item]="item" [idx]="idx"
-                [isGroupByAlias]="_isCombineByAlias" [isSimplify]="isSimplify" [isAbsolute]="isAbsolute"
-                (itemClick)="onClickMessage($event.idx, $event.event, item)"></app-flow-item>
-            <div style="height: 60px"></div>
-        </div>
+  <div
+  *ngIf="isExport || isSafari"
+    class="VS-Container"
+    style="overflow: auto !important"
+    (scroll)="onScrollVScrollWrapper($event)"
+  >
+    <div
+      class="VS-Container"
+      style="height: initial; overflow: scroll !important; bottom:unset"
+      [style.min-width.px]="pageWidth + 100"
+    >
+      <div style="height: 92px"></div>
+      <app-flow-item
+        *ngFor="let item of arrayItems; let idx = index"
+        [item]="item"
+        [idx]="idx"
+        [isGroupByAlias]="_isCombineByAlias"
+        [isSimplify]="isSimplify"
+        [isAbsolute]="isAbsolute"
+        (itemClick)="onClickMessage($event.idx, $event.event, item)"
+      ></app-flow-item>
+      <div style="height: 60px"></div>
     </div>
-    <div class="VS-Container" style="overflow-y: hidden !important" (scroll)="onScrollVScrollWrapper($event)"
-        *ngIf="!isExport && !isSafari" #VScrollWrapper>
-        <cdk-virtual-scroll-viewport class="VS-Container hidescroll" (wheel)="cdkWheelScroll($event)"
-            (touchstart)="onEvent($event, 'touchstart')" (touchmove)="onEvent($event, 'touchmove')" [maxBufferPx]="500"
-            [minBufferPx]="10" [style.min-width.px]="pageWidth + 100" #virtualScroll>
-            <ng-container *cdkVirtualFor="let item of virtualScrollerItemsArray; let idx = index"
-                [ngSwitch]="item?._step">
-                <ng-template ngSwitchCase="top">
-                    <div style="height: 92px"></div>
-                </ng-template>
-                <ng-template ngSwitchDefault>
-                    <app-flow-item [item]="item" [idx]="idx" [isGroupByAlias]="_isCombineByAlias"
-                        [isSimplify]="isSimplify" [isAbsolute]="isAbsolute"
-                        (itemClick)="onClickMessage($event.idx, $event.event, item)">
-                    </app-flow-item>
-                </ng-template>
-                <ng-template ngSwitchCase="bottom">
-                    <div style="height: 60px"></div>
-                </ng-template>
-            </ng-container>
-        </cdk-virtual-scroll-viewport>
-    </div>
+  </div>
+   <div
+    class="VS-Container"
+    style="overflow-y: hidden !important"
+    (scroll)="onScrollVScrollWrapper($event)"
+    *ngIf="!isExport && !isSafari"
+    #VScrollWrapper
+  >
+    <cdk-virtual-scroll-viewport
+      class="VS-Container hidescroll"
+      (wheel)="cdkWheelScroll($event)"
+
+      (touchstart)="onEvent($event, 'touchstart')"
+      (touchmove)="onEvent($event, 'touchmove')"
+      [maxBufferPx]="500"
+      [minBufferPx]="10"
+      [style.min-width.px]="pageWidth + 100"
+      #virtualScroll
+    >
+      <ng-container *cdkVirtualFor="let item of virtualScrollerItemsArray; let idx = index" [ngSwitch]="item?._step">
+        <ng-template ngSwitchCase="top">
+          <div style="height: 92px"></div>
+        </ng-template>
+        <ng-template ngSwitchDefault>
+          <app-flow-item
+            [item]="item"
+            [idx]="idx"
+            [isGroupByAlias]="_isCombineByAlias"
+            [isSimplify]="isSimplify"
+            [isAbsolute]="isAbsolute"
+            (itemClick)="onClickMessage($event.idx, $event.event, item)"
+          >
+          </app-flow-item>
+        </ng-template>
+        <ng-template ngSwitchCase="bottom">
+          <div style="height: 60px"></div>
+        </ng-template>
+      </ng-container>
+    </cdk-virtual-scroll-viewport>
+  </div>
 </div>
 
 <div id="download" style="display: none">
     <img #canvas />
     <a #downloadLink target="_blank"></a>
 </div>
-<div class="virtual-scrollbar" *ngIf="!isExport && !isSafari" (mousedown)="setScrollTarget('virtualScrollbar')"
-    (scroll)="setVirtualScrollHeight($event)" #virtualScrollbar>
-    <div [style.transform]="getVirtualScrollHeight" [style.padding.px]="1"></div>
+ <div
+  class="virtual-scrollbar"
+  *ngIf="!isExport && !isSafari"
+  (mousedown)="setScrollTarget('virtualScrollbar')"
+  (scroll)="setVirtualScrollHeight($event)"
+  #virtualScrollbar
+>
+  <div [style.transform]="getVirtualScrollHeight" [style.padding.px]="1"></div>
 </div>

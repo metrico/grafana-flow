@@ -94,6 +94,7 @@ export class TabFlowComponent
     timeout: any;
     _interval: any | null = null;
     pathPrefix = './assets/';
+    isSafari = navigator.vendor === 'Apple Computer, Inc.'
     outEventDelayOff = 0;
     get outEventOff() {
         //
@@ -701,7 +702,7 @@ export class TabFlowComponent
         const scrollbar = this.virtualScrollbar?.nativeElement;
         let movingAverageArray: any[] = [];
         const ma = (p: any) => {
-            const valMA = 6;
+            const valMA = 3; // Adjust this to change virtual scroll speed. Lower = faster
             if (movingAverageArray.length < valMA) {
                 movingAverageArray = Array.from({ length: valMA }, (x) => p);
             }

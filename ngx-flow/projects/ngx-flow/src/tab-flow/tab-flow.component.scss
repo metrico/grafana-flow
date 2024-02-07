@@ -43,6 +43,8 @@
     box-shadow: inset 7px 10px 12px transparent;
   }
 }
+::-webkit-scrollbar-corner { background: rgba(0,0,0,0.5); } 
+
 
 .flow-grid-lines {
   display: flex;
