@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { PanelProps, StandardEditorProps } from '@grafana/data';
 import { SimpleOptions } from 'types';
 import { css, cx } from '@emotion/css';
@@ -30,11 +30,13 @@ declare global {
   }
 }
 export let valueLabelsName: string[] = [];
+
 let bufferCheck = '';
 export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const themeName: string = useTheme2().name;
   const styles = useStyles2(getStyles);
+
   const templateData = JSON.stringify({
     actors: [], data: [{
       messageID: 'messageID',
@@ -112,8 +114,19 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
   try {
     isJSON = typeof JSON.parse(value) === 'object';
   } catch (e) { }
+  const textAreaRef: any = useRef(null);
 
+  function copyToClipboard() {
+    if (textAreaRef && textAreaRef.current) {
+      textAreaRef.current.focus();
+      textAreaRef.current.select();
+      document.execCommand('copy');
+    }
+  };
+  const [copyValue, setCopyValue] = useState('')
   return (<div>
+    <textarea
+      ref={textAreaRef} value={copyValue} style={{ height: 0, width: 0, border: 0, padding: 0 }} />
     {value ? <>
       <strong className={styles.label}>{key}</strong>
       {isJSON ?
@@ -124,7 +137,14 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
             displayDataTypes={false}
             displayObjectSize={false}
             enableClipboard={({ src }) => {
-              navigator.clipboard.writeText(JSON.stringify(src))
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(JSON.stringify(src))
+              } else {
+                setCopyValue(JSON.stringify(src))
+                setTimeout(() => {
+                  copyToClipboard()
+                }, 0);
+              }
             }}
             quotesOnKeys={false}
             name={false}
@@ -146,7 +166,9 @@ document.addEventListener('ngx-flow-click-item', function (e: any) {
 });
 
 function formattingDataAndSortIt(data: any, sortType = 'none') {
-  const [firstField] = data || [];
+
+  let [firstField] = data || [];
+  
   const unSortData = firstField?.values?.map((i: any, k: number) => {
     const outData: any = {};
     data.forEach((item: any) => {
@@ -154,7 +176,7 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
     });
     if (outData?.Time && typeof outData?.labels === 'object') {
       outData['labels'].timestamp = outData.Time;
-    } 
+    }
     return outData;
   }) || [];
   if (sortType === 'none') {
@@ -165,7 +187,7 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
       const a = itemA.tsNs;
       const b = itemB.tsNs;
       return a < b ? -1 : a > b ? 1 : 0;
-    } else { 
+    } else {
       const a = itemA.Time;
       const b = itemB.Time;
       return a < b ? -1 : a > b ? 1 : 0;
