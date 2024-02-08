@@ -34,7 +34,6 @@ export class NgxFlowComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-        console.log(this.data)
         this.formatter(this.data);
     }
     formatter(data: FlowData | null = null) {
@@ -47,13 +46,10 @@ export class NgxFlowComponent implements OnInit {
         const hosts = uniqHostName.map((i, k) => this.makeHost(i, k, actors))
         const messages = dataSimple.map(i => this.formatItem(i, i.source, i.destination, hosts))
         this._formattedData = { hosts, messages };
-        console.log('hosts -> ', { hosts, messages }, this._formattedData);
     }
 
     makeHost(name: string, i: number = 0, actors: any[] | null = null) {
-        // console.log({ actors });
         const actor = actors?.find((j: any) => j.id === name)?.displayedTitle;
-        console.log({ actor, name, i });
         return {
             name: name,
             alias: actor || name,
