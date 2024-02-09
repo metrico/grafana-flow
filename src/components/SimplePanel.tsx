@@ -126,7 +126,7 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
   const [copyValue, setCopyValue] = useState('')
   return (<div>
     <textarea
-      ref={textAreaRef} value={copyValue} style={{ height: 0, width: 0, border: 0, padding: 0 }} />
+      ref={textAreaRef} value={copyValue} style={{pointerEvents: 'none', opacity: 0, position: 'fixed', left: 0, top: 0, border: 0, padding: 0 }} />
     {value ? <>
       <strong className={styles.label}>{key}</strong>
       {isJSON ?
