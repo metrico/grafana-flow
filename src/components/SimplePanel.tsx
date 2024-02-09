@@ -112,8 +112,19 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
   try {
     isJSON = typeof JSON.parse(value) === 'object';
   } catch (e) { }
+  const textAreaRef: any = useRef(null);
 
+  function copyToClipboard() {
+    if (textAreaRef && textAreaRef.current) {
+      textAreaRef.current.focus();
+      textAreaRef.current.select();
+      document.execCommand('copy');
+    }
+  };
+  const [copyValue, setCopyValue] = useState('')
   return (<div>
+    <textarea
+      ref={textAreaRef} value={copyValue} style={{pointerEvents: 'none', opacity: 0, position: 'fixed', left: 0, top: 0, border: 0, padding: 0 }} />
     {value ? <>
       <strong className={styles.label}>{key}</strong>
       {isJSON ?
@@ -125,6 +136,14 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
             displayObjectSize={false}
             enableClipboard={({ src }) => {
               navigator.clipboard.writeText(JSON.stringify(src))
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(JSON.stringify(src))
+              } else {
+                setCopyValue(JSON.stringify(src))
+                setTimeout(() => {
+                  copyToClipboard()
+                }, 0);
+              }
             }}
             quotesOnKeys={false}
             name={false}
