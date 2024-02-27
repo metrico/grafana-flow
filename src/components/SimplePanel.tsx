@@ -4,12 +4,20 @@ import { SimpleOptions } from 'types';
 import { css, cx } from '@emotion/css';
 import './../../ngx-flow/widget/ngx-flow.js';
 import ReactJson from 'react-json-view';
+import { DateTime } from "luxon";
+// @ts-ignore
+import packets from '../libs/packets.js';
+// @ts-ignore
+import { configure } from 'pcap-generator'
+import { Buffer } from 'buffer'
+const ip = packets.ipPacket
+const udp = packets.udpPacket
+const tcp = packets.tcpPacket
 
 import {
     Button,
     MultiSelect,
     Collapse,
-    // AsyncSelect,
     Modal,
     useStyles2,
     useTheme2
@@ -203,6 +211,9 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
 
 }
 
+
+
+
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: any) => {
     const [flowData, setFlowData] = React.useState({ actors: [], data: [] });
     const [modalIsOpen, setModalIsOpen] = React.useState(false);
@@ -212,13 +223,28 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
     const onModalClose = () => {
         setModalIsOpen(false);
     };
+    // Export .txt
     useEffect(() => {
         const handler = (e: any) => {
 
             const [serie]: any = (data as any)?.series || [];
             const fields = serie?.fields || [];
             const lineField = fields.find((i: any) => i.name === 'Line') ?? [];
-            const exportText = lineField?.values.join('\n');
+            const exportText = lineField?.values.map((i: string, index: number) => {
+                let dt = DateTime.fromMillis(fields[0]?.values[index]?.timestamp).toISO()
+                dt = dt?.replace('+', '000+') ?? '';
+                if (fields[0]?.values[index]?.type !== 'sip') {
+                    i = '';
+                }
+                let proto = 'proto:'
+                if (i.includes('UDP')) {
+                    proto += "UDP"
+                } else if (i.includes('TCP')) {
+                    proto += "TCP"
+                }
+                console.log(proto)
+                return `${proto} ${dt} ${fields[0]?.values[index]?.src_ip} ---> ${fields[0]?.values[index]?.dst_ip} \n\n${i}`
+            }).join('\n');
             // Create element with <a> tag
             const link = document.createElement("a");
 
@@ -229,25 +255,88 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
             link.href = URL.createObjectURL(file);
 
             // Add file name
-            link.download = "sample.txt";
-            console.log(link)
-            // Add click event to <a> tag to save file.
+            const date = new Date();
+            link.download = `${date.toUTCString()}.txt`;
             link.click();
-            URL.revokeObjectURL(link.href);
-            document.removeChild(link)
-            // console.log(exportText)
         }
         document.addEventListener('export-flow-as-text', handler);
         return () => {
             document.removeEventListener('export-flow-as-text', handler)
         }
     }, [data])
+    // Export .pcap
+    useEffect(() => {
+        const handler = (e: any) => {
+
+            const [serie]: any = (data as any)?.series || [];
+            const fields = serie?.fields || [];
+            const lineField = fields.find((i: any) => i.name === 'Line') ?? [];
+            const packets2 = lineField?.values.map((field: string, index: number) => {
+
+                const labels = fields[0]?.values[index]
+                const fieldObj = {
+                    data: field,
+                    srcIp: labels.src_ip,
+                    dstIp: labels.dst_ip,
+                    srcPort: labels.src_port,
+                    dstPort: labels.dst_port,
+                    ts: fields[0]?.values[index]?.timestamp,
+                    proto: 17,
+                    type: fields[0]?.values[index]?.type
+                }
+                let proto = ''
+                if (field.includes('UDP')) {
+                    proto += "UDP"
+                } else if (field.includes('TCP')) {
+                    proto += "TCP"
+                }
+                const packet_data = proto === 'UDP' ? udp.encode({
+                    sourcePort: fieldObj.srcPort,
+                    destinationPort: fieldObj.dstPort,
+                    data: Buffer.from(fieldObj.data)
+                }) : tcp.encode({
+                    sourcePort: fieldObj.srcPort,
+                    destinationPort: fieldObj.dstPort,
+                    data: Buffer.from(fieldObj.data)
+                })
+                let ipv4_packet = ip.encode({
+                    version: 4,
+                    protocol: fieldObj.proto,
+                    sourceIp: fieldObj.srcIp,
+                    destinationIp: fieldObj.dstIp,
+                    data: packet_data,
+                    ttl: 112,
+                })
+                return {
+                    timestamp: fieldObj.ts,
+                    buffer: ipv4_packet,
+                    type: fields[0]?.values[index]?.type
+                }
+            }).filter((packet: any) => packet.type === 'sip')
+            const generator = configure({ Buffer: Buffer })
+            const pcapFile = generator(packets2)
+            const blob = new Blob([pcapFile], { type: 'application/vnd.tcpdump.pcap' });
+            // // Create element with <a> tag
+            const link = document.createElement("a");
+
+            // Add file content in the object URL
+            link.href = URL.createObjectURL(blob);
+
+            // Add file name
+            const date = new Date();
+            link.download = `${date.toUTCString()}.pcap`;
+            link.click();
+
+        }
+        document.addEventListener('export-flow-as-pcap', handler);
+        return () => {
+            document.removeEventListener('export-flow-as-pcap', handler)
+        }
+    }, [data])
     const styles = useStyles2(getStyles);
     React.useEffect(() => {
         const [serie]: any = (data as any)?.series || [];
         const fields = serie?.fields || [];
-        console.log({ options })
-        console.log(serie)
         if (fields) {
             const [firsField]: any = fields;
             const sortData = formattingDataAndSortIt(fields, options.sortoption);
