@@ -437,7 +437,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                         css`
               position: absolute;
               top: 15px;
-              right: 15px;
+              right: 40px;
               border: 1px solid ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
               border-radius: 2px;
               background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.5)' : 'hsla(0, 0%, 100%, 0.5)'};
