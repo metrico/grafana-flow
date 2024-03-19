@@ -1,106 +1,156 @@
-<div class="flowscreen" [style.min-width.px]="pageWidth + 85" data-comment="85 = 16 * 2 + 106 / 2"
-    [style.padding-top.px]="isExport ? 40 : 0" [style.width]="isExport ? 'calc(100% + 20px)' : 'calc(100% - 1rem)'"
-    #flowscreen>
-    <ng-container *ngIf="arrayItemsVisible?.length === 0">
-        <h1 style="text-align: center; padding: 8rem; color: #aaa">No Data</h1>
-    </ng-container>
+<div
+  class="flowscreen"
+  [style.min-width.px]="pageWidth + 85"
+  data-comment="85 = 16 * 2 + 106 / 2"
+  [style.padding-top.px]="isExport ? 40 : 0"
+  [style.width]="isExport ? 'calc(100% + 20px)' : 'calc(100% - 1rem)'"
+  #flowscreen
+>
+  <ng-container *ngIf="arrayItemsVisible?.length === 0">
+    <h1 style="text-align: center; padding: 8rem; color: #aaa">No Data</h1>
+  </ng-container>
 
-    <div class="flow-grid-lines" [style.min-width.px]="pageWidth - 16 * 2">
-        <div *ngFor="let title of flowGridLines" class="line"></div>
-    </div>
+  <div class="flow-grid-lines" [style.min-width.px]="pageWidth - 16 * 2">
+    <div *ngFor="let title of flowGridLines" class="line"></div>
+  </div>
 
-    <!-- hosts -->
+  <!-- hosts -->
 
-    <div class="hosts" [style.top.px]="isExport ? 40 : 0">
-        <div class="hosts-wrapper">
-            <!-- host titles -->
-            <ng-template ngFor let-itemhost [ngForOf]="_isCombineByAlias ? hostsCA : hostsIPs">
-                <div *ngIf="!itemhost.hidden" [ngClass]="'item-wrapper' + (isSimplify ? ' big' : '')">
-                    <!-- wrapper -->
+  <div class="hosts" [style.top.px]="isExport ? 40 : 0">
+    <div class="hosts-wrapper">
+      <!-- host titles -->
+      <ng-template ngFor let-itemhost [ngForOf]="_isCombineByAlias ? hostsCA : hostsIPs">
+        <div *ngIf="!itemhost.hidden" [ngClass]="'item-wrapper' + (isSimplify ? ' big' : '')">
+          <!-- wrapper -->
 
-                    <div class="item" [id]="itemhost.alias && itemhost.alias !== itemhost.ip ? itemhost.alias : ''"
-                        [style.border-color]="(itemhost.color && itemhost.color.border) || 'lightgray'">
-                        <!-- container -->
+          <div
+            class="item"
+            [id]="itemhost.alias && itemhost.alias !== itemhost.ip ? itemhost.alias : ''"
+            [style.border-color]="(itemhost.color && itemhost.color.border) || 'lightgray'"
+          >
+            <!-- container -->
 
-                        <div class="aliasfield" (mouseover)="showTooltip(itemhost)" (mouseout)="hideTooltip()">
-                            <ng-template #noAlias> </ng-template>
-                            <div class="alias-img"></div>
-                            <div class="alias-name" *ngIf="!_isCombineByAliasGroup; else itemhostGroup">
-                                {{ itemhost.alias && itemhost.alias !== itemhost.ip ? itemhost.alias : '' }}
-                            </div>
-                            <ng-template #itemhostGroup>
-                                <div>Group:</div>
-                                <div class="alias-name">
-                                    {{ itemhost.group || '...other...' }}
-                                </div>
-                            </ng-template>
-                        </div>
-                    </div>
+            <div class="aliasfield" (mouseover)="showTooltip(itemhost)" (mouseout)="hideTooltip()">
+              <ng-template #noAlias> </ng-template>
+              <div class="alias-img"></div>
+              <div class="alias-name" *ngIf="!_isCombineByAliasGroup; else itemhostGroup">
+                {{ itemhost.alias && itemhost.alias !== itemhost.ip ? itemhost.alias : '' }}
+              </div>
+              <ng-template #itemhostGroup>
+                <div>Group:</div>
+                <div class="alias-name">
+                  {{ itemhost.group || '...other...' }}
                 </div>
-            </ng-template>
+              </ng-template>
+            </div>
+          </div>
         </div>
+      </ng-template>
     </div>
+  </div>
 
-    <!-- flow packets -->
-    <!-- REAL TIME FLOW -->
+  <!-- flow packets -->
+  <!-- REAL TIME FLOW -->
 
-    <!-- EXPORT FLOW as PNG -->
-    <div *ngIf="isExport" class="flow-packets-wrapper" [style.margin-right.rem]="0"
-        [style.min-width.px]="pageWidth + 100">
-        <div style="height: 92px"></div>
-        <app-flow-item *ngFor="let item of arrayItemsVisible; let idx = index" [isGroupByAlias]="_isCombineByAlias"
-            [item]="item" [idx]="idx" [isSimplify]="false">
-        </app-flow-item>
-        <div style="height: 40px"></div>
+  <!-- EXPORT FLOW as PNG -->
+  <div
+    *ngIf="isExport"
+    class="flow-packets-wrapper"
+    [style.margin-right.rem]="0"
+    [style.min-width.px]="pageWidth + 100"
+  >
+    <div style="height: 92px"></div>
+    <app-flow-item
+      *ngFor="let item of arrayItemsVisible; let idx = index"
+      [isGroupByAlias]="_isCombineByAlias"
+      [item]="item"
+      [idx]="idx"
+      [isSimplify]="false"
+    >
+    </app-flow-item>
+    <div style="height: 40px"></div>
+  </div>
+  <!-- </div> -->
+  <div *ngIf="isExport" class="label-callid-container">
+    <div class="label-callid-wrapper" *ngFor="let itemLabel of labels" [style.color]="itemLabel.color">
+      * {{ itemLabel.callid }}
     </div>
-    <!-- </div> -->
-    <div *ngIf="isExport" class="label-callid-container">
-        <div class="label-callid-wrapper" *ngFor="let itemLabel of labels" [style.color]="itemLabel.color">
-            * {{ itemLabel.callid }}
-        </div>
-    </div>
+  </div>
 </div>
 <div class="VS-Container-horizontal">
-    <div *ngIf="isExport || isSafari" class="VS-Container" style="overflow: auto !important"
-        (scroll)="onScrollVScrollWrapper($event)">
-        <div class="VS-Container" style="height: initial; overflow: scroll !important; bottom:unset"
-            [style.min-width.px]="pageWidth + 100">
-            <div style="height: 92px"></div>
-            <app-flow-item *ngFor="let item of arrayItems; let idx = index" [item]="item" [idx]="idx"
-                [isGroupByAlias]="_isCombineByAlias" [isSimplify]="isSimplify" [isAbsolute]="isAbsolute"
-                (itemClick)="onClickMessage($event.idx, $event.event, item)"></app-flow-item>
-            <div style="height: 60px"></div>
-        </div>
+  <div
+    class="VS-Container"
+    style="overflow: auto !important"
+    (scroll)="onScrollVScrollWrapper($event)"
+  >
+    <div
+      class="VS-Container"
+      style="height: initial; overflow: scroll !important"
+      [style.min-width.px]="pageWidth + 100"
+    >
+      <div style="height: 92px"></div>
+      <app-flow-item
+        *ngFor="let item of arrayItems; let idx = index"
+        [item]="item"
+        [idx]="idx"
+        [isGroupByAlias]="_isCombineByAlias"
+        [isSimplify]="isSimplify"
+        [isAbsolute]="isAbsolute"
+        (itemClick)="onClickMessage($event.idx, $event.event, item)"
+      ></app-flow-item>
+      <div style="height: 60px"></div>
     </div>
-    <div class="VS-Container" style="overflow-y: hidden !important" (scroll)="onScrollVScrollWrapper($event)"
-        *ngIf="!isExport && !isSafari" #VScrollWrapper>
-        <cdk-virtual-scroll-viewport class="VS-Container hidescroll" (wheel)="cdkWheelScroll($event)"
-            (touchstart)="onEvent($event, 'touchstart')" (touchmove)="onEvent($event, 'touchmove')" [maxBufferPx]="500"
-            [minBufferPx]="10" [style.min-width.px]="pageWidth + 100" #virtualScroll>
-            <ng-container *cdkVirtualFor="let item of virtualScrollerItemsArray; let idx = index"
-                [ngSwitch]="item?._step">
-                <ng-template ngSwitchCase="top">
-                    <div style="height: 92px"></div>
-                </ng-template>
-                <ng-template ngSwitchDefault>
-                    <app-flow-item [item]="item" [idx]="idx" [isGroupByAlias]="_isCombineByAlias"
-                        [isSimplify]="isSimplify" [isAbsolute]="isAbsolute"
-                        (itemClick)="onClickMessage($event.idx, $event.event, item)">
-                    </app-flow-item>
-                </ng-template>
-                <ng-template ngSwitchCase="bottom">
-                    <div style="height: 60px"></div>
-                </ng-template>
-            </ng-container>
-        </cdk-virtual-scroll-viewport>
-    </div>
+  </div>
+  <!-- <div
+    class="VS-Container"
+    style="overflow-y: hidden !important"
+    (scroll)="onScrollVScrollWrapper($event)"
+    *ngIf="!isExport"
+    #VScrollWrapper
+  >
+    <cdk-virtual-scroll-viewport
+      class="VS-Container hidescroll"
+      (wheel)="cdkWheelScroll($event)"
+      (touchstart)="onEvent($event, 'touchstart')"
+      (touchmove)="onEvent($event, 'touchmove')"
+      [maxBufferPx]="500"
+      [minBufferPx]="10"
+      [style.min-width.px]="pageWidth + 100"
+      #virtualScroll
+    >
+      <ng-container *cdkVirtualFor="let item of virtualScrollerItemsArray; let idx = index" [ngSwitch]="item?._step">
+        <ng-template ngSwitchCase="top">
+          <div style="height: 92px"></div>
+        </ng-template>
+        <ng-template ngSwitchDefault>
+          <app-flow-item
+            [item]="item"
+            [idx]="idx"
+            [isGroupByAlias]="_isCombineByAlias"
+            [isSimplify]="isSimplify"
+            [isAbsolute]="isAbsolute"
+            (itemClick)="onClickMessage($event.idx, $event.event, item)"
+          >
+          </app-flow-item>
+        </ng-template>
+        <ng-template ngSwitchCase="bottom">
+          <div style="height: 60px"></div>
+        </ng-template>
+      </ng-container>
+    </cdk-virtual-scroll-viewport>
+  </div> -->
 </div>
 
 <div id="download" style="display: none">
-    <img #canvas />
-    <a #downloadLink target="_blank"></a>
+  <img #canvas />
+  <a #downloadLink></a>
 </div>
-<div class="virtual-scrollbar" *ngIf="!isExport && !isSafari" (mousedown)="setScrollTarget('virtualScrollbar')"
-    (scroll)="setVirtualScrollHeight($event)" #virtualScrollbar>
-    <div [style.transform]="getVirtualScrollHeight" [style.padding.px]="1"></div>
-</div>
+<!-- <div
+  class="virtual-scrollbar"
+  *ngIf="!isExport"
+  (mousedown)="setScrollTarget('virtualScrollbar')"
+  (scroll)="setVirtualScrollHeight($event)"
+  #virtualScrollbar
+>
+  <div [style.transform]="getVirtualScrollHeight" [style.padding.px]="1"></div>
+</div> -->

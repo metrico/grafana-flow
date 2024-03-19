@@ -12,6 +12,7 @@ export class AppComponent {
     isDarkTheme = false;
     @Input() set dataFlow(value: any) {
         this._dataFlow = JSON.parse(value);
+        console.log('DATA FLOW', this._dataFlow)
         this.isReady = false;
         this.cdr.detectChanges();
         requestAnimationFrame(() => {
@@ -22,6 +23,7 @@ export class AppComponent {
 
     @Input() set theme(val: any) {
         this.isDarkTheme = val === "Dark";
+        console.log({ val }, val === "Dark");
         requestAnimationFrame(() => {
             this.cdr.detectChanges();
         });
