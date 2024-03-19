@@ -20,7 +20,9 @@ import {
     Collapse,
     Modal,
     useStyles2,
-    useTheme2
+    useTheme2,
+    Dropdown,
+    Menu
 } from '@grafana/ui';
 
 
@@ -274,6 +276,12 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
             const packets2 = lineField?.values.map((field: string, index: number) => {
 
                 const labels = fields[0]?.values[index]
+                let proto = ''
+                if (field.includes('UDP')) {
+                    proto += "UDP"
+                } else if (field.includes('TCP')) {
+                    proto += "TCP"
+                }
                 const fieldObj = {
                     data: field,
                     srcIp: labels.src_ip,
@@ -281,15 +289,14 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                     srcPort: labels.src_port,
                     dstPort: labels.dst_port,
                     ts: fields[0]?.values[index]?.timestamp,
-                    proto: 17,
-                    type: fields[0]?.values[index]?.type
+                    proto: proto === 'UDP' ? 17 : 6,
+                    type: fields[0]?.values[index]?.type,
+                    trafficClass: 0,
+                    flowLabel: 0,
+                    nextHeader: proto === 'UDP' ? 17 : 6
                 }
-                let proto = ''
-                if (field.includes('UDP')) {
-                    proto += "UDP"
-                } else if (field.includes('TCP')) {
-                    proto += "TCP"
-                }
+                const ipv4_regex = /^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/gm;
+
                 const packet_data = proto === 'UDP' ? udp.encode({
                     sourcePort: fieldObj.srcPort,
                     destinationPort: fieldObj.dstPort,
@@ -299,17 +306,20 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                     destinationPort: fieldObj.dstPort,
                     data: Buffer.from(fieldObj.data)
                 })
-                let ipv4_packet = ip.encode({
-                    version: 4,
+                let ip_packet = ip.encode({
+                    version: ipv4_regex.test(fieldObj.srcIp) ? 4 : 6,
                     protocol: fieldObj.proto,
                     sourceIp: fieldObj.srcIp,
                     destinationIp: fieldObj.dstIp,
                     data: packet_data,
                     ttl: 112,
+                    nextHeader: fieldObj.nextHeader,
+                    trafficClass: fieldObj.trafficClass,
+                    flowLabel: fieldObj.flowLabel
                 })
                 return {
                     timestamp: fieldObj.ts,
-                    buffer: ipv4_packet,
+                    buffer: ip_packet,
                     type: fields[0]?.values[index]?.type
                 }
             }).filter((packet: any) => packet.type === 'sip')
@@ -387,6 +397,28 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
     // console.log(useTheme2());
     const themeName: string = useTheme2().name;
     const flowDataJSON = JSON.stringify(flowData);
+    const menu = (
+        <Menu>
+            <Menu.Item
+                onClick={() => {
+                    document.dispatchEvent(new CustomEvent('export-flow-as-png'));
+                }}
+                label='Export flow as PNG'
+            ></Menu.Item>
+            <Menu.Item
+                onClick={() => {
+                    document.dispatchEvent(new CustomEvent('export-flow-as-json'));
+                }}
+                label='Export flow as JSON'
+            ></Menu.Item>
+            <Menu.Item
+                onClick={() => {
+                    document.dispatchEvent(new CustomEvent('export-flow-as-pcap'));
+                }}
+                label='Export flow as PCAP'
+            ></Menu.Item>
+        </Menu>
+    )
     return (
         <div
             className={cx(
@@ -394,9 +426,27 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                 css`
           width: ${width}px;
           height: ${height}px;
+          position: relative;
         `
             )}
         >
+            {data?.request?.app === 'dashboard' && (
+                // <span >
+                <Dropdown overlay={menu}>
+
+                    <Button className={cx(
+                        css`
+              position: absolute;
+              top: 15px;
+              right: 15px;
+              border: 1px solid ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
+              border-radius: 2px;
+              background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.5)' : 'hsla(0, 0%, 100%, 0.5)'};
+              z-index: 2;
+            `)} icon="bars" fill="text" variant="secondary" />
+                </Dropdown>
+                // </span>/
+            )}
             {/* <pre>{JSON.stringify(flowData)}</pre> */}
             {/* <FlowMemo flowData={flowData} themeName={themeName} /> */}
             <ngx-flow-out data-flow={flowDataJSON} theme={themeName} />

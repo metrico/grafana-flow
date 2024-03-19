@@ -2035,23 +2035,43 @@
 
                     function configure(opts) {
                         function encode(packet, buf, offset) {
-                            if (!buf) buf = new Buffer(encodingLength(packet))
+                            if (!buf) buf = new Buffer(encodingLength(packet, packet.version === 4 ? 20 : 40))
                             if (!offset) offset = 0
+                            if (packet.version === 4) {
 
-                            buf[offset] = packet.version << 4 | (packet.ihl || 5)
-                            buf[offset + 1] = (packet.dscp || 0) << 2 | (packet.ecn || 0)
-                            buf.writeUInt16BE(20 + packet.data.length, offset + 2)
-                            buf.writeUInt16BE(packet.identification || 0, offset + 4)
-                            buf.writeUInt16BE((packet.flags || 0) << 13 | (packet.fragmentOffset || 0), offset + 6)
-                            buf[offset + 8] = packet.ttl || 0
-                            buf[offset + 9] = packet.protocol || 0
-                            buf.writeUInt16BE(0, offset + 10)
-                            encodeIp(packet.sourceIp, buf, offset + 12)
-                            encodeIp(packet.destinationIp, buf, offset + 16)
-                            buf.writeUInt16BE(checksum(buf, offset, offset + 20), offset + 10)
-                            packet.data.copy(buf, offset + 20)
+                                // IPv4 header
+                                buf[offset] = packet.version << 4 | (packet.ihl || 5)
+                                buf[offset + 1] = (packet.dscp || 0) << 2 | (packet.ecn || 0)
+                                buf.writeUInt16BE(20 + packet.data.length, offset + 2)
+                                buf.writeUInt16BE(packet.identification || 0, offset + 4)
+                                buf.writeUInt16BE((packet.flags || 0) << 13 | (packet.fragmentOffset || 0), offset + 6)
+                                buf[offset + 8] = packet.ttl || 0
+                                buf[offset + 9] = packet.protocol || 0
+                                buf.writeUInt16BE(0, offset + 10)
+                                encodeIp(packet.sourceIp, buf, offset + 12)
+                                encodeIp(packet.destinationIp, buf, offset + 16)
+                                buf.writeUInt16BE(checksum(buf, offset, offset + 20), offset + 10)
+                                packet.data.copy(buf, offset + 20)
 
-                            encode.bytes = 20 + packet.data.length
+                                encode.bytes = 20 + packet.data.length
+                            } else {
+                                // IPv6 header
+                                buf.writeUInt32BE(packet.version << 28 | (packet.trafficClass << 20) | packet.flowLabel, offset);
+                                buf.writeUInt16BE(packet.data.length, offset + 4);
+                                buf[offset + 6] = packet.nextHeader;
+                                buf[offset + 7] = packet.hopLimit;
+                                const sourceIpBuffer = Buffer.from(packet.sourceIp);
+                                const destinationIpBuffer = Buffer.from(packet.destinationIp);
+
+                                sourceIpBuffer.copy(buf, offset + 8, 0, 16);
+                                destinationIpBuffer.copy(buf, offset + 24, 0, 16);
+
+                                // Here you would continue encoding any additional IPv6 header fields
+
+                                packet.data.copy(buf, offset + 40);
+
+                                encode.bytes = 40 + packet.data.length;
+                            }
 
                             return buf
                         }
@@ -2092,8 +2112,8 @@
                             }
                         }
 
-                        function encodingLength(packet) {
-                            return 20 + packet.data.length
+                        function encodingLength(packet, ipPacketSize) {
+                            return ipPacketSize + packet.data.length
                         }
 
                         encode.bytes = decode.bytes = 0
@@ -2139,7 +2159,7 @@
 
                     function encode({ data, sourcePort, destinationPort, sequenceNumber = 0, acknowledgmentNumber = 0 }) {
                         const dataLength = data ? data.length : 0
-                        const packet = Buffer.alloc(20 + dataLength)
+                        const packet = Buffer.alloc(dataLength)
                         packet.writeUInt16BE(sourcePort, 0)
                         packet.writeUInt16BE(destinationPort, 2)
                         packet.writeUInt32BE(sequenceNumber, 4)
