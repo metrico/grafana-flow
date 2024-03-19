@@ -1,5 +1,5 @@
-(function (f) { if (typeof exports === "object" && typeof module !== "undefined") { module.exports = f() } else if (typeof define === "function" && define.amd) { define([], f) } else { var g; if (typeof window !== "undefined") { g = window } else if (typeof global !== "undefined") { g = global } else if (typeof self !== "undefined") { g = self } else { g = this } g.packets = f() } })(function () {
-    var define, module, exports; return (function () { function r(e, n, t) { function o(i, f) { if (!n[i]) { if (!e[i]) { var c = "function" == typeof require && require; if (!f && c) return c(i, !0); if (u) return u(i, !0); var a = new Error("Cannot find module '" + i + "'"); throw a.code = "MODULE_NOT_FOUND", a } var p = n[i] = { exports: {} }; e[i][0].call(p.exports, function (r) { var n = e[i][1][r]; return o(n || r) }, p, p.exports, r, e, n, t) } return n[i].exports } for (var u = "function" == typeof require && require, i = 0; i < t.length; i++)o(t[i]); return o } return r })()({
+(function (f) { if (typeof exports === "object" && typeof module !== "undefined") { module.exports = f() } else if (typeof define === "function" && define.amd) { define([], f) } else { let g; if (typeof window !== "undefined") { g = window } else if (typeof global !== "undefined") { g = global } else if (typeof self !== "undefined") { g = self } else { g = this } g.packets = f() } })(function () {
+    let define, module, exports; return (function () { function r(e, n, t) { function o(i, f) { if (!n[i]) { if (!e[i]) { let c = "function" === typeof require && require; if (!f && c) { return c(i, !0); } if (u) { return u(i, !0); } let a = new Error("Cannot find module '" + i + "'"); throw a.code = "MODULE_NOT_FOUND", a } let p = n[i] = { exports: {} }; e[i][0].call(p.exports, function (r) { let n = e[i][1][r]; return o(n || r) }, p, p.exports, r, e, n, t) } return n[i].exports } for (let u = "function" === typeof require && require, i = 0; i < t.length; i++) { o(t[i]); } return o } return r })()({
         1: [function (require, module, exports) {
             'use strict'
 
@@ -7,12 +7,12 @@
             exports.toByteArray = toByteArray
             exports.fromByteArray = fromByteArray
 
-            var lookup = []
-            var revLookup = []
-            var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+            let lookup = []
+            let revLookup = []
+            let Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
 
-            var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-            for (var i = 0, len = code.length; i < len; ++i) {
+            let code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+            for (let i = 0, len = code.length; i < len; ++i) {
                 lookup[i] = code[i]
                 revLookup[code.charCodeAt(i)] = i
             }
@@ -23,7 +23,7 @@
             revLookup['_'.charCodeAt(0)] = 63
 
             function getLens(b64) {
-                var len = b64.length
+                let len = b64.length
 
                 if (len % 4 > 0) {
                     throw new Error('Invalid string. Length must be a multiple of 4')
@@ -31,10 +31,10 @@
 
                 // Trim off extra bytes after placeholder bytes are found
                 // See: https://github.com/beatgammit/base64-js/issues/42
-                var validLen = b64.indexOf('=')
-                if (validLen === -1) validLen = len
+                let validLen = b64.indexOf('=')
+                if (validLen === -1) { validLen = len }
 
-                var placeHoldersLen = validLen === len
+                let placeHoldersLen = validLen === len
                     ? 0
                     : 4 - (validLen % 4)
 
@@ -43,9 +43,9 @@
 
             // base64 is 4/3 + up to two characters of the original data
             function byteLength(b64) {
-                var lens = getLens(b64)
-                var validLen = lens[0]
-                var placeHoldersLen = lens[1]
+                let lens = getLens(b64)
+                let validLen = lens[0]
+                let placeHoldersLen = lens[1]
                 return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
             }
 
@@ -54,21 +54,21 @@
             }
 
             function toByteArray(b64) {
-                var tmp
-                var lens = getLens(b64)
-                var validLen = lens[0]
-                var placeHoldersLen = lens[1]
+                let tmp
+                let lens = getLens(b64)
+                let validLen = lens[0]
+                let placeHoldersLen = lens[1]
 
-                var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
+                let arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
 
-                var curByte = 0
+                let curByte = 0
 
                 // if there are placeholders, only get up to the last complete 4 chars
-                var len = placeHoldersLen > 0
+                let len = placeHoldersLen > 0
                     ? validLen - 4
                     : validLen
 
-                var i
+                let i
                 for (i = 0; i < len; i += 4) {
                     tmp =
                         (revLookup[b64.charCodeAt(i)] << 18) |
@@ -107,9 +107,9 @@
             }
 
             function encodeChunk(uint8, start, end) {
-                var tmp
-                var output = []
-                for (var i = start; i < end; i += 3) {
+                let tmp
+                let output = []
+                for (let i = start; i < end; i += 3) {
                     tmp =
                         ((uint8[i] << 16) & 0xFF0000) +
                         ((uint8[i + 1] << 8) & 0xFF00) +
@@ -120,14 +120,14 @@
             }
 
             function fromByteArray(uint8) {
-                var tmp
-                var len = uint8.length
-                var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
-                var parts = []
-                var maxChunkLength = 16383 // must be multiple of 3
+                let tmp
+                let len = uint8.length
+                let extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+                let parts = []
+                let maxChunkLength = 16383 // must be multiple of 3
 
                 // go through the array every three bytes, we'll deal with trailing stuff later
-                for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+                for (let i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
                     parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
                 }
 
@@ -165,14 +165,14 @@
 
                     'use strict'
 
-                    var base64 = require('base64-js')
-                    var ieee754 = require('ieee754')
+                    let base64 = require('base64-js')
+                    let ieee754 = require('ieee754')
 
                     exports.Buffer = Buffer
                     exports.SlowBuffer = SlowBuffer
                     exports.INSPECT_MAX_BYTES = 50
 
-                    var K_MAX_LENGTH = 0x7fffffff
+                    let K_MAX_LENGTH = 0x7fffffff
                     exports.kMaxLength = K_MAX_LENGTH
 
                     /**
@@ -202,7 +202,7 @@
                     function typedArraySupport() {
                         // Can typed array instances can be augmented?
                         try {
-                            var arr = new Uint8Array(1)
+                            let arr = new Uint8Array(1)
                             arr.__proto__ = { __proto__: Uint8Array.prototype, foo: function () { return 42 } }
                             return arr.foo() === 42
                         } catch (e) {
@@ -213,7 +213,7 @@
                     Object.defineProperty(Buffer.prototype, 'parent', {
                         enumerable: true,
                         get: function () {
-                            if (!Buffer.isBuffer(this)) return undefined
+                            if (!Buffer.isBuffer(this)) { return undefined }
                             return this.buffer
                         }
                     })
@@ -221,7 +221,7 @@
                     Object.defineProperty(Buffer.prototype, 'offset', {
                         enumerable: true,
                         get: function () {
-                            if (!Buffer.isBuffer(this)) return undefined
+                            if (!Buffer.isBuffer(this)) { return undefined }
                             return this.byteOffset
                         }
                     })
@@ -231,7 +231,7 @@
                             throw new RangeError('The value "' + length + '" is invalid for option "size"')
                         }
                         // Return an augmented `Uint8Array` instance
-                        var buf = new Uint8Array(length)
+                        let buf = new Uint8Array(length)
                         buf.__proto__ = Buffer.prototype
                         return buf
                     }
@@ -299,13 +299,13 @@
                             )
                         }
 
-                        var valueOf = value.valueOf && value.valueOf()
+                        let valueOf = value.valueOf && value.valueOf()
                         if (valueOf != null && valueOf !== value) {
                             return Buffer.from(valueOf, encodingOrOffset, length)
                         }
 
-                        var b = fromObject(value)
-                        if (b) return b
+                        let b = fromObject(value)
+                        if (b) { return b }
 
                         if (typeof Symbol !== 'undefined' && Symbol.toPrimitive != null &&
                             typeof value[Symbol.toPrimitive] === 'function') {
@@ -396,10 +396,10 @@
                             throw new TypeError('Unknown encoding: ' + encoding)
                         }
 
-                        var length = byteLength(string, encoding) | 0
-                        var buf = createBuffer(length)
+                        let length = byteLength(string, encoding) | 0
+                        let buf = createBuffer(length)
 
-                        var actual = buf.write(string, encoding)
+                        let actual = buf.write(string, encoding)
 
                         if (actual !== length) {
                             // Writing a hex string, for example, that contains invalid characters will
@@ -412,9 +412,9 @@
                     }
 
                     function fromArrayLike(array) {
-                        var length = array.length < 0 ? 0 : checked(array.length) | 0
-                        var buf = createBuffer(length)
-                        for (var i = 0; i < length; i += 1) {
+                        let length = array.length < 0 ? 0 : checked(array.length) | 0
+                        let buf = createBuffer(length)
+                        for (let i = 0; i < length; i += 1) {
                             buf[i] = array[i] & 255
                         }
                         return buf
@@ -429,7 +429,7 @@
                             throw new RangeError('"length" is outside of buffer bounds')
                         }
 
-                        var buf
+                        let buf
                         if (byteOffset === undefined && length === undefined) {
                             buf = new Uint8Array(array)
                         } else if (length === undefined) {
@@ -445,8 +445,8 @@
 
                     function fromObject(obj) {
                         if (Buffer.isBuffer(obj)) {
-                            var len = checked(obj.length) | 0
-                            var buf = createBuffer(len)
+                            let len = checked(obj.length) | 0
+                            let buf = createBuffer(len)
 
                             if (buf.length === 0) {
                                 return buf
@@ -491,20 +491,20 @@
                     }
 
                     Buffer.compare = function compare(a, b) {
-                        if (isInstance(a, Uint8Array)) a = Buffer.from(a, a.offset, a.byteLength)
-                        if (isInstance(b, Uint8Array)) b = Buffer.from(b, b.offset, b.byteLength)
+                        if (isInstance(a, Uint8Array)) { a = Buffer.from(a, a.offset, a.byteLength) }
+                        if (isInstance(b, Uint8Array)) { b = Buffer.from(b, b.offset, b.byteLength) }
                         if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
                             throw new TypeError(
                                 'The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array'
                             )
                         }
 
-                        if (a === b) return 0
+                        if (a === b) { return 0 }
 
-                        var x = a.length
-                        var y = b.length
+                        let x = a.length
+                        let y = b.length
 
-                        for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+                        for (let i = 0, len = Math.min(x, y); i < len; ++i) {
                             if (a[i] !== b[i]) {
                                 x = a[i]
                                 y = b[i]
@@ -512,8 +512,8 @@
                             }
                         }
 
-                        if (x < y) return -1
-                        if (y < x) return 1
+                        if (x < y) { return -1 }
+                        if (y < x) { return 1 }
                         return 0
                     }
 
@@ -545,7 +545,7 @@
                             return Buffer.alloc(0)
                         }
 
-                        var i
+                        let i
                         if (length === undefined) {
                             length = 0
                             for (i = 0; i < list.length; ++i) {
@@ -553,10 +553,10 @@
                             }
                         }
 
-                        var buffer = Buffer.allocUnsafe(length)
-                        var pos = 0
+                        let buffer = Buffer.allocUnsafe(length)
+                        let pos = 0
                         for (i = 0; i < list.length; ++i) {
-                            var buf = list[i]
+                            let buf = list[i]
                             if (isInstance(buf, Uint8Array)) {
                                 buf = Buffer.from(buf)
                             }
@@ -583,12 +583,12 @@
                             )
                         }
 
-                        var len = string.length
-                        var mustMatch = (arguments.length > 2 && arguments[2] === true)
-                        if (!mustMatch && len === 0) return 0
+                        let len = string.length
+                        let mustMatch = (arguments.length > 2 && arguments[2] === true)
+                        if (!mustMatch && len === 0) { return 0 }
 
                         // Use a for loop to avoid recursion
-                        var loweredCase = false
+                        let loweredCase = false
                         for (; ;) {
                             switch (encoding) {
                                 case 'ascii':
@@ -619,7 +619,7 @@
                     Buffer.byteLength = byteLength
 
                     function slowToString(encoding, start, end) {
-                        var loweredCase = false
+                        let loweredCase = false
 
                         // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
                         // property of a typed array.
@@ -653,7 +653,7 @@
                             return ''
                         }
 
-                        if (!encoding) encoding = 'utf8'
+                        if (!encoding) { encoding = 'utf8' }
 
                         while (true) {
                             switch (encoding) {
@@ -681,7 +681,7 @@
                                     return utf16leSlice(this, start, end)
 
                                 default:
-                                    if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+                                    if (loweredCase) { throw new TypeError('Unknown encoding: ' + encoding) }
                                     encoding = (encoding + '').toLowerCase()
                                     loweredCase = true
                             }
@@ -697,28 +697,28 @@
                     Buffer.prototype._isBuffer = true
 
                     function swap(b, n, m) {
-                        var i = b[n]
+                        let i = b[n]
                         b[n] = b[m]
                         b[m] = i
                     }
 
                     Buffer.prototype.swap16 = function swap16() {
-                        var len = this.length
+                        let len = this.length
                         if (len % 2 !== 0) {
                             throw new RangeError('Buffer size must be a multiple of 16-bits')
                         }
-                        for (var i = 0; i < len; i += 2) {
+                        for (let i = 0; i < len; i += 2) {
                             swap(this, i, i + 1)
                         }
                         return this
                     }
 
                     Buffer.prototype.swap32 = function swap32() {
-                        var len = this.length
+                        let len = this.length
                         if (len % 4 !== 0) {
                             throw new RangeError('Buffer size must be a multiple of 32-bits')
                         }
-                        for (var i = 0; i < len; i += 4) {
+                        for (let i = 0; i < len; i += 4) {
                             swap(this, i, i + 3)
                             swap(this, i + 1, i + 2)
                         }
@@ -726,11 +726,11 @@
                     }
 
                     Buffer.prototype.swap64 = function swap64() {
-                        var len = this.length
+                        let len = this.length
                         if (len % 8 !== 0) {
                             throw new RangeError('Buffer size must be a multiple of 64-bits')
                         }
-                        for (var i = 0; i < len; i += 8) {
+                        for (let i = 0; i < len; i += 8) {
                             swap(this, i, i + 7)
                             swap(this, i + 1, i + 6)
                             swap(this, i + 2, i + 5)
@@ -740,25 +740,25 @@
                     }
 
                     Buffer.prototype.toString = function toString() {
-                        var length = this.length
-                        if (length === 0) return ''
-                        if (arguments.length === 0) return utf8Slice(this, 0, length)
+                        let length = this.length
+                        if (length === 0) { return '' }
+                        if (arguments.length === 0) { return utf8Slice(this, 0, length) }
                         return slowToString.apply(this, arguments)
                     }
 
                     Buffer.prototype.toLocaleString = Buffer.prototype.toString
 
                     Buffer.prototype.equals = function equals(b) {
-                        if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
-                        if (this === b) return true
+                        if (!Buffer.isBuffer(b)) { throw new TypeError('Argument must be a Buffer') }
+                        if (this === b) { return true }
                         return Buffer.compare(this, b) === 0
                     }
 
                     Buffer.prototype.inspect = function inspect() {
-                        var str = ''
-                        var max = exports.INSPECT_MAX_BYTES
+                        let str = ''
+                        let max = exports.INSPECT_MAX_BYTES
                         str = this.toString('hex', 0, max).replace(/(.{2})/g, '$1 ').trim()
-                        if (this.length > max) str += ' ... '
+                        if (this.length > max) { str += ' ... ' }
                         return '<Buffer ' + str + '>'
                     }
 
@@ -805,16 +805,16 @@
                         thisStart >>>= 0
                         thisEnd >>>= 0
 
-                        if (this === target) return 0
+                        if (this === target) { return 0 }
 
-                        var x = thisEnd - thisStart
-                        var y = end - start
-                        var len = Math.min(x, y)
+                        let x = thisEnd - thisStart
+                        let y = end - start
+                        let len = Math.min(x, y)
 
-                        var thisCopy = this.slice(thisStart, thisEnd)
-                        var targetCopy = target.slice(start, end)
+                        let thisCopy = this.slice(thisStart, thisEnd)
+                        let targetCopy = target.slice(start, end)
 
-                        for (var i = 0; i < len; ++i) {
+                        for (let i = 0; i < len; ++i) {
                             if (thisCopy[i] !== targetCopy[i]) {
                                 x = thisCopy[i]
                                 y = targetCopy[i]
@@ -822,8 +822,8 @@
                             }
                         }
 
-                        if (x < y) return -1
-                        if (y < x) return 1
+                        if (x < y) { return -1 }
+                        if (y < x) { return 1 }
                         return 0
                     }
 
@@ -838,7 +838,7 @@
                     // - dir - true for indexOf, false for lastIndexOf
                     function bidirectionalIndexOf(buffer, val, byteOffset, encoding, dir) {
                         // Empty buffer means no match
-                        if (buffer.length === 0) return -1
+                        if (buffer.length === 0) { return -1 }
 
                         // Normalize byteOffset
                         if (typeof byteOffset === 'string') {
@@ -856,13 +856,13 @@
                         }
 
                         // Normalize byteOffset: negative offsets start from the end of the buffer
-                        if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+                        if (byteOffset < 0) { byteOffset = buffer.length + byteOffset }
                         if (byteOffset >= buffer.length) {
-                            if (dir) return -1
-                            else byteOffset = buffer.length - 1
+                            if (dir) { return -1 }
+                            else { byteOffset = buffer.length - 1 }
                         } else if (byteOffset < 0) {
-                            if (dir) byteOffset = 0
-                            else return -1
+                            if (dir) { byteOffset = 0 }
+                            else { return -1 }
                         }
 
                         // Normalize val
@@ -893,9 +893,9 @@
                     }
 
                     function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
-                        var indexSize = 1
-                        var arrLength = arr.length
-                        var valLength = val.length
+                        let indexSize = 1
+                        let arrLength = arr.length
+                        let valLength = val.length
 
                         if (encoding !== undefined) {
                             encoding = String(encoding).toLowerCase()
@@ -919,29 +919,29 @@
                             }
                         }
 
-                        var i
+                        let i
                         if (dir) {
-                            var foundIndex = -1
+                            let foundIndex = -1
                             for (i = byteOffset; i < arrLength; i++) {
                                 if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
-                                    if (foundIndex === -1) foundIndex = i
-                                    if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+                                    if (foundIndex === -1) { foundIndex = i }
+                                    if (i - foundIndex + 1 === valLength) { return foundIndex * indexSize }
                                 } else {
-                                    if (foundIndex !== -1) i -= i - foundIndex
+                                    if (foundIndex !== -1) { i -= i - foundIndex }
                                     foundIndex = -1
                                 }
                             }
                         } else {
-                            if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+                            if (byteOffset + valLength > arrLength) { byteOffset = arrLength - valLength }
                             for (i = byteOffset; i >= 0; i--) {
-                                var found = true
-                                for (var j = 0; j < valLength; j++) {
+                                let found = true
+                                for (let j = 0; j < valLength; j++) {
                                     if (read(arr, i + j) !== read(val, j)) {
                                         found = false
                                         break
                                     }
                                 }
-                                if (found) return i
+                                if (found) { return i }
                             }
                         }
 
@@ -962,7 +962,7 @@
 
                     function hexWrite(buf, string, offset, length) {
                         offset = Number(offset) || 0
-                        var remaining = buf.length - offset
+                        let remaining = buf.length - offset
                         if (!length) {
                             length = remaining
                         } else {
@@ -972,14 +972,14 @@
                             }
                         }
 
-                        var strLen = string.length
+                        let strLen = string.length
 
                         if (length > strLen / 2) {
                             length = strLen / 2
                         }
-                        for (var i = 0; i < length; ++i) {
-                            var parsed = parseInt(string.substr(i * 2, 2), 16)
-                            if (numberIsNaN(parsed)) return i
+                        for (let i = 0; i < length; ++i) {
+                            let parsed = parseInt(string.substr(i * 2, 2), 16)
+                            if (numberIsNaN(parsed)) { return i }
                             buf[offset + i] = parsed
                         }
                         return i
@@ -1021,7 +1021,7 @@
                             offset = offset >>> 0
                             if (isFinite(length)) {
                                 length = length >>> 0
-                                if (encoding === undefined) encoding = 'utf8'
+                                if (encoding === undefined) { encoding = 'utf8' }
                             } else {
                                 encoding = length
                                 length = undefined
@@ -1032,16 +1032,16 @@
                             )
                         }
 
-                        var remaining = this.length - offset
-                        if (length === undefined || length > remaining) length = remaining
+                        let remaining = this.length - offset
+                        if (length === undefined || length > remaining) { length = remaining }
 
                         if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
                             throw new RangeError('Attempt to write outside buffer bounds')
                         }
 
-                        if (!encoding) encoding = 'utf8'
+                        if (!encoding) { encoding = 'utf8' }
 
-                        var loweredCase = false
+                        let loweredCase = false
                         for (; ;) {
                             switch (encoding) {
                                 case 'hex':
@@ -1069,7 +1069,7 @@
                                     return ucs2Write(this, string, offset, length)
 
                                 default:
-                                    if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+                                    if (loweredCase) { throw new TypeError('Unknown encoding: ' + encoding) }
                                     encoding = ('' + encoding).toLowerCase()
                                     loweredCase = true
                             }
@@ -1093,19 +1093,19 @@
 
                     function utf8Slice(buf, start, end) {
                         end = Math.min(buf.length, end)
-                        var res = []
+                        let res = []
 
-                        var i = start
+                        let i = start
                         while (i < end) {
-                            var firstByte = buf[i]
-                            var codePoint = null
-                            var bytesPerSequence = (firstByte > 0xEF) ? 4
+                            let firstByte = buf[i]
+                            let codePoint = null
+                            let bytesPerSequence = (firstByte > 0xEF) ? 4
                                 : (firstByte > 0xDF) ? 3
                                     : (firstByte > 0xBF) ? 2
                                         : 1
 
                             if (i + bytesPerSequence <= end) {
-                                var secondByte, thirdByte, fourthByte, tempCodePoint
+                                let secondByte, thirdByte, fourthByte, tempCodePoint
 
                                 switch (bytesPerSequence) {
                                     case 1:
@@ -1167,17 +1167,17 @@
                     // Based on http://stackoverflow.com/a/22747272/680742, the browser with
                     // the lowest limit is Chrome, with 0x10000 args.
                     // We go 1 magnitude less, for safety
-                    var MAX_ARGUMENTS_LENGTH = 0x1000
+                    let MAX_ARGUMENTS_LENGTH = 0x1000
 
                     function decodeCodePointsArray(codePoints) {
-                        var len = codePoints.length
+                        let len = codePoints.length
                         if (len <= MAX_ARGUMENTS_LENGTH) {
                             return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
                         }
 
                         // Decode in chunks to avoid "call stack size exceeded".
-                        var res = ''
-                        var i = 0
+                        let res = ''
+                        let i = 0
                         while (i < len) {
                             res += String.fromCharCode.apply(
                                 String,
@@ -1188,69 +1188,69 @@
                     }
 
                     function asciiSlice(buf, start, end) {
-                        var ret = ''
+                        let ret = ''
                         end = Math.min(buf.length, end)
 
-                        for (var i = start; i < end; ++i) {
+                        for (let i = start; i < end; ++i) {
                             ret += String.fromCharCode(buf[i] & 0x7F)
                         }
                         return ret
                     }
 
                     function latin1Slice(buf, start, end) {
-                        var ret = ''
+                        let ret = ''
                         end = Math.min(buf.length, end)
 
-                        for (var i = start; i < end; ++i) {
+                        for (let i = start; i < end; ++i) {
                             ret += String.fromCharCode(buf[i])
                         }
                         return ret
                     }
 
                     function hexSlice(buf, start, end) {
-                        var len = buf.length
+                        let len = buf.length
 
-                        if (!start || start < 0) start = 0
-                        if (!end || end < 0 || end > len) end = len
+                        if (!start || start < 0) { start = 0 }
+                        if (!end || end < 0 || end > len) { end = len }
 
-                        var out = ''
-                        for (var i = start; i < end; ++i) {
+                        let out = ''
+                        for (let i = start; i < end; ++i) {
                             out += toHex(buf[i])
                         }
                         return out
                     }
 
                     function utf16leSlice(buf, start, end) {
-                        var bytes = buf.slice(start, end)
-                        var res = ''
-                        for (var i = 0; i < bytes.length; i += 2) {
+                        let bytes = buf.slice(start, end)
+                        let res = ''
+                        for (let i = 0; i < bytes.length; i += 2) {
                             res += String.fromCharCode(bytes[i] + (bytes[i + 1] * 256))
                         }
                         return res
                     }
 
                     Buffer.prototype.slice = function slice(start, end) {
-                        var len = this.length
+                        let len = this.length
                         start = ~~start
                         end = end === undefined ? len : ~~end
 
                         if (start < 0) {
                             start += len
-                            if (start < 0) start = 0
+                            if (start < 0) { start = 0 }
                         } else if (start > len) {
                             start = len
                         }
 
                         if (end < 0) {
                             end += len
-                            if (end < 0) end = 0
+                            if (end < 0) { end = 0 }
                         } else if (end > len) {
                             end = len
                         }
 
-                        if (end < start) end = start
+                        if (end < start) { end = start }
 
-                        var newBuf = this.subarray(start, end)
+                        let newBuf = this.subarray(start, end)
                         // Return an augmented `Uint8Array` instance
                         newBuf.__proto__ = Buffer.prototype
                         return newBuf
@@ -1260,18 +1260,18 @@
                      * Need to make sure that buffer isn't trying to write out of bounds.
                      */
                     function checkOffset(offset, ext, length) {
-                        if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
-                        if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+                        if ((offset % 1) !== 0 || offset < 0) { throw new RangeError('offset is not uint') }
+                        if (offset + ext > length) { throw new RangeError('Trying to access beyond buffer length') }
                     }
 
                     Buffer.prototype.readUIntLE = function readUIntLE(offset, byteLength, noAssert) {
                         offset = offset >>> 0
                         byteLength = byteLength >>> 0
-                        if (!noAssert) checkOffset(offset, byteLength, this.length)
+                        if (!noAssert) { checkOffset(offset, byteLength, this.length) }
 
-                        var val = this[offset]
-                        var mul = 1
-                        var i = 0
+                        let val = this[offset]
+                        let mul = 1
+                        let i = 0
                         while (++i < byteLength && (mul *= 0x100)) {
                             val += this[offset + i] * mul
                         }
@@ -1286,8 +1286,8 @@
                             checkOffset(offset, byteLength, this.length)
                         }
 
-                        var val = this[offset + --byteLength]
-                        var mul = 1
+                        let val = this[offset + --byteLength]
+                        let mul = 1
                         while (byteLength > 0 && (mul *= 0x100)) {
                             val += this[offset + --byteLength] * mul
                         }
@@ -1297,25 +1297,25 @@
 
                     Buffer.prototype.readUInt8 = function readUInt8(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 1, this.length)
+                        if (!noAssert) { checkOffset(offset, 1, this.length) }
                         return this[offset]
                     }
 
                     Buffer.prototype.readUInt16LE = function readUInt16LE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 2, this.length)
+                        if (!noAssert) { checkOffset(offset, 2, this.length) }
                         return this[offset] | (this[offset + 1] << 8)
                     }
 
                     Buffer.prototype.readUInt16BE = function readUInt16BE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 2, this.length)
+                        if (!noAssert) { checkOffset(offset, 2, this.length) }
                         return (this[offset] << 8) | this[offset + 1]
                     }
 
                     Buffer.prototype.readUInt32LE = function readUInt32LE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 4, this.length)
+                        if (!noAssert) { checkOffset(offset, 4, this.length) }
 
                         return ((this[offset]) |
                             (this[offset + 1] << 8) |
@@ -1325,7 +1325,7 @@
 
                     Buffer.prototype.readUInt32BE = function readUInt32BE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 4, this.length)
+                        if (!noAssert) { checkOffset(offset, 4, this.length) }
 
                         return (this[offset] * 0x1000000) +
                             ((this[offset + 1] << 16) |
@@ -1336,17 +1336,17 @@
                     Buffer.prototype.readIntLE = function readIntLE(offset, byteLength, noAssert) {
                         offset = offset >>> 0
                         byteLength = byteLength >>> 0
-                        if (!noAssert) checkOffset(offset, byteLength, this.length)
+                        if (!noAssert) { checkOffset(offset, byteLength, this.length) }
 
-                        var val = this[offset]
-                        var mul = 1
-                        var i = 0
+                        let val = this[offset]
+                        let mul = 1
+                        let i = 0
                         while (++i < byteLength && (mul *= 0x100)) {
                             val += this[offset + i] * mul
                         }
                         mul *= 0x80
 
-                        if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+                        if (val >= mul) { val -= Math.pow(2, 8 * byteLength) }
 
                         return val
                     }
@@ -1354,45 +1354,45 @@
                     Buffer.prototype.readIntBE = function readIntBE(offset, byteLength, noAssert) {
                         offset = offset >>> 0
                         byteLength = byteLength >>> 0
-                        if (!noAssert) checkOffset(offset, byteLength, this.length)
+                        if (!noAssert) { checkOffset(offset, byteLength, this.length) }
 
-                        var i = byteLength
-                        var mul = 1
-                        var val = this[offset + --i]
+                        let i = byteLength
+                        let mul = 1
+                        let val = this[offset + --i]
                         while (i > 0 && (mul *= 0x100)) {
                             val += this[offset + --i] * mul
                         }
                         mul *= 0x80
 
-                        if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+                        if (val >= mul) { val -= Math.pow(2, 8 * byteLength) }
 
                         return val
                     }
 
                     Buffer.prototype.readInt8 = function readInt8(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 1, this.length)
-                        if (!(this[offset] & 0x80)) return (this[offset])
+                        if (!noAssert) { checkOffset(offset, 1, this.length) }
+                        if (!(this[offset] & 0x80)) { return (this[offset]) }
                         return ((0xff - this[offset] + 1) * -1)
                     }
 
                     Buffer.prototype.readInt16LE = function readInt16LE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 2, this.length)
-                        var val = this[offset] | (this[offset + 1] << 8)
+                        if (!noAssert) { checkOffset(offset, 2, this.length) }
+                        let val = this[offset] | (this[offset + 1] << 8)
                         return (val & 0x8000) ? val | 0xFFFF0000 : val
                     }
 
                     Buffer.prototype.readInt16BE = function readInt16BE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 2, this.length)
-                        var val = this[offset + 1] | (this[offset] << 8)
+                        if (!noAssert) { checkOffset(offset, 2, this.length) }
+                        let val = this[offset + 1] | (this[offset] << 8)
                         return (val & 0x8000) ? val | 0xFFFF0000 : val
                     }
 
                     Buffer.prototype.readInt32LE = function readInt32LE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 4, this.length)
+                        if (!noAssert) { checkOffset(offset, 4, this.length) }
 
                         return (this[offset]) |
                             (this[offset + 1] << 8) |
@@ -1402,7 +1402,7 @@
 
                     Buffer.prototype.readInt32BE = function readInt32BE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 4, this.length)
+                        if (!noAssert) { checkOffset(offset, 4, this.length) }
 
                         return (this[offset] << 24) |
                             (this[offset + 1] << 16) |
@@ -1412,32 +1412,32 @@
 
                     Buffer.prototype.readFloatLE = function readFloatLE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 4, this.length)
+                        if (!noAssert) { checkOffset(offset, 4, this.length) }
                         return ieee754.read(this, offset, true, 23, 4)
                     }
 
                     Buffer.prototype.readFloatBE = function readFloatBE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 4, this.length)
+                        if (!noAssert) { checkOffset(offset, 4, this.length) }
                         return ieee754.read(this, offset, false, 23, 4)
                     }
 
                     Buffer.prototype.readDoubleLE = function readDoubleLE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 8, this.length)
+                        if (!noAssert) { checkOffset(offset, 8, this.length) }
                         return ieee754.read(this, offset, true, 52, 8)
                     }
 
                     Buffer.prototype.readDoubleBE = function readDoubleBE(offset, noAssert) {
                         offset = offset >>> 0
-                        if (!noAssert) checkOffset(offset, 8, this.length)
+                        if (!noAssert) { checkOffset(offset, 8, this.length) }
                         return ieee754.read(this, offset, false, 52, 8)
                     }
 
                     function checkInt(buf, value, offset, ext, max, min) {
-                        if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
-                        if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
-                        if (offset + ext > buf.length) throw new RangeError('Index out of range')
+                        if (!Buffer.isBuffer(buf)) { throw new TypeError('"buffer" argument must be a Buffer instance') }
+                        if (value > max || value < min) { throw new RangeError('"value" argument is out of bounds') }
+                        if (offset + ext > buf.length) { throw new RangeError('Index out of range') }
                     }
 
                     Buffer.prototype.writeUIntLE = function writeUIntLE(value, offset, byteLength, noAssert) {
@@ -1445,12 +1445,12 @@
                         offset = offset >>> 0
                         byteLength = byteLength >>> 0
                         if (!noAssert) {
-                            var maxBytes = Math.pow(2, 8 * byteLength) - 1
+                            let maxBytes = Math.pow(2, 8 * byteLength) - 1
                             checkInt(this, value, offset, byteLength, maxBytes, 0)
                         }
 
-                        var mul = 1
-                        var i = 0
+                        let mul = 1
+                        let i = 0
                         this[offset] = value & 0xFF
                         while (++i < byteLength && (mul *= 0x100)) {
                             this[offset + i] = (value / mul) & 0xFF
@@ -1464,12 +1464,12 @@
                         offset = offset >>> 0
                         byteLength = byteLength >>> 0
                         if (!noAssert) {
-                            var maxBytes = Math.pow(2, 8 * byteLength) - 1
+                            let maxBytes = Math.pow(2, 8 * byteLength) - 1
                             checkInt(this, value, offset, byteLength, maxBytes, 0)
                         }
 
-                        var i = byteLength - 1
-                        var mul = 1
+                        let i = byteLength - 1
+                        let mul = 1
                         this[offset + i] = value & 0xFF
                         while (--i >= 0 && (mul *= 0x100)) {
                             this[offset + i] = (value / mul) & 0xFF
@@ -1481,7 +1481,7 @@
                     Buffer.prototype.writeUInt8 = function writeUInt8(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+                        if (!noAssert) { checkInt(this, value, offset, 1, 0xff, 0) }
                         this[offset] = (value & 0xff)
                         return offset + 1
                     }
@@ -1489,7 +1489,7 @@
                     Buffer.prototype.writeUInt16LE = function writeUInt16LE(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+                        if (!noAssert) { checkInt(this, value, offset, 2, 0xffff, 0) }
                         this[offset] = (value & 0xff)
                         this[offset + 1] = (value >>> 8)
                         return offset + 2
@@ -1498,7 +1498,7 @@
                     Buffer.prototype.writeUInt16BE = function writeUInt16BE(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+                        if (!noAssert) { checkInt(this, value, offset, 2, 0xffff, 0) }
                         this[offset] = (value >>> 8)
                         this[offset + 1] = (value & 0xff)
                         return offset + 2
@@ -1507,7 +1507,7 @@
                     Buffer.prototype.writeUInt32LE = function writeUInt32LE(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+                        if (!noAssert) { checkInt(this, value, offset, 4, 0xffffffff, 0) }
                         this[offset + 3] = (value >>> 24)
                         this[offset + 2] = (value >>> 16)
                         this[offset + 1] = (value >>> 8)
@@ -1518,7 +1518,7 @@
                     Buffer.prototype.writeUInt32BE = function writeUInt32BE(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+                        if (!noAssert) { checkInt(this, value, offset, 4, 0xffffffff, 0) }
                         this[offset] = (value >>> 24)
                         this[offset + 1] = (value >>> 16)
                         this[offset + 2] = (value >>> 8)
@@ -1530,14 +1530,14 @@
                         value = +value
                         offset = offset >>> 0
                         if (!noAssert) {
-                            var limit = Math.pow(2, (8 * byteLength) - 1)
+                            let limit = Math.pow(2, (8 * byteLength) - 1)
 
                             checkInt(this, value, offset, byteLength, limit - 1, -limit)
                         }
 
-                        var i = 0
-                        var mul = 1
-                        var sub = 0
+                        let i = 0
+                        let mul = 1
+                        let sub = 0
                         this[offset] = value & 0xFF
                         while (++i < byteLength && (mul *= 0x100)) {
                             if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
@@ -1553,14 +1553,14 @@
                         value = +value
                         offset = offset >>> 0
                         if (!noAssert) {
-                            var limit = Math.pow(2, (8 * byteLength) - 1)
+                            let limit = Math.pow(2, (8 * byteLength) - 1)
 
                             checkInt(this, value, offset, byteLength, limit - 1, -limit)
                         }
 
-                        var i = byteLength - 1
-                        var mul = 1
-                        var sub = 0
+                        let i = byteLength - 1
+                        let mul = 1
+                        let sub = 0
                         this[offset + i] = value & 0xFF
                         while (--i >= 0 && (mul *= 0x100)) {
                             if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
@@ -1575,8 +1575,8 @@
                     Buffer.prototype.writeInt8 = function writeInt8(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
-                        if (value < 0) value = 0xff + value + 1
+                        if (!noAssert) { checkInt(this, value, offset, 1, 0x7f, -0x80) }
+                        if (value < 0) { value = 0xff + value + 1 }
                         this[offset] = (value & 0xff)
                         return offset + 1
                     }
@@ -1584,7 +1584,7 @@
                     Buffer.prototype.writeInt16LE = function writeInt16LE(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+                        if (!noAssert) { checkInt(this, value, offset, 2, 0x7fff, -0x8000) }
                         this[offset] = (value & 0xff)
                         this[offset + 1] = (value >>> 8)
                         return offset + 2
@@ -1593,7 +1593,7 @@
                     Buffer.prototype.writeInt16BE = function writeInt16BE(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+                        if (!noAssert) { checkInt(this, value, offset, 2, 0x7fff, -0x8000) }
                         this[offset] = (value >>> 8)
                         this[offset + 1] = (value & 0xff)
                         return offset + 2
@@ -1602,7 +1602,7 @@
                     Buffer.prototype.writeInt32LE = function writeInt32LE(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+                        if (!noAssert) { checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000) }
                         this[offset] = (value & 0xff)
                         this[offset + 1] = (value >>> 8)
                         this[offset + 2] = (value >>> 16)
@@ -1613,8 +1613,8 @@
                     Buffer.prototype.writeInt32BE = function writeInt32BE(value, offset, noAssert) {
                         value = +value
                         offset = offset >>> 0
-                        if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-                        if (value < 0) value = 0xffffffff + value + 1
+                        if (!noAssert) { checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000) }
+                        if (value < 0) { value = 0xffffffff + value + 1 }
                         this[offset] = (value >>> 24)
                         this[offset + 1] = (value >>> 16)
                         this[offset + 2] = (value >>> 8)
@@ -1623,8 +1623,8 @@
                     }
 
                     function checkIEEE754(buf, value, offset, ext, max, min) {
-                        if (offset + ext > buf.length) throw new RangeError('Index out of range')
-                        if (offset < 0) throw new RangeError('Index out of range')
+                        if (offset + ext > buf.length) { throw new RangeError('Index out of range') }
+                        if (offset < 0) { throw new RangeError('Index out of range') }
                     }
 
                     function writeFloat(buf, value, offset, littleEndian, noAssert) {
@@ -1665,38 +1665,38 @@
 
                     // copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
                     Buffer.prototype.copy = function copy(target, targetStart, start, end) {
-                        if (!Buffer.isBuffer(target)) throw new TypeError('argument should be a Buffer')
-                        if (!start) start = 0
-                        if (!end && end !== 0) end = this.length
-                        if (targetStart >= target.length) targetStart = target.length
-                        if (!targetStart) targetStart = 0
-                        if (end > 0 && end < start) end = start
+                        if (!Buffer.isBuffer(target)) { throw new TypeError('argument should be a Buffer') }
+                        if (!start) { start = 0 }
+                        if (!end && end !== 0) { end = this.length }
+                        if (targetStart >= target.length) { targetStart = target.length }
+                        if (!targetStart) { targetStart = 0 }
+                        if (end > 0 && end < start) { end = start }
 
                         // Copy 0 bytes; we're done
-                        if (end === start) return 0
-                        if (target.length === 0 || this.length === 0) return 0
+                        if (end === start) { return 0 }
+                        if (target.length === 0 || this.length === 0) { return 0 }
 
                         // Fatal error conditions
                         if (targetStart < 0) {
                             throw new RangeError('targetStart out of bounds')
                         }
-                        if (start < 0 || start >= this.length) throw new RangeError('Index out of range')
-                        if (end < 0) throw new RangeError('sourceEnd out of bounds')
+                        if (start < 0 || start >= this.length) { throw new RangeError('Index out of range') }
+                        if (end < 0) { throw new RangeError('sourceEnd out of bounds') }
 
                         // Are we oob?
-                        if (end > this.length) end = this.length
+                        if (end > this.length) { end = this.length }
                         if (target.length - targetStart < end - start) {
                             end = target.length - targetStart + start
                         }
 
-                        var len = end - start
+                        let len = end - start
 
                         if (this === target && typeof Uint8Array.prototype.copyWithin === 'function') {
                             // Use built-in when available, missing from IE11
                             this.copyWithin(targetStart, start, end)
                         } else if (this === target && start < targetStart && targetStart < end) {
                             // descending copy from end
-                            for (var i = len - 1; i >= 0; --i) {
+                            for (let i = len - 1; i >= 0; --i) {
                                 target[i + targetStart] = this[i + start]
                             }
                         } else {
@@ -1732,7 +1732,7 @@
                                 throw new TypeError('Unknown encoding: ' + encoding)
                             }
                             if (val.length === 1) {
-                                var code = val.charCodeAt(0)
+                                let code = val.charCodeAt(0)
                                 if ((encoding === 'utf8' && code < 128) ||
                                     encoding === 'latin1') {
                                     // Fast path: If `val` fits into a single byte, use that numeric value.
@@ -1755,18 +1755,18 @@
                         start = start >>> 0
                         end = end === undefined ? this.length : end >>> 0
 
-                        if (!val) val = 0
+                        if (!val) { val = 0 }
 
-                        var i
+                        let i
                         if (typeof val === 'number') {
                             for (i = start; i < end; ++i) {
                                 this[i] = val
                             }
                         } else {
-                            var bytes = Buffer.isBuffer(val)
+                            let bytes = Buffer.isBuffer(val)
                                 ? val
                                 : Buffer.from(val, encoding)
-                            var len = bytes.length
+                            let len = bytes.length
                             if (len === 0) {
                                 throw new TypeError('The value "' + val +
                                     '" is invalid for argument "value"')
@@ -1782,7 +1782,7 @@
                     // HELPER FUNCTIONS
                     // ================
 
-                    var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g
+                    let INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g
 
                     function base64clean(str) {
                         // Node takes equal signs as end of the Base64 encoding
@@ -1790,7 +1790,7 @@
                         // Node strips out invalid characters like \n and \t from the string, base64-js does not
                         str = str.trim().replace(INVALID_BASE64_RE, '')
                         // Node converts strings with length < 2 to ''
-                        if (str.length < 2) return ''
+                        if (str.length < 2) { return '' }
                         // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
                         while (str.length % 4 !== 0) {
                             str = str + '='
@@ -1799,18 +1799,18 @@
                     }
 
                     function toHex(n) {
-                        if (n < 16) return '0' + n.toString(16)
+                        if (n < 16) { return '0' + n.toString(16) }
                         return n.toString(16)
                     }
 
                     function utf8ToBytes(string, units) {
                         units = units || Infinity
-                        var codePoint
-                        var length = string.length
-                        var leadSurrogate = null
-                        var bytes = []
+                        let codePoint
+                        let length = string.length
+                        let leadSurrogate = null
+                        let bytes = []
 
-                        for (var i = 0; i < length; ++i) {
+                        for (let i = 0; i < length; ++i) {
                             codePoint = string.charCodeAt(i)
 
                             // is surrogate component
@@ -1820,11 +1820,11 @@
                                     // no lead yet
                                     if (codePoint > 0xDBFF) {
                                         // unexpected trail
-                                        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+                                        if ((units -= 3) > -1) { bytes.push(0xEF, 0xBF, 0xBD) }
                                         continue
                                     } else if (i + 1 === length) {
                                         // unpaired lead
-                                        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+                                        if ((units -= 3) > -1) { bytes.push(0xEF, 0xBF, 0xBD) }
                                         continue
                                     }
 
@@ -1836,7 +1836,7 @@
 
                                 // 2 leads in a row
                                 if (codePoint < 0xDC00) {
-                                    if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+                                    if ((units -= 3) > -1) { bytes.push(0xEF, 0xBF, 0xBD) }
                                     leadSurrogate = codePoint
                                     continue
                                 }
@@ -1845,30 +1845,30 @@
                                 codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
                             } else if (leadSurrogate) {
                                 // valid bmp char, but last char was a lead
-                                if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+                                if ((units -= 3) > -1) { bytes.push(0xEF, 0xBF, 0xBD) }
                             }
 
                             leadSurrogate = null
 
                             // encode utf8
                             if (codePoint < 0x80) {
-                                if ((units -= 1) < 0) break
+                                if ((units -= 1) < 0) { break }
                                 bytes.push(codePoint)
                             } else if (codePoint < 0x800) {
-                                if ((units -= 2) < 0) break
+                                if ((units -= 2) < 0) { break }
                                 bytes.push(
                                     codePoint >> 0x6 | 0xC0,
                                     codePoint & 0x3F | 0x80
                                 )
                             } else if (codePoint < 0x10000) {
-                                if ((units -= 3) < 0) break
+                                if ((units -= 3) < 0) { break }
                                 bytes.push(
                                     codePoint >> 0xC | 0xE0,
                                     codePoint >> 0x6 & 0x3F | 0x80,
                                     codePoint & 0x3F | 0x80
                                 )
                             } else if (codePoint < 0x110000) {
-                                if ((units -= 4) < 0) break
+                                if ((units -= 4) < 0) { break }
                                 bytes.push(
                                     codePoint >> 0x12 | 0xF0,
                                     codePoint >> 0xC & 0x3F | 0x80,
@@ -1884,8 +1884,8 @@
                     }
 
                     function asciiToBytes(str) {
-                        var byteArray = []
-                        for (var i = 0; i < str.length; ++i) {
+                        let byteArray = []
+                        for (let i = 0; i < str.length; ++i) {
                             // Node's code seems to be doing this and not & 0x7F..
                             byteArray.push(str.charCodeAt(i) & 0xFF)
                         }
@@ -1893,10 +1893,10 @@
                     }
 
                     function utf16leToBytes(str, units) {
-                        var c, hi, lo
-                        var byteArray = []
-                        for (var i = 0; i < str.length; ++i) {
-                            if ((units -= 2) < 0) break
+                        let c, hi, lo
+                        let byteArray = []
+                        for (let i = 0; i < str.length; ++i) {
+                            if ((units -= 2) < 0) { break }
 
                             c = str.charCodeAt(i)
                             hi = c >> 8
@@ -1913,8 +1913,8 @@
                     }
 
                     function blitBuffer(src, dst, offset, length) {
-                        for (var i = 0; i < length; ++i) {
-                            if ((i + offset >= dst.length) || (i >= src.length)) break
+                        for (let i = 0; i < length; ++i) {
+                            if ((i + offset >= dst.length) || (i >= src.length)) { break }
                             dst[i + offset] = src[i]
                         }
                         return i
@@ -1938,14 +1938,14 @@
         }, { "base64-js": 1, "buffer": 2, "ieee754": 3 }], 3: [function (require, module, exports) {
             /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
             exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-                var e, m
-                var eLen = (nBytes * 8) - mLen - 1
-                var eMax = (1 << eLen) - 1
-                var eBias = eMax >> 1
-                var nBits = -7
-                var i = isLE ? (nBytes - 1) : 0
-                var d = isLE ? -1 : 1
-                var s = buffer[offset + i]
+                let e, m
+                let eLen = (nBytes * 8) - mLen - 1
+                let eMax = (1 << eLen) - 1
+                let eBias = eMax >> 1
+                let nBits = -7
+                let i = isLE ? (nBytes - 1) : 0
+                let d = isLE ? -1 : 1
+                let s = buffer[offset + i]
 
                 i += d
 
@@ -1971,14 +1971,14 @@
             }
 
             exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-                var e, m, c
-                var eLen = (nBytes * 8) - mLen - 1
-                var eMax = (1 << eLen) - 1
-                var eBias = eMax >> 1
-                var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-                var i = isLE ? 0 : (nBytes - 1)
-                var d = isLE ? 1 : -1
-                var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+                let e, m, c
+                let eLen = (nBytes * 8) - mLen - 1
+                let eMax = (1 << eLen) - 1
+                let eBias = eMax >> 1
+                let rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+                let i = isLE ? 0 : (nBytes - 1)
+                let d = isLE ? 1 : -1
+                let s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
 
                 value = Math.abs(value)
 
@@ -2035,8 +2035,8 @@
 
                     function configure(opts) {
                         function encode(packet, buf, offset) {
-                            if (!buf) buf = new Buffer(encodingLength(packet, packet.version === 4 ? 20 : 40))
-                            if (!offset) offset = 0
+                            if (!buf) { buf = new Buffer(encodingLength(packet, packet.version === 4 ? 20 : 40)) }
+                            if (!offset) { offset = 0 }
                             if (packet.version === 4) {
 
                                 // IPv4 header
@@ -2077,20 +2077,20 @@
                         }
 
                         function decode(buf, offset) {
-                            if (!offset) offset = 0
+                            if (!offset) { offset = 0 }
 
-                            var version = buf[offset] >> 4
-                            if (version !== 4) throw new Error('Currently only IPv4 is supported')
-                            var ihl = buf[offset] & 15
-                            if (ihl > 5) throw new Error('Currently only IHL <= 5 is supported')
-                            var length = buf.readUInt16BE(offset + 2)
-                            var decodedChecksum = buf.readUInt16BE(offset + 10)
-                            var ignoreChecksum = opts.allowNullChecksum && decodedChecksum === 0
+                            let version = buf[offset] >> 4
+                            if (version !== 4) { throw new Error('Currently only IPv4 is supported') }
+                            let ihl = buf[offset] & 15
+                            if (ihl > 5) { throw new Error('Currently only IHL <= 5 is supported') }
+                            let length = buf.readUInt16BE(offset + 2)
+                            let decodedChecksum = buf.readUInt16BE(offset + 10)
+                            let ignoreChecksum = opts.allowNullChecksum && decodedChecksum === 0
 
                             if (!ignoreChecksum) {
-                                var sum = checksum(buf, offset, offset + 20)
+                                let sum = checksum(buf, offset, offset + 20)
 
-                                if (sum) throw new Error('Bad checksum (' + sum + ')')
+                                if (sum) { throw new Error('Bad checksum (' + sum + ')') }
                             }
 
                             decode.bytes = length
@@ -2127,8 +2127,8 @@
                     }
 
                     function encodeIp(addr, buf, offset) {
-                        for (var i = 0; i < 4; i++) {
-                            var oct = parseInt(addr, 10)
+                        for (let i = 0; i < 4; i++) {
+                            let oct = parseInt(addr, 10)
                             buf[offset++] = oct
                             addr = addr.slice(oct < 100 ? oct < 10 ? 2 : 3 : 4)
                         }
@@ -2139,11 +2139,11 @@
                     }
 
                     function checksum(buf, offset, end) {
-                        var sum = 0
-                        for (; offset < end; offset += 2) sum += buf.readUInt16BE(offset)
+                        let sum = 0
+                        for (; offset < end; offset += 2) { sum += buf.readUInt16BE(offset) }
                         while (true) {
-                            var carry = sum >> 16
-                            if (!carry) break
+                            let carry = sum >> 16
+                            if (!carry) { break }
                             sum = (sum & 0xffff) + carry
                         }
                         return ~sum & 0xffff
@@ -2165,7 +2165,7 @@
                         packet.writeUInt32BE(sequenceNumber, 4)
                         packet.writeUInt32BE(acknowledgmentNumber, 8)
                         packet.writeUInt16BE(0x5000, 12)
-                        if (data) data.copy(packet, 20)
+                        if (data) { data.copy(packet, 20) }
                         return packet
                     }
 
@@ -2204,9 +2204,9 @@
             (function (Buffer) {
                 (function () {
                     exports.encode = function (packet) {
-                        var data = packet.data, len = data.length
-                        var srcport = packet.sourcePort, dstport = packet.destinationPort
-                        var buf = Buffer.alloc(len + 8)
+                        let data = packet.data, len = data.length
+                        let srcport = packet.sourcePort, dstport = packet.destinationPort
+                        let buf = Buffer.alloc(len + 8)
                         buf.writeUInt16BE(srcport, 0)
                         buf.writeUInt16BE(dstport, 2)
                         buf.writeUInt16BE(buf.length, 4)
@@ -2216,7 +2216,7 @@
                     }
 
                     exports.decode = function (buf) {
-                        var len = buf.readUInt16BE(4)
+                        let len = buf.readUInt16BE(4)
                         return {
                             sourcePort: buf.readUInt16BE(0),
                             destinationPort: buf.readUInt16BE(2),
@@ -2229,26 +2229,26 @@
                     exports.checksum = checksum
                     function checksum(packet, buf) {
                         // pseudo header: srcip (16), dstip (16), 0 (8), proto (8), udp len (16)
-                        var len = buf.length
-                        var srcip = packet.sourceIp
-                        var dstip = packet.destinationIp
-                        if (!srcip || !dstip) return 0xffff
-                        var protocol = packet.protocol === undefined ? 0x11 : packet.protocol
-                        var sum = 0xffff
+                        let len = buf.length
+                        let srcip = packet.sourceIp
+                        let dstip = packet.destinationIp
+                        if (!srcip || !dstip) { return 0xffff }
+                        let protocol = packet.protocol === undefined ? 0x11 : packet.protocol
+                        let sum = 0xffff
                         // pseudo header: srcip (16), dstip (16), 0 (8), proto (8), udp len (16)
                         if (srcip && dstip) {
-                            if (typeof srcip === 'string') srcip = Buffer.from(srcip.split('.'))
-                            if (typeof dstip === 'string') dstip = Buffer.from(dstip.split('.'))
+                            if (typeof srcip === 'string') { srcip = Buffer.from(srcip.split('.')) }
+                            if (typeof dstip === 'string') { dstip = Buffer.from(dstip.split('.')) }
                             sum = 0
-                            var pad = len % 2
-                            for (var i = 0; i < len + pad; i += 2) {
-                                if (i === 6) continue // ignore the currently written checksum
+                            let pad = len % 2
+                            for (let i = 0; i < len + pad; i += 2) {
+                                if (i === 6) { continue } // ignore the currently written checksum
                                 sum += ((buf[i] << 8) & 0xff00) + ((buf[i + 1]) & 0xff)
                             }
-                            for (var i = 0; i < 4; i += 2) {
+                            for (let i = 0; i < 4; i += 2) {
                                 sum += ((srcip[i] << 8) & 0xff00) + (srcip[i + 1] & 0xff)
                             }
-                            for (var i = 0; i < 4; i += 2) {
+                            for (let i = 0; i < 4; i += 2) {
                                 sum += ((dstip[i] << 8) & 0xff00) + (dstip[i + 1] & 0xff)
                             }
                             sum += protocol + len
