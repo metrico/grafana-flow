@@ -16,7 +16,6 @@ import {
 } from '../services/message-details.service';
 import { Subscription } from 'rxjs';
 import { isExternalUrl } from '../helpers/functions';
-import * as html2canvas from 'html2canvas';
 
 export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy {
     constructor() {
@@ -94,7 +93,6 @@ export class TabFlowComponent
     timeout: any;
     _interval: any | null = null;
     pathPrefix = './assets/';
-    isSafari = navigator.vendor === 'Apple Computer, Inc.'
     outEventDelayOff = 0;
     get outEventOff() {
         //
@@ -116,14 +114,16 @@ export class TabFlowComponent
 
     @Input() set dataItem(dataItemValueInput) {
         let dataItemValue: any = {}
-
+        console.log('test BEFORE MD5', typeof dataItemValueInput, dataItemValueInput)
         const _hash = 'test' //md5(dataItemValue);
         if (typeof dataItemValueInput === 'string') {
+            console.log('test1')
             try {
+                console.log(JSON_parse(dataItemValueInput),JSON.parse(dataItemValueInput))
                 dataItemValue = {
                     data: JSON.parse(dataItemValueInput)
                 }
-            } catch (e) {
+            } catch (e)  {
                 console.error("JSON PARSING ERROR", e, dataItemValueInput)
                 dataItemValue = {
                     data: null
@@ -132,15 +132,19 @@ export class TabFlowComponent
         } else {
             if (dataItemValueInput.data) {
                 if (typeof dataItemValueInput.data === 'string') {
+
+                    console.log('test string 145',dataItemValueInput)
                     try {
+                        console.log(JSON_parse(dataItemValueInput.data),JSON.parse(dataItemValueInput.data))
                         dataItemValue.data = JSON.parse(dataItemValueInput.data)
-                    } catch (e) {
+                    } catch (e)  {
                         console.error("JSON PARSING ERROR", e, dataItemValueInput.data)
                         dataItemValue = {
                             data: null
                         }
                     }
                 } else {
+                    console.log('test not string 157')
                     dataItemValue.data = dataItemValueInput.data;
                 }
             } else {
@@ -212,11 +216,12 @@ export class TabFlowComponent
         if (val) {
             this.isExport = true;
             this.cdr.detectChanges();
-            setTimeout(this.onSavePng.bind(this), 500);
+            // setTimeout(this.onSavePng.bind(this), 500);
         }
     }
 
     set pageWidth(v: any) {
+        console.log((this.isSimplify ? 150 : 200) *this.flowGridLines.length)
         this.cdr.detectChanges();
     }
     get pageWidth() {
@@ -230,10 +235,7 @@ export class TabFlowComponent
         private messageDetailsService: MessageDetailsService,
         private transactionFilterService: TransactionFilterService,
         private cdr: ChangeDetectorRef,
-    ) {
-        console.log('test constructor')
-
-    }
+    ) { }
     public isDataReady() {
 
     }
@@ -571,6 +573,8 @@ export class TabFlowComponent
     }
 
     onClickMessage(id: any, event: any = null, sitem: any = null) {
+        console.log('onClickMessage', { id, event, sitem });
+
         document.dispatchEvent(new CustomEvent('ngx-flow-click-item', { detail: id }));
         return;
     }
@@ -585,28 +589,8 @@ export class TabFlowComponent
         const arr = itemhost.arrip || [itemhost.IP];
         return arr.join(', ');
     }
-    onSavePng() {
-        if (!this._flagAfterViewInit) {
-            setTimeout(this.onSavePng.bind(this), 1000);
-            return;
-        }
-        if (html2canvas && typeof html2canvas === 'function') {
-            this.cdr.detectChanges();
-            const f: Function = html2canvas as Function;
-            f(this.flowscreen.nativeElement).then((canvas: any) => {
-                this.canvas.nativeElement.src = canvas.toDataURL();
-                this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
-                const date = new Date();
-                this.downloadLink.nativeElement.download = `${date.toUTCString()}.png`;
-                console.log()
-                this.downloadLink.nativeElement.click();
-                console.log('%cpng ready', 'color:#ff4400; font-size: 50px;', this.downloadLink.nativeElement.href);
-                setTimeout(() => {
-                    this.pngReady.emit({});
-                });
-            });
-        }
-    }
+    // onSavePng() {
+
     labelColor(callid: any, selected: any) {
         if (selected) {
             const color = this.callIDColorList?.find(
@@ -639,20 +623,20 @@ export class TabFlowComponent
         this.copyTimer = Date.now();
     }
     copy(value: any) {
-        //   const localTimer = Date.now();
-        //   if (localTimer - this.copyTimer > 700) {
-        //     this.copyService.copy(value.callid, {
-        //       message: 'notifications.success.callidCopy',
-        //       isTranslation: true,
-        //       translationParams: {
-        //         callid: value.callid,
-        //       },
-        //     });
-        //     value.copySelected = true;
-        //     this.timeout = setTimeout(() => {
-        //       value.copySelected = false;
-        //     }, 1800);
-        //   }
+    //   const localTimer = Date.now();
+    //   if (localTimer - this.copyTimer > 700) {
+    //     this.copyService.copy(value.callid, {
+    //       message: 'notifications.success.callidCopy',
+    //       isTranslation: true,
+    //       translationParams: {
+    //         callid: value.callid,
+    //       },
+    //     });
+    //     value.copySelected = true;
+    //     this.timeout = setTimeout(() => {
+    //       value.copySelected = false;
+    //     }, 1800);
+    //   }
     }
     setScrollTarget(targetString: string) {
         this.ScrollTarget = targetString;
@@ -693,7 +677,7 @@ export class TabFlowComponent
         const scrollbar = this.virtualScrollbar?.nativeElement;
         let movingAverageArray: any[] = [];
         const ma = (p: any) => {
-            const valMA = 3; // Adjust this to change virtual scroll speed. Lower = faster
+            const valMA = 6;
             if (movingAverageArray.length < valMA) {
                 movingAverageArray = Array.from({ length: valMA }, (x) => p);
             }

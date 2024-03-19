@@ -4,6 +4,8 @@ import { SimplePanel, SimpleEditor, TemplateEditor } from './components/SimplePa
 
 
 export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOptions((builder) => {
+  console.log('---builder---', { builder });
+
   return builder
     .addCustomEditor({
       id: 'Template',
