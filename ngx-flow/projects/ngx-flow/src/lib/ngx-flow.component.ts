@@ -13,6 +13,18 @@ import { FlowData } from '../models/flow.model';
             [callid]="callid"
             [isSimplify]="isSimplify"
         ></app-tab-flow>
+        <div style="position: relative; overflow: hidden; height: 1px; width: 1px;">
+                        <div style="position: absolute;">
+                            <app-tab-flow 
+            [callid]="callid"
+            [dataItem]="{data: _formattedData}"
+                            [exportAsPNG]="exportAsPNG" 
+                            [callIDColorList]='callIDColorList'
+                            (pngReady)="exportAsPNG=false"
+                            >
+                            </app-tab-flow>
+                        </div>
+                    </div>
     </div>`,
     styles: [`
     .wrapper-container {
@@ -30,8 +42,12 @@ export class NgxFlowComponent implements OnInit {
     @Input() callid: any;
     @Input() isSimplify: boolean = false;
     @Input() isFilter: boolean = false;
-
-    constructor() { }
+    exportAsPNG: boolean = false;
+    constructor() {
+        document.addEventListener('export-flow-as-png', (e: any) => {
+            this.exportAsPNG = true
+        });
+    }
 
     ngOnInit(): void {
         console.log(this.data)
@@ -69,14 +85,14 @@ export class NgxFlowComponent implements OnInit {
         const dist = hosts.find((i: any) => i.name === DIST);
 
         return {
-            callid: hash((i.messageID || i.title)+''),
+            callid: hash((i.messageID || i.title) + ''),
             codecData: ' ',
             description: i.aboveArrow || '',
             destination_ip: dist.ip,
             destination_port: dist.port,
             diff: ' ',
             diff_absolute: i.subTitle || '',
-            diff_num:  ' ',
+            diff_num: ' ',
             dstAlias: DIST,
             id: 0,
             info_date: i.belowArrow || '... ',
