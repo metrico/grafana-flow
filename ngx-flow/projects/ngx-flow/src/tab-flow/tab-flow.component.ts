@@ -116,12 +116,9 @@ export class TabFlowComponent
 
     @Input() set dataItem(dataItemValueInput) {
         let dataItemValue: any = {}
-        console.log('test BEFORE MD5', typeof dataItemValueInput, dataItemValueInput)
         const _hash = 'test' //md5(dataItemValue);
         if (typeof dataItemValueInput === 'string') {
-            console.log('test1')
             try {
-                console.log(JSON_parse(dataItemValueInput),JSON.parse(dataItemValueInput))
                 dataItemValue = {
                     data: JSON.parse(dataItemValueInput)
                 }
@@ -135,9 +132,7 @@ export class TabFlowComponent
             if (dataItemValueInput.data) {
                 if (typeof dataItemValueInput.data === 'string') {
 
-                    console.log('test string 145',dataItemValueInput)
                     try {
-                        console.log(JSON_parse(dataItemValueInput.data),JSON.parse(dataItemValueInput.data))
                         dataItemValue.data = JSON.parse(dataItemValueInput.data)
                     } catch (e) {
                         console.error("JSON PARSING ERROR", e, dataItemValueInput.data)
@@ -146,7 +141,6 @@ export class TabFlowComponent
                         }
                     }
                 } else {
-                    console.log('test not string 157')
                     dataItemValue.data = dataItemValueInput.data;
                 }
             } else {
@@ -223,7 +217,6 @@ export class TabFlowComponent
     }
 
     set pageWidth(v: any) {
-        console.log((this.isSimplify ? 150 : 200) *this.flowGridLines.length)
         this.cdr.detectChanges();
     }
     get pageWidth() {
@@ -238,7 +231,6 @@ export class TabFlowComponent
         private transactionFilterService: TransactionFilterService,
         private cdr: ChangeDetectorRef,
     ) {
-        console.log('test constructor')
 
     }
     public isDataReady() {
@@ -578,8 +570,6 @@ export class TabFlowComponent
     }
 
     onClickMessage(id: any, event: any = null, sitem: any = null) {
-        console.log('onClickMessage', { id, event, sitem });
-
         document.dispatchEvent(new CustomEvent('ngx-flow-click-item', { detail: id }));
         return;
     }
@@ -607,9 +597,7 @@ export class TabFlowComponent
                 this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
                 const date = new Date();
                 this.downloadLink.nativeElement.download = `${date.toUTCString()}.png`;
-                console.log()
                 this.downloadLink.nativeElement.click();
-                console.log('%cpng ready', 'color:#ff4400; font-size: 50px;', this.downloadLink.nativeElement.href);
                 setTimeout(() => {
                     this.pngReady.emit({});
                 });

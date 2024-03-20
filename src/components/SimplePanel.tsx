@@ -146,10 +146,14 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
                         displayDataTypes={false}
                         displayObjectSize={false}
                         enableClipboard={({ src }) => {
+                            let textToCopy = JSON.stringify(src);
+                            if (textToCopy.startsWith("\"") && textToCopy.endsWith("\"")) {
+                                textToCopy = textToCopy.substring(1, textToCopy.length - 1);
+                            }
                             if (navigator.clipboard) {
-                                navigator.clipboard.writeText(JSON.stringify(src))
+                                navigator.clipboard.writeText(textToCopy)
                             } else {
-                                setCopyValue(JSON.stringify(src))
+                                setCopyValue(textToCopy)
                                 setTimeout(() => {
                                     copyToClipboard()
                                 }, 0);
@@ -170,7 +174,6 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
 let ngxFlowClickHandler: Function = function () { };
 
 document.addEventListener('ngx-flow-click-item', function (e: any) {
-    // console.log('ngx-flow-click-item::details');
     ngxFlowClickHandler(e)
 });
 
@@ -243,7 +246,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                 } else if (i.includes('TCP')) {
                     proto += "TCP"
                 }
-                console.log(proto)
                 return `${proto} ${dt} ${fields[0]?.values[index]?.src_ip} ---> ${fields[0]?.values[index]?.dst_ip} \n\n${i}`
             }).join('\n');
             // Create element with <a> tag
@@ -349,7 +351,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
         if (fields) {
             const [firsField]: any = fields;
             const sortData = formattingDataAndSortIt(fields, options.sortoption);
-            // console.log({ fields }, sortData);
             setModalDataFields(sortData);
             const outData = firsField?.values;
 
@@ -392,8 +393,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
         setModalData(details);
         setModalIsOpen(true);
     };
-
-    // console.log(useTheme2());
     const themeName: string = useTheme2().name;
     const flowDataJSON = JSON.stringify(flowData);
     const menu = (
@@ -406,9 +405,9 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
             ></Menu.Item>
             <Menu.Item
                 onClick={() => {
-                    document.dispatchEvent(new CustomEvent('export-flow-as-json'));
+                    document.dispatchEvent(new CustomEvent('export-flow-as-text'));
                 }}
-                label='Export flow as JSON'
+                label='Export flow as TXT'
             ></Menu.Item>
             <Menu.Item
                 onClick={() => {
