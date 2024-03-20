@@ -35,7 +35,9 @@ jobs:
         run: npm run lint
       - name: Unit tests
         run: npm run test:ci
-      - name: Build frontend
+      - name: Build Angular frontend
+        run: npm run build:component       
+      - name: Build and test frontend
         run: npm run build
 
       - name: Check for backend
