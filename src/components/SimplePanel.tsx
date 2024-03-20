@@ -146,10 +146,14 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
                         displayDataTypes={false}
                         displayObjectSize={false}
                         enableClipboard={({ src }) => {
+                            let textToCopy = JSON.stringify(src);
+                            if (textToCopy.startsWith("\"") && textToCopy.endsWith("\"")) {
+                                textToCopy = textToCopy.substring(1, textToCopy.length - 1);
+                            }
                             if (navigator.clipboard) {
-                                navigator.clipboard.writeText(JSON.stringify(src))
+                                navigator.clipboard.writeText(textToCopy)
                             } else {
-                                setCopyValue(JSON.stringify(src))
+                                setCopyValue(textToCopy)
                                 setTimeout(() => {
                                     copyToClipboard()
                                 }, 0);
