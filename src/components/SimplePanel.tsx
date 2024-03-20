@@ -59,6 +59,7 @@ export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>)
             destinationLabel: 'destinationLabel',
         }]
     });
+
     return <Collapse label="Template" isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)}>
         <div className={cx(
             styles.wrapper, css`
