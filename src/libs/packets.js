@@ -977,7 +977,8 @@
                         if (length > strLen / 2) {
                             length = strLen / 2
                         }
-                        for (let i = 0; i < length; ++i) {
+                        let i = 0
+                        for (; i < length; ++i) {
                             let parsed = parseInt(string.substr(i * 2, 2), 16)
                             if (numberIsNaN(parsed)) { return i }
                             buf[offset + i] = parsed
@@ -1913,7 +1914,8 @@
                     }
 
                     function blitBuffer(src, dst, offset, length) {
-                        for (let i = 0; i < length; ++i) {
+                        let i = 0
+                        for (; i < length; ++i) {
                             if ((i + offset >= dst.length) || (i >= src.length)) { break }
                             dst[i + offset] = src[i]
                         }
