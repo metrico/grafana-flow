@@ -3,6 +3,7 @@
     "version": "10.0.11",
     "description": "Test plugin to lern dev enveroument",
     "scripts": {
+        "build:component": "cd ./ngx-flow && npm run build:component",
         "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
         "dev": "webpack -w -c ./.config/webpack/webpack.config.ts --env development",
         "test": "jest --watch --onlyChanged",
