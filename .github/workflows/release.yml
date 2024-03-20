@@ -27,7 +27,11 @@ jobs:
         run: |
            npm install
            # npm ci
-
+      - name: Install Angular dependencies
+        run: |
+           cd ngx-flow
+           npm install
+           # npm ci
       - name: Build and test frontend
         run: npm run build
 

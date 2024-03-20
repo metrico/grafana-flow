@@ -20,10 +20,15 @@ jobs:
         with:
           node-version: 16
           # cache: 'npm'
+
       - name: Install dependencies
         run: |
           npm install 
           # npm ci
+      - name: Install Angular dependencies
+        run: |
+           cd ngx-flow
+           npm install
       - name: Check types
         run: npm run typecheck
       - name: Lint
