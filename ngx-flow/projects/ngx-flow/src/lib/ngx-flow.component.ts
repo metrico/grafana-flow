@@ -110,6 +110,7 @@ export class NgxFlowComponent implements OnInit {
             srcAlias: SRC,
 
             typeItem: "SIP",
+            hash: i.hash
         }
     }
 
