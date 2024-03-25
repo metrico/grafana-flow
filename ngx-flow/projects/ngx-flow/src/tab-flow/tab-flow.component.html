@@ -80,7 +80,7 @@
         [isGroupByAlias]="_isCombineByAlias"
         [isSimplify]="isSimplify"
         [isAbsolute]="isAbsolute"
-        (itemClick)="onClickMessage($event.idx, $event.event, item)"
+        (itemClick)="onClickMessage(item.hash, $event.event, item)"
       ></app-flow-item>
       <div style="height: 60px"></div>
     </div>
@@ -114,8 +114,8 @@
             [isGroupByAlias]="_isCombineByAlias"
             [isSimplify]="isSimplify"
             [isAbsolute]="isAbsolute"
-            (itemClick)="onClickMessage($event.idx, $event.event, item)"
-          >
+            (itemClick)="onClickMessage(item.hash, $event.event, item)"
+          > <!-- Decrease index by one due to spacer counting as zeroth index. -->
           </app-flow-item>
         </ng-template>
         <ng-template ngSwitchCase="bottom">
