@@ -13,6 +13,8 @@ import { Buffer } from 'buffer'
 const ip = packets.ipPacket
 const udp = packets.udpPacket
 const tcp = packets.tcpPacket
+const ethernet = packets.ethernetPacket
+
 
 import {
     Button,
@@ -216,7 +218,9 @@ function formattingDataAndSortIt(data: any, sortType = 'none') {
 
 }
 
-
+interface Labels {
+    [key: string]: string
+}
 
 
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: any) => {
@@ -275,17 +279,25 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
             const [serie]: any = (data as any)?.series || [];
             const fields = serie?.fields || [];
             const lineField = fields.find((i: any) => i.name === 'Line') ?? [];
-            const packets2 = lineField?.values.map((field: string, index: number) => {
-
-                const labels = fields[0]?.values[index]
+            const values = fields[0]?.values.map((item: any, index: number) => {
+                item.line = lineField?.values[index];
+                return item
+            }).filter((packet: any) => packet.type === 'sip')
+            const sequenceMap = new Map<string, number>();
+            const ipv4_regex = /(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}/;
+            const packets2 = values.sort((a: any, b: any) => {
+                return a.timestamp - b.timestamp
+            }).map((labels: Labels, index: number) => {
+                let line = labels.line
                 let proto = ''
-                if (field.includes('UDP')) {
+                line = line?.replace('UDP', 'TCP')
+                if (line.includes('UDP')) {
                     proto += "UDP"
-                } else if (field.includes('TCP')) {
+                } else if (line.includes('TCP')) {
                     proto += "TCP"
                 }
                 const fieldObj = {
-                    data: field,
+                    data: line,
                     srcIp: labels.src_ip,
                     dstIp: labels.dst_ip,
                     srcPort: labels.src_port,
@@ -297,19 +309,25 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                     flowLabel: 0,
                     nextHeader: proto === 'UDP' ? 17 : 6
                 }
-                const ipv4_regex = /^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/gm;
-
+                const hash = `${fieldObj.srcIp}:${fieldObj.srcPort}->${fieldObj.dstIp}:${fieldObj.dstPort}`
+                const sequence = sequenceMap.get(hash) ?? 1
                 const packet_data = proto === 'UDP' ? udp.encode({
                     sourcePort: fieldObj.srcPort,
                     destinationPort: fieldObj.dstPort,
-                    data: Buffer.from(fieldObj.data)
+                    data: Buffer.from(line)
                 }) : tcp.encode({
                     sourcePort: fieldObj.srcPort,
                     destinationPort: fieldObj.dstPort,
-                    data: Buffer.from(fieldObj.data)
+                    data: Buffer.from(line),
+                    sequenceNumber: sequence,
+                    acknowledgmentNumber: 0,
+                    ack: true,
+                    psh: true,
+                    syn: false,
                 })
+
                 let ip_packet = ip.encode({
-                    version: ipv4_regex.test(fieldObj.srcIp) ? 4 : 6,
+                    version: ipv4_regex.test(fieldObj.dstIp) ? 4 : 6,
                     protocol: fieldObj.proto,
                     sourceIp: fieldObj.srcIp,
                     destinationIp: fieldObj.dstIp,
@@ -319,13 +337,20 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                     trafficClass: fieldObj.trafficClass,
                     flowLabel: fieldObj.flowLabel
                 })
+                let ethernetPacket = ethernet.encode({
+                    data: ip_packet,
+                    type: ipv4_regex.test(fieldObj.dstIp) ? '0800' : '86dd'
+                })
+                if (proto === 'TCP') {
+                    sequenceMap.set(hash, (sequenceMap.get(hash) ?? 1) + Buffer.from(line).length)
+                }
                 return {
                     timestamp: fieldObj.ts,
-                    buffer: ip_packet,
+                    buffer: ethernetPacket,
                     type: fields[0]?.values[index]?.type
                 }
-            }).filter((packet: any) => packet.type === 'sip')
-            const generator = configure({ Buffer: Buffer })
+            })
+            const generator = configure({ Buffer: Buffer, snapshotLength: 102400, linkLayerType: 1 })
             const pcapFile = generator(packets2)
             const blob = new Blob([pcapFile], { type: 'application/vnd.tcpdump.pcap' });
             // // Create element with <a> tag
