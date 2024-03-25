@@ -2028,9 +2028,10 @@
             module.exports = {
                 'ipPacket': require('./ip-packet'),
                 'udpPacket': require('./udp-packet'),
-                'tcpPacket': require('./tcp-packet')
+                'tcpPacket': require('./tcp-packet'),
+                'ethernetPacket': require('./ethernet-packet')
             }
-        }, { "./ip-packet": 5, "./tcp-packet": 6, "./udp-packet": 7 }], 5: [function (require, module, exports) {
+        }, { "./ip-packet": 5, "./tcp-packet": 6, "./udp-packet": 7, "./ethernet-packet": 8 }], 5: [function (require, module, exports) {
             (function (Buffer) {
                 (function () {
                     module.exports = configure({})
@@ -2061,7 +2062,7 @@
                                 buf.writeUInt32BE(packet.version << 28 | (packet.trafficClass << 20) | packet.flowLabel, offset);
                                 buf.writeUInt16BE(packet.data.length, offset + 4);
                                 buf[offset + 6] = packet.nextHeader;
-                                buf[offset + 7] = packet.hopLimit;
+                                buf[offset + 7] = packet.hopLimit || 64;
                                 const sourceIpBuffer = Buffer.from(packet.sourceIp);
                                 const destinationIpBuffer = Buffer.from(packet.destinationIp);
 
@@ -2158,16 +2159,56 @@
                 (function () {
                     exports.encode = encode
                     exports.decode = decode
-
-                    function encode({ data, sourcePort, destinationPort, sequenceNumber = 0, acknowledgmentNumber = 0 }) {
+                    function tcpChecksum(packet, buf) {
+                        // pseudo header: srcip (16), dstip (16), 0 (8), proto (8), udp len (16)
+                        let len = buf.length
+                        let srcip = packet.sourceIp
+                        let dstip = packet.destinationIp
+                        if (!srcip || !dstip) { return 0xffff }
+                        let protocol = packet.protocol === undefined ? 0x11 : packet.protocol
+                        let sum = 0xffff
+                        // pseudo header: srcip (16), dstip (16), 0 (8), proto (8), udp len (16)
+                        if (srcip && dstip) {
+                            if (typeof srcip === 'string') { srcip = Buffer.from(srcip.split('.')) }
+                            if (typeof dstip === 'string') { dstip = Buffer.from(dstip.split('.')) }
+                            sum = 0
+                            let pad = len % 2
+                            for (let i = 0; i < len + pad; i += 2) {
+                                if (i === 6) { continue } // ignore the currently written checksum
+                                sum += ((buf[i] << 8) & 0xff00) + ((buf[i + 1]) & 0xff)
+                            }
+                            for (let i = 0; i < 4; i += 2) {
+                                sum += ((srcip[i] << 8) & 0xff00) + (srcip[i + 1] & 0xff)
+                            }
+                            for (let i = 0; i < 4; i += 2) {
+                                sum += ((dstip[i] << 8) & 0xff00) + (dstip[i + 1] & 0xff)
+                            }
+                            sum += protocol + len
+                            while (sum >> 16) {
+                                sum = (sum & 0xffff) + (sum >> 16)
+                            }
+                            sum = 0xffff ^ sum
+                        }
+                        return sum
+                    }
+                    function encode({ data, sourcePort, destinationPort, sequenceNumber = 0, acknowledgmentNumber = 0, ack = false, psh = false, syn = false }) {
                         const dataLength = data ? data.length : 0
-                        const packet = Buffer.alloc(dataLength)
+                        const packet = Buffer.alloc(dataLength + 20)
                         packet.writeUInt16BE(sourcePort, 0)
                         packet.writeUInt16BE(destinationPort, 2)
                         packet.writeUInt32BE(sequenceNumber, 4)
                         packet.writeUInt32BE(acknowledgmentNumber, 8)
-                        packet.writeUInt16BE(0x5000, 12)
+                        packet.writeUInt16BE(((20 / 4) << 12), 12);
+                        const setAck = (ack) ? (1 << 4) : (0 << 4)
+                        const setPsh = (psh) ? (1 << 3) : (0 << 3)
+                        const setSyn = (syn) ? (1 << 1) : (0 << 1)
+                        const flags = setSyn | setPsh | setAck
+                        packet.writeUInt8(flags, 13);
+                        packet.writeUInt16BE(8235, 14);
+                        packet.writeUInt16BE(0, 16);
                         if (data) { data.copy(packet, 20) }
+                        const checksum = tcpChecksum(data, packet);
+                        packet.writeUInt16BE(checksum, 16)
                         return packet
                     }
 
@@ -2262,6 +2303,24 @@
                         return sum
                     }
 
+                }).call(this)
+            }).call(this, require("buffer").Buffer)
+        }, { "buffer": 2 }], 8: [function (require, module, exports) {
+            (function (Buffer) {
+                (function () {
+                    exports.encode = encodeEthernetFrame
+                    function encodeEthernetFrame({ destinationMac = '11:22:33:44:55:66', sourceMac = 'aa:bb:cc:dd:ee:ff', type, data }) {
+                        const ethernetFrameLength = 14; // Length of Ethernet frame header
+                        const totalLength = ethernetFrameLength + data.length;
+                        const frame = Buffer.alloc(totalLength);
+
+                        destinationMac.split(':').forEach((byte, index) => frame.writeUInt8(parseInt(byte, 16), index));
+                        sourceMac.split(':').forEach((byte, index) => frame.writeUInt8(parseInt(byte, 16), index + 6));
+                        frame.writeUInt16BE(parseInt(type, 16), 12); // EtherType
+                        data.copy(frame, ethernetFrameLength); // Copy payload to frame
+
+                        return frame;
+                    }
                 }).call(this)
             }).call(this, require("buffer").Buffer)
         }, { "buffer": 2 }]
