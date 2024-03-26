@@ -26,6 +26,7 @@ import {
     Dropdown,
     Menu
 } from '@grafana/ui';
+import { hash } from 'helpers/hash';
 import { convertDateToFileName } from 'helpers/convertDateToFileName';
 
 
@@ -228,7 +229,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
     const [flowData, setFlowData] = React.useState({ actors: [], data: [] });
     const [modalIsOpen, setModalIsOpen] = React.useState(false);
     const [modalData, setModalData] = React.useState({});
-    const [modalDataFields, setModalDataFields] = React.useState([]);
+    const [modalDataFields, setModalDataFields] = React.useState<Map<string, any>>();
 
     const onModalClose = () => {
         setModalIsOpen(false);
@@ -378,9 +379,8 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
         if (fields) {
             const [firsField]: any = fields;
             const sortData = formattingDataAndSortIt(fields, options.sortoption);
-            setModalDataFields(sortData);
             const outData = firsField?.values;
-
+            const map = new Map();
             if (outData) {
                 valueLabelsName = Object.keys(outData?.[0] || {});
                 setFlowData({
@@ -393,6 +393,8 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                             }
                             return labelItem[optionArr] || '';
                         };
+                        const itemHash = hash(JSON.stringify(item))
+                        map.set(itemHash, item);
                         return {
                             messageID: _(options.colorGenerator) || 'Title',
                             subTitle: options.showbody && message,
@@ -402,18 +404,19 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                             aboveArrow: _(options.aboveArrow) || '',
                             belowArrow: _(options.belowArrow) || '',
                             sourceLabel: _(options.sourceLabel) || '',
-                            destinationLabel: _(options.destinationLabel) || ''
+                            destinationLabel: _(options.destinationLabel) || '',
+                            hash: itemHash
                         }
                     })
                 })
-
+                setModalDataFields(map);
             }
         }
         /* eslint-disable-next-line */
     }, [data, options]);
 
     ngxFlowClickHandler = (e: any) => {
-        const details: any = modalDataFields[e.detail];
+        const details: any = modalDataFields?.get(e.detail)
         if (typeof details.labels === 'object') {
             details.labels = JSON.stringify(details.labels);
         }
