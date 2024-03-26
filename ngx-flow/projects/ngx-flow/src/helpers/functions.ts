@@ -606,3 +606,8 @@ export function methodCheck(payload: number) {
 export function messageFormatter(dist: Array<any>) {
     return dist;
 }
+
+export const convertDateToFileName = (date: Date) => {
+
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}_${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+}
