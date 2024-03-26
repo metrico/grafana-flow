@@ -26,6 +26,7 @@ import {
     Dropdown,
     Menu
 } from '@grafana/ui';
+import { convertDateToFileName } from 'helpers/convertDateToFileName';
 
 
 
@@ -43,6 +44,7 @@ declare global {
 }
 export let valueLabelsName: string[] = [];
 let bufferCheck = '';
+
 export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>) => {
     const [isOpen, setIsOpen] = React.useState(false);
     const themeName: string = useTheme2().name;
@@ -263,7 +265,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
 
             // Add file name
             const date = new Date();
-            link.download = `${date.toUTCString()}.txt`;
+            link.download = `${convertDateToFileName(date)}.txt`;
             link.click();
         }
         document.addEventListener('export-flow-as-text', handler);
@@ -360,7 +362,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
 
             // Add file name
             const date = new Date();
-            link.download = `${date.toUTCString()}.pcap`;
+            link.download = `${convertDateToFileName(date)}.pcap`;
             link.click();
 
         }

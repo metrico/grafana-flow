@@ -7,7 +7,7 @@ import {
     ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation
 } from '@angular/core';
 import { TransactionFilterService } from '../transaction-filter/transaction-filter.service';
-import { cloneObject, getColorByString, getMethodColor, isIpInSubnet, JSON_parse, md5 } from '../helpers/functions';
+import { cloneObject, convertDateToFileName, getColorByString, getMethodColor, isIpInSubnet, JSON_parse, md5 } from '../helpers/functions';
 import { getStorage, setStorage } from '../helpers/functions';
 import { UserConstValue } from '../models/const-value.model';
 import { FlowItemType } from '../models/flow-item-type.model';
@@ -596,7 +596,7 @@ export class TabFlowComponent
                 this.canvas.nativeElement.src = canvas.toDataURL();
                 this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
                 const date = new Date();
-                this.downloadLink.nativeElement.download = `${date.toUTCString()}.png`;
+                this.downloadLink.nativeElement.download = `${convertDateToFileName(date)}.png`;
                 this.downloadLink.nativeElement.click();
                 setTimeout(() => {
                     this.pngReady.emit({});
