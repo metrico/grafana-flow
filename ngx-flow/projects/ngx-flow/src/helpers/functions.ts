@@ -356,29 +356,31 @@ export function colorsByStatus(status: number, proto: string = '') {
     }
 }
 
-export function msToTime(ms: number) {
-    var milliseconds = ms % 1000 >> 0,
-        seconds = Math.floor((ms / 1000) % 60),
-        minutes = Math.floor((ms / (1000 * 60)) % 60),
-        hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
-    let milrest = (milliseconds / 10) >> 0 || '';
-    milrest = milrest < 10 ? '0' + milrest : milrest;
-    let secrest = (seconds / 0.6) >> 0 || '';
-    secrest = secrest < 10 && minutes > 0 ? '0' + secrest : secrest;
-    let minrest = (minutes / 0.6) >> 0 || '';
-    minrest = minrest < 10 && hours > 0 ? '0' + minrest : minrest;
-    let secs = seconds + (milrest > 0 ? '.' + milrest : '');
-    let mins = minutes + (secrest > 0 ? '.' + secrest : '');
-    let hrs = hours + (minrest > 0 ? '.' + minrest : '');
+export function msToTime(ms: number): string {
+    if (ms < 0) {
+        throw new RangeError('ms must be a positive integer');
+    }
+    const milliseconds = ms % 1000;
+    const seconds = Math.floor((ms / 1000) % 60);
+    const minutes = Math.floor((ms / (1000 * 60)) % 60);
+    const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+    const milrest = milliseconds / 10 >> 0 || 0;
+    const secrest = seconds / 0.6 >> 0 || 0;
+    const minrest = minutes / 0.6 >> 0 || 0;
+    const secs = seconds + (milrest > 0 ? '.' + (milrest < 10 ? '0' + milrest : milrest) : '');
+    const mins = minutes + (secrest > 0 ? '.' + (secrest < 10 ? '0' + secrest : secrest) : '');
+    const hrs = hours + (minrest > 0 ? '.' + (minrest < 10 ? '0' + minrest : minrest) : '');
+
 
     if (hours > 0) {
-        return hrs + ' h';
+        return `${hrs} h`;
     } else if (minutes > 0) {
-        return mins + ' min';
+        return `${mins} min`;
     } else {
-        return secs + ' s';
+        return `${secs} s`;
     }
 }
+
 export function idColorHash(str: string) {
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
