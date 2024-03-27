@@ -6,7 +6,7 @@ import { TabFlowComponent } from './tab-flow.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 // import { TranslateModule } from '@ngx-translate/core'
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
     imports: [
