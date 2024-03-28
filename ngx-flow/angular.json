@@ -73,10 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "lib-flow:build:production"
+              "buildTarget": "lib-flow:build:production"
             },
             "development": {
-              "browserTarget": "lib-flow:build:development"
+              "buildTarget": "lib-flow:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -84,7 +84,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "lib-flow:build"
+            "buildTarget": "lib-flow:build"
           }
         },
         "test": {
@@ -183,18 +183,18 @@
             "serve": {
                 "builder": "@angular-devkit/build-angular:dev-server",
                 "options": {
-                    "browserTarget": "elements:build"
+                  "buildTarget": "elements:build"
                 },
                 "configurations": {
                     "production": {
-                        "browserTarget": "elements:build:production"
+                      "buildTarget": "elements:build:production"
                     }
                 }
             },
             "extract-i18n": {
                 "builder": "@angular-devkit/build-angular:extract-i18n",
                 "options": {
-                    "browserTarget": "elements:build"
+                  "buildTarget": "elements:build"
                 }
             },
             "lint": {
@@ -207,5 +207,7 @@
         }
     }
   },
-  "defaultProject": "lib-flow"
+  "cli": {
+    "analytics": false
+  }
 }
