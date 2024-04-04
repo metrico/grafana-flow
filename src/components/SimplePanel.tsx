@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { PanelProps, StandardEditorProps } from '@grafana/data';
-import { SimpleOptions } from 'types';
 import { css, cx } from '@emotion/css';
-import './../../ngx-flow/widget/ngx-flow.js';
-import ReactJson from 'react-json-view';
+import { PanelProps, StandardEditorProps } from '@grafana/data';
 import { DateTime } from "luxon";
+import React, { useEffect, useRef, useState } from 'react';
+import ReactJson from 'react-json-view';
+import './../../ngx-flow/widget/ngx-flow.js';
 // @ts-ignore
 import packets from '../libs/packets.js';
 // @ts-ignore
-import { configure } from 'pcap-generator'
-import { Buffer } from 'buffer'
+import { configure } from 'pcap-generator';
+import { Buffer } from 'buffer';
 const ip = packets.ipPacket
 const udp = packets.udpPacket
 const tcp = packets.tcpPacket
@@ -18,20 +17,23 @@ const ethernet = packets.ethernetPacket
 
 import {
     Button,
-    MultiSelect,
     Collapse,
-    Modal,
-    useStyles2,
-    useTheme2,
     Dropdown,
-    Menu
+    Menu,
+    Modal,
+    MultiSelect,
+    useStyles2,
+    useTheme2
 } from '@grafana/ui';
-import { hash } from 'helpers/hash';
 import { convertDateToFileName } from 'helpers/convertDateToFileName';
+import { hash } from 'helpers/hash';
+import { FilterPanel, Filters } from './FilterPanel/FilterPanel';
 
 
 
-interface Props extends PanelProps<SimpleOptions> { }
+interface Props extends PanelProps {
+    options: any
+}
 
 type CustomElement<T> = Partial<T & React.DOMAttributes<T> & { children: any }>;
 
@@ -225,12 +227,12 @@ interface Labels {
 }
 
 
-export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: any) => {
+export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) => {
     const [flowData, setFlowData] = React.useState({ actors: [], data: [] });
     const [modalIsOpen, setModalIsOpen] = React.useState(false);
     const [modalData, setModalData] = React.useState({});
     const [modalDataFields, setModalDataFields] = React.useState<Map<string, any>>();
-
+    const [isSimplify, setIsSimplify] = useState(false);
     const onModalClose = () => {
         setModalIsOpen(false);
     };
@@ -373,7 +375,10 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
         }
     }, [data])
     const styles = useStyles2(getStyles);
-    React.useEffect(() => {
+    const [filters, setFilters] = useState<Filters>({ ip: {}, port: {}, ipPort: {}, method: {}, type: {} })
+    // Set flow data and sort
+    useEffect(() => {
+        console.log(filters)
         const [serie]: any = (data as any)?.series || [];
         const fields = serie?.fields || [];
         if (fields) {
@@ -395,6 +400,16 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                         };
                         const itemHash = hash(JSON.stringify(item))
                         map.set(itemHash, item);
+
+                        const isSrcIPDisabled = !(filters?.['ip']?.[labelItem.src_ip] ?? true)
+                        const isDstIPDisabled = !(filters?.['ip']?.[labelItem.dst_ip] ?? true)
+                        const isSrcPortDisabled = !(filters?.['port']?.[labelItem.src_port] ?? true)
+                        const isDstPortDisabled = !(filters?.['port']?.[labelItem.dst_port] ?? true)
+                        const isSrcIpPortDisabled = !(filters?.['ipPort']?.[labelItem.src_ip + ':' + labelItem.src_port] ?? true)
+                        const isDstIpPortDisabled = !(filters?.['ipPort']?.[labelItem.dst_ip + ':' + labelItem.dst_port] ?? true)
+                        const isMethodDisabled = !(filters?.['method']?.[labelItem.response] ?? true)
+                        const isTypeDisabled = !(filters?.['type']?.[labelItem.type] ?? true)
+                        const hidden = isSrcIPDisabled || isDstIPDisabled || isSrcPortDisabled || isDstPortDisabled || isSrcIpPortDisabled || isDstIpPortDisabled || isMethodDisabled || isTypeDisabled
                         return {
                             messageID: _(options.colorGenerator) || 'Title',
                             subTitle: options.showbody && message,
@@ -405,16 +420,16 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                             belowArrow: _(options.belowArrow) || '',
                             sourceLabel: _(options.sourceLabel) || '',
                             destinationLabel: _(options.destinationLabel) || '',
+                            hidden,
                             hash: itemHash
                         }
-                    })
+                    }).filter((item: any) => !item.hidden)
                 })
                 setModalDataFields(map);
             }
         }
-        /* eslint-disable-next-line */
-    }, [data, options]);
-
+    }, [data, options, filters]);
+    console.log(flowData)
     ngxFlowClickHandler = (e: any) => {
         const details: any = modalDataFields?.get(e.detail)
         if (typeof details.labels === 'object') {
@@ -458,6 +473,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
         `
             )}
         >
+            <FilterPanel data={data} onFilter={setFilters} onSimplify={setIsSimplify} />
             {data?.request?.app === 'dashboard' && (
                 // <span >
                 <Dropdown overlay={menu}>
@@ -466,7 +482,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
                         css`
               position: absolute;
               top: 15px;
-              right: 40px;
+              right: 80px;
               border: 1px solid ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
               border-radius: 2px;
               background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.5)' : 'hsla(0, 0%, 100%, 0.5)'};
@@ -477,7 +493,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }: a
             )}
             {/* <pre>{JSON.stringify(flowData)}</pre> */}
             {/* <FlowMemo flowData={flowData} themeName={themeName} /> */}
-            <ngx-flow-out data-flow={flowDataJSON} theme={themeName} />
+            <ngx-flow-out data-flow={flowDataJSON} is-simplify={isSimplify} theme={themeName} />
 
             <Modal title="Message Details" isOpen={modalIsOpen} onDismiss={onModalClose}>
                 {modalData && Object.entries(modalData).map((item: any, key: number) => (

@@ -27,6 +27,14 @@ export class AppComponent {
         });
 
     }
+
+    _isSimplify = false;
+    @Input() set isSimplify(value: string) {
+        this._isSimplify = value === 'true';
+    }
+    public get isSimplify(): boolean {
+        return this._isSimplify;
+    }
     constructor(private cdr: ChangeDetectorRef) {
         // console.log('DATA FLOW', this._dataFlow)
     }
