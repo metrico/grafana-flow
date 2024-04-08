@@ -27,6 +27,8 @@ import {
 } from '@grafana/ui';
 import { convertDateToFileName } from 'helpers/convertDateToFileName';
 import { hash } from 'helpers/hash';
+import { labelFormatter } from 'helpers/labelFormatter';
+import { CopyText } from './CopyText/CopyText';
 import { FilterPanel, Filters } from './FilterPanel/FilterPanel';
 
 
@@ -45,8 +47,6 @@ declare global {
         }
     }
 }
-export let valueLabelsName: string[] = [];
-let bufferCheck = '';
 
 export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>) => {
     const [isOpen, setIsOpen] = React.useState(false);
@@ -56,7 +56,7 @@ export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>)
     const templateData = JSON.stringify({
         actors: [], data: [{
             messageID: 'messageID',
-            subTitle: 'subTitle',
+            details: 'details',
             source: 'source',
             destination: 'destination',
             title: 'title',
@@ -75,20 +75,23 @@ export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>)
         </div>
     </Collapse>;
 }
-export const SimpleEditor = ({ value, onChange }: StandardEditorProps<string[]>) => {
+export const SimpleEditor = ({ value, onChange, context: { data } }: StandardEditorProps<string[]>) => {
     const [selectValue, setSelectValue] = React.useState<any>();
-    const [forRerender, setForRerender] = React.useState<any>(0);
+    const [labels, setLabels] = useState<string[]>([])
 
-    if (bufferCheck !== JSON.stringify(valueLabelsName) || valueLabelsName?.length === 0) {
-        setTimeout(() => {
-            bufferCheck = JSON.stringify(valueLabelsName)
-            setSelectValue(value);
-            setForRerender(forRerender + 1);
-        }, 200)
-    }
-
+    useEffect(() => {
+        const dataEntry = data?.[0];
+        if (dataEntry && dataEntry.fields) {
+            const labelField = dataEntry.fields[0];
+            const labels = Object.keys(labelField.values[0])
+            setLabels(labels)
+        }
+    }, [data])
+    useEffect(() => {
+        setSelectValue(value)
+    }, [value])
     return <MultiSelect
-        options={valueLabelsName.map((i: any) => ({ label: i, value: i }))}
+        options={labels.map((i: any) => ({ label: i, value: i }))}
         value={selectValue}
         onChange={(v: any[]) => {
             setSelectValue(v);
@@ -118,7 +121,7 @@ const getStyles = () => {
     };
 };
 
-export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | null => {
+export const DetailItem: React.FC<any> = ({ item, theme }: any): JSX.Element | null => {
     let [key, value]: any = item;
     const themeName: any = theme === 'Dark' ? 'railscasts' : 'rjv-default'
     let isJSON = false;
@@ -171,7 +174,15 @@ export const DetaiItem: React.FC<any> = ({ item, theme }: any): JSX.Element | nu
 
                     />
                 </pre> :
-                <pre className={styles.pre}>{value}</pre>
+                <span style={{ position: 'relative' }}>
+                    <pre className={styles.pre}>
+                        {value}
+                    </pre>
+                    <span style={{ position: 'absolute', right: 15, top: 32 }}>
+
+                        <CopyText text={value} />
+                    </span>
+                </span>
             }
         </> : <>
         </>}
@@ -387,14 +398,13 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
             const outData = firsField?.values;
             const map = new Map();
             if (outData) {
-                valueLabelsName = Object.keys(outData?.[0] || {});
                 setFlowData({
                     actors: [], data: sortData.map((item: any) => {
                         const message: string = item.Line || '';
                         const labelItem: any = item.labels || {};
-                        const _ = (optionArr: string[] | string) => {
+                        const getOptionValue = (optionArr: string[] | string) => {
                             if (optionArr instanceof Array) {
-                                return optionArr.map((option: string) => labelItem[option]).filter((a: any) => !!a).join(':');
+                                return optionArr.map((option: string) => labelFormatter(labelItem[option], option)).filter((a: any) => !!a).join(':');
                             }
                             return labelItem[optionArr] || '';
                         };
@@ -410,16 +420,18 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
                         const isMethodDisabled = !(filters?.['method']?.[labelItem.response] ?? true)
                         const isTypeDisabled = !(filters?.['type']?.[labelItem.type] ?? true)
                         const hidden = isSrcIPDisabled || isDstIPDisabled || isSrcPortDisabled || isDstPortDisabled || isSrcIpPortDisabled || isDstIpPortDisabled || isMethodDisabled || isTypeDisabled
+
                         return {
-                            messageID: _(options.colorGenerator) || 'Title',
-                            subTitle: options.showbody && message,
-                            source: _(options.source) || '...',
-                            destination: _(options.destination) || '...',
-                            title: _(options.title) || '',
-                            aboveArrow: _(options.aboveArrow) || '',
-                            belowArrow: _(options.belowArrow) || '',
-                            sourceLabel: _(options.sourceLabel) || '',
-                            destinationLabel: _(options.destinationLabel) || '',
+                            messageID: getOptionValue(options.colorGenerator) || 'Title',
+                            details: getOptionValue(options.details) || '',
+                            line: options.showbody && message || '',
+                            source: getOptionValue(options.source) || '...',
+                            destination: getOptionValue(options.destination) || '...',
+                            title: getOptionValue(options.title) || '',
+                            aboveArrow: getOptionValue(options.aboveArrow) || '',
+                            belowArrow: getOptionValue(options.belowArrow) || '',
+                            sourceLabel: getOptionValue(options.sourceLabel) || '',
+                            destinationLabel: getOptionValue(options.destinationLabel) || '',
                             hidden,
                             hash: itemHash
                         }
