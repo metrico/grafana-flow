@@ -47,7 +47,7 @@ export const FilterPanel = ({ data, onFilter, onSimplify }: FilterProps) => {
         const ipPorts = new Set<string>()
         const methods = new Set<string>()
         const payloadType = new Set<string>()
-        labelValues.forEach((label) => {
+        labelValues?.forEach((label) => {
             ips.add(label.dst_ip)
             ips.add(label.src_ip)
             ports.add(label.dst_port)
@@ -88,7 +88,7 @@ export const FilterPanel = ({ data, onFilter, onSimplify }: FilterProps) => {
         >
             <InlineSwitch showLabel={true} defaultChecked={false} value={isSimplify} onChange={() => { setIsSimplify(!isSimplify); }} label="Simple format" />
             <hr />
-            <MyCollapse label="Payload type">
+            <MyCollapse label="Payload type" filterState={filters} filterTag={'type'} setFilters={setFilters}>
                 <HorizontalGroup spacing="md" >
                     {payloadTypesArray.map((payloadType) => (
                         <Checkbox value={filters?.type?.[payloadType]} key={payloadType} defaultChecked={true} label={payloadType} onChange={(v) => {
@@ -97,7 +97,7 @@ export const FilterPanel = ({ data, onFilter, onSimplify }: FilterProps) => {
                     ))}
                 </HorizontalGroup>
             </MyCollapse>
-            <MyCollapse label="Method">
+            <MyCollapse label="Method" filterState={filters} filterTag={'method'} setFilters={setFilters}>
                 <HorizontalGroup spacing="md" wrap={true}>
                     {methodsArray.map((method) => (
                         <Checkbox value={filters?.method?.[method]} key={method} defaultChecked={true} label={method} onChange={(v) => {
@@ -107,7 +107,7 @@ export const FilterPanel = ({ data, onFilter, onSimplify }: FilterProps) => {
                 </HorizontalGroup>
             </MyCollapse>
 
-            <MyCollapse label="IP">
+            <MyCollapse label="IP" filterState={filters} filterTag={'ip'} setFilters={setFilters}>
                 <HorizontalGroup spacing="md" wrap={true}>
                     {ipsArray.map((ip) => (
                         <Checkbox value={filters?.ip?.[ip]} key={ip} defaultChecked={true} label={ip} onChange={(v) => setFilters({ ...filters, ip: { ...filters.ip, [ip]: (v.target as HTMLInputElement).checked } })} />
@@ -133,11 +133,40 @@ export const FilterPanel = ({ data, onFilter, onSimplify }: FilterProps) => {
 
     )
 }
-const MyCollapse = ({ label, children }: any) => {
+const MyCollapse = ({ label, children, filterState, filterTag, setFilters }: any) => {
     const [isOpen, setIsOpen] = useState(false)
+    const [indeterminate, setIndeterminate] = useState(false)
+    const [checked, setChecked] = useState(false)
+    useEffect(() => {
+        let count = 0
+        const keys = Object.values(filterState[filterTag])
+        keys.forEach(item => {
+            if (item) {
+                count += 1
+            }
+        })
+        console.log(count, keys.length, filterState[filterTag])
+        setIndeterminate(count > 0 && count < keys.length)
+        setChecked(count === keys.length)
+    }, [filterState, filterTag])
+    const setFilterState = () => {
+
+        setFilters(() => ({
+            ...filterState,
+            [filterTag]: Object.fromEntries(
+                Object.entries(filterState[filterTag]).map(([key]) => [key, !checked])
+            ),
+        }));
+
+    } 
     return (
-        <Collapse collapsible={true} isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)} label={label}>
+        <span style={{ position: 'relative' }}>
+            <span style={{ position: 'absolute', left: '28px', top: '8px', display: 'flex' }}>
+                <Checkbox indeterminate={indeterminate} checked={checked} onChange={setFilterState} /> <span style={{ zIndex: 1 }}>{label}</span>
+            </span>
+            <Collapse collapsible={true} isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)} label={''}>
             {children}
         </Collapse>
+        </span>
     )
 }
