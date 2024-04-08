@@ -1,14 +1,14 @@
 import { css, cx } from '@emotion/css';
-import { PanelProps, StandardEditorProps } from '@grafana/data';
+import { GrafanaTheme2, PanelProps, StandardEditorProps } from '@grafana/data';
 import { DateTime } from "luxon";
 import React, { useEffect, useRef, useState } from 'react';
 import ReactJson from 'react-json-view';
 import './../../ngx-flow/widget/ngx-flow.js';
 // @ts-ignore
 import packets from '../libs/packets.js';
+import { Buffer } from 'buffer';
 // @ts-ignore
 import { configure } from 'pcap-generator';
-import { Buffer } from 'buffer';
 const ip = packets.ipPacket
 const udp = packets.udpPacket
 const tcp = packets.tcpPacket
@@ -100,7 +100,7 @@ export const SimpleEditor = ({ value, onChange, context: { data } }: StandardEdi
     />;
 };
 
-const getStyles = () => {
+const getStyles = ({ name: themeName }: GrafanaTheme2) => {
     return {
         wrapper: css`
       font-family: Open Sans;
@@ -117,7 +117,26 @@ const getStyles = () => {
     `,
         pre: css`
       white-space: pre-wrap;
+    `,
+        buttonWrapper: css`
+       position: absolute;
+       right: 20px; 
+       top: -15px; 
+       display: flex; 
+       z-index: 3;
+       border: 1px solid ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
+       border-radius: 2px;
+        padding: 0.2em;
+       > * {
+         margin: 0 5px;
+         
+       }
+       &:hover {
+           background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.8)' : 'hsla(0, 0%, 100%, 0.8)'};
+       }
+
     `
+
     };
 };
 
@@ -385,6 +404,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
             document.removeEventListener('export-flow-as-pcap', handler)
         }
     }, [data])
+    const themeName: string = useTheme2().name;
     const styles = useStyles2(getStyles);
     const [filters, setFilters] = useState<Filters>({ ip: {}, port: {}, ipPort: {}, method: {}, type: {} })
     // Set flow data and sort
@@ -450,7 +470,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
         setModalData(details);
         setModalIsOpen(true);
     };
-    const themeName: string = useTheme2().name;
     const flowDataJSON = JSON.stringify(flowData);
     const menu = (
         <Menu>
@@ -485,24 +504,23 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
         `
             )}
         >
-            <FilterPanel data={data} onFilter={setFilters} onSimplify={setIsSimplify} />
-            {data?.request?.app === 'dashboard' && (
-                // <span >
-                <Dropdown overlay={menu}>
+            <div id="buttons" className={styles.buttonWrapper}>
 
-                    <Button className={cx(
-                        css`
-              position: absolute;
-              top: 15px;
-              right: 80px;
+                <FilterPanel data={data} onFilter={setFilters} onSimplify={setIsSimplify} />
+                {data?.request?.app === 'dashboard' || data?.request?.app === 'panel-editor' && (
+                    // <span >
+                    <Dropdown overlay={menu}>
+
+                        <Button className={cx(
+                            css`
               border: 1px solid ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
               border-radius: 2px;
               background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.5)' : 'hsla(0, 0%, 100%, 0.5)'};
-              z-index: 2;
             `)} icon="bars" fill="text" variant="secondary" />
-                </Dropdown>
-                // </span>/
-            )}
+                    </Dropdown>
+                    // </span>/
+                )}
+            </div>
             {/* <pre>{JSON.stringify(flowData)}</pre> */}
             {/* <FlowMemo flowData={flowData} themeName={themeName} /> */}
             <ngx-flow-out data-flow={flowDataJSON} is-simplify={isSimplify} theme={themeName} />
@@ -510,7 +528,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
             <Modal title="Message Details" isOpen={modalIsOpen} onDismiss={onModalClose}>
                 {modalData && Object.entries(modalData).map((item: any, key: number) => (
                     // <p>{item} | {key}</p>
-                    <DetaiItem item={item} key={key} theme={themeName} />
+                    <DetailItem item={item} key={key} theme={themeName} />
                 ))}
                 <Button variant="primary" onClick={onModalClose}>
                     Close

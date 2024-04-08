@@ -125,13 +125,9 @@ export const FilterPanel = ({ data, onFilter, onSimplify }: FilterProps) => {
             onClose={() => { onFilter(filters); onSimplify(isSimplify) }}
         >
             <Button className={cx(css`
-                  position: absolute;
-                  top: 15px;
-                  right: 40px;
                   border: 1px solid ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
                   border-radius: 2px;
-                  background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.5)' : 'hsla(0, 0%, 100%, 0.5)'};
-                  z-index: 2;
+                  background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.3)' : 'hsla(0, 0%, 100%, 0.3)'};
                 `)} id="filter" icon="filter" fill="text" variant="secondary" />
         </Toggletip>
 
