@@ -100,11 +100,12 @@
         </div>
         <div class="call-text-date">
             {{
-                isAbsolute
-                    ? item.diff_absolute
-                    : item.diff
-                    ? item.diff
-                    : "+0.00ms"
+                item.details
+                }}
+                </div>
+                <div class="call-text-date">
+                    {{
+                    item.line
             }}
         </div>
     </div>

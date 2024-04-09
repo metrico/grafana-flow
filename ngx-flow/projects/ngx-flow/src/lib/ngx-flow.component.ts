@@ -87,14 +87,13 @@ export class NgxFlowComponent implements OnInit {
             description: i.aboveArrow || '',
             destination_ip: dist.ip,
             destination_port: dist.port,
-            diff: ' ',
-            diff_absolute: i.subTitle || '',
-            diff_num: ' ',
+            details: i.details,
             dstAlias: DIST,
             id: 0,
             info_date: i.belowArrow || '... ',
-            info_date_absolute: i.subTitle || '... ',
+            info_date_absolute: i.details || '... ',
             ipDirection: SRC + ' > ' + DIST,
+            line: i.line,
             messageData: null,
             method: ' ',
             method_text: i.title || i.messageID,
@@ -110,7 +109,7 @@ export class NgxFlowComponent implements OnInit {
             srcAlias: SRC,
 
             typeItem: "SIP",
-            hash: i.hash
+            hash: i.hash,
         }
     }
 

@@ -8,7 +8,7 @@ export interface FlowItem {
     destination: string;
 
     title?: string;
-    subTitle?: string;
+    details?: string;
 
     // hidden in Simplified mode
     aboveArrow?: string;
@@ -27,7 +27,7 @@ export interface ArrowStyling {
 }
 export interface TextColors {
     title?: string;
-    subTitle?: string;
+    details?: string;
 
     // hidden in Simplified mode
     aboveArrow?: string;

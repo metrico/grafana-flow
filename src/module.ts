@@ -67,6 +67,14 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
             defaultValue: '',
             editor: SimpleEditor,
         })
+        .addCustomEditor({
+            id: 'details',
+            path: 'details',
+            name: 'Details',
+            description: 'String details (Labels[key])',
+            defaultValue: '',
+            editor: SimpleEditor,
+        })
         .addSelect({
             // id: 'sortoption',
             path: 'sortoption',
