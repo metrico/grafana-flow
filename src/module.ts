@@ -23,7 +23,7 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
             id: 'aboveArrow',
             path: 'aboveArrow',
             name: 'Above Arrow',
-            description: 'String above Arrow (Labels[key])',
+            description: 'Label directly above an arrow (hidden in simple format)',
             defaultValue: '',
             editor: SimpleEditor,
         })
@@ -31,39 +31,7 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
             id: 'belowArrow',
             path: 'belowArrow',
             name: 'Below Arrow',
-            description: 'String below arrow (Labels[key])',
-            defaultValue: '',
-            editor: SimpleEditor,
-        })
-        .addCustomEditor({
-            id: 'source',
-            path: 'source',
-            name: 'Source',
-            description: 'String source (Labels[key])',
-            defaultValue: '',
-            editor: SimpleEditor,
-        })
-        .addCustomEditor({
-            id: 'sourceLabel',
-            path: 'sourceLabel',
-            name: 'Source Label',
-            description: 'String source label (Labels[key])',
-            defaultValue: '',
-            editor: SimpleEditor,
-        })
-        .addCustomEditor({
-            id: 'destination',
-            path: 'destination',
-            name: 'Destination',
-            description: 'String destination (Labels[key])',
-            defaultValue: '',
-            editor: SimpleEditor,
-        })
-        .addCustomEditor({
-            id: 'destinationLabel',
-            path: 'destinationLabel',
-            name: 'Destination Label',
-            description: 'String destination label (Labels[key])',
+            description: 'Label directly below an arrow (hidden in simple format)',
             defaultValue: '',
             editor: SimpleEditor,
         })
@@ -71,7 +39,38 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
             id: 'details',
             path: 'details',
             name: 'Details',
-            description: 'String details (Labels[key])',
+            description: 'Label 2 lines below an arrow',
+            defaultValue: ['timestamp'],
+            editor: SimpleEditor,
+        })
+        .addCustomEditor({
+            id: 'sourceLabel',
+            path: 'sourceLabel',
+            name: 'Source Label',
+            description: 'Label at the beginning of an arrow',
+            defaultValue: '',
+            editor: SimpleEditor,
+        })
+        .addCustomEditor({
+            id: 'destinationLabel',
+            path: 'destinationLabel',
+            name: 'Destination Label',
+            description: 'Label at the end of an arrow',
+            defaultValue: '',
+            editor: SimpleEditor,
+        })
+        .addCustomEditor({
+            id: 'source',
+            path: 'source',
+            name: 'Source Host',
+            defaultValue: 'Label used to determine beginning of an arrow',
+            editor: SimpleEditor,
+        })
+        .addCustomEditor({
+            id: 'destination',
+            path: 'destination',
+            name: 'Destination Host',
+            description: 'Label used to determine end of an arrow',
             defaultValue: '',
             editor: SimpleEditor,
         })
@@ -92,7 +91,7 @@ export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOption
             id: 'colorGenerator',
             path: 'colorGenerator',
             name: 'Items for color generator',
-            description: 'String label(s) for color (Labels[key])',
+            description: 'Which labels should be used for background color generation',
             defaultValue: '',
             editor: SimpleEditor,
         })
