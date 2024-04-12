@@ -507,7 +507,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
             <div id="buttons" className={styles.buttonWrapper}>
 
                 <FilterPanel data={data} onFilter={setFilters} onSimplify={setIsSimplify} />
-                {data?.request?.app === 'dashboard' || data?.request?.app === 'panel-editor' && (
+                {(data?.request?.app !== 'app') && (
                     // <span >
                     <Dropdown overlay={menu}>
 
