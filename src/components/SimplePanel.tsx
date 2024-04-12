@@ -406,7 +406,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
     }, [data])
     const themeName: string = useTheme2().name;
     const styles = useStyles2(getStyles);
-    const [filters, setFilters] = useState<Filters>({ ip: {}, port: {}, ipPort: {}, method: {}, type: {} })
+    const [filters, setFilters] = useState<Filters>({ ip: {}, port: {}, ipPort: {}, method: {}, type: {}, callid: {} });
     // Set flow data and sort
     useEffect(() => {
         console.log(filters)
@@ -439,7 +439,8 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
                         const isDstIpPortDisabled = !(filters?.['ipPort']?.[labelItem.dst_ip + ':' + labelItem.dst_port] ?? true)
                         const isMethodDisabled = !(filters?.['method']?.[labelItem.response] ?? true)
                         const isTypeDisabled = !(filters?.['type']?.[labelItem.type] ?? true)
-                        const hidden = isSrcIPDisabled || isDstIPDisabled || isSrcPortDisabled || isDstPortDisabled || isSrcIpPortDisabled || isDstIpPortDisabled || isMethodDisabled || isTypeDisabled
+                        const isCallidDisabled = !(filters?.['callid']?.[labelItem.callid] ?? true)
+                        const hidden = isSrcIPDisabled || isDstIPDisabled || isSrcPortDisabled || isDstPortDisabled || isSrcIpPortDisabled || isDstIpPortDisabled || isMethodDisabled || isTypeDisabled || isCallidDisabled
 
                         return {
                             messageID: getOptionValue(options.colorGenerator) || 'Title',
