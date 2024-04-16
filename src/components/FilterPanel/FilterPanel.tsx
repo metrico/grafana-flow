@@ -98,7 +98,7 @@ export const FilterPanel = ({ data, onFilter, onSimplify, options }: FilterProps
             )}
         >
             <Tooltip
-                content={`Changes display to simple format, which is more compact and doesn't have ${options?.aboveArrow} ${options?.belowArrow && options?.aboveArrow ? 'and' : ''} ${options?.belowArrow} labels`} placement="top">
+                content={`Changes display to simple format, which is more compact and doesn't have "${options?.aboveArrow}" ${options?.belowArrow && options?.aboveArrow ? 'and' : ''} "${options?.belowArrow}" labels`} placement="top">
                 <span style={{ display: 'flex', flexDirection: 'column' }}>
                     <InlineSwitch
                         showLabel={true}
