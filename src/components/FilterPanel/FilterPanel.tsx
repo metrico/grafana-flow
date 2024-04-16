@@ -7,6 +7,7 @@ export interface FilterProps {
     data: PanelData
     onFilter: Function
     onSimplify: Function
+    options: any
 }
 export interface Filters {
     ip: {
@@ -96,7 +97,17 @@ export const FilterPanel = ({ data, onFilter, onSimplify }: FilterProps) => {
                 `
             )}
         >
-            <InlineSwitch showLabel={true} defaultChecked={false} value={isSimplify} onChange={() => { setIsSimplify(!isSimplify); }} label="Simple format" />
+            <Tooltip
+                content={`Changes display to simple format, which is more compact and doesn't have ${options?.aboveArrow} ${options?.belowArrow && options?.aboveArrow ? 'and' : ''} ${options?.aboveArrow} ${options?.belowArrow} labels`} placement="top">
+                <span style={{ display: 'flex', flexDirection: 'column' }}>
+                    <InlineSwitch
+                        showLabel={true}
+                        defaultChecked={false}
+                        value={isSimplify}
+                        onChange={() => { setIsSimplify(!isSimplify); }}
+                        label="Simple format" />
+                </span>
+            </Tooltip>
             <hr />
             {payloadTypesArray.length > 0 &&
                 <MyCollapse label="Payload type" filterState={filters} filterProperty={'type'} setFilters={setFilters} filterLabel={"type"}>
