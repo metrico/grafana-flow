@@ -33,7 +33,7 @@ export interface Filter {
     name: string
     value: boolean
 }
-export const FilterPanel = ({ data, onFilter, onSimplify }: FilterProps) => {
+export const FilterPanel = ({ data, onFilter, onSimplify, options }: FilterProps) => {
     const [ipsArray, setIpsArray] = useState<string[]>([]);
     // const [portsArray, setPortsArray] = useState<string[]>([]);
     // const [ipPortsArray, setIpPortsArray] = useState<string[]>([]);
