@@ -33,6 +33,16 @@ export interface Filter {
     name: string
     value: boolean
 }
+const getStyles = () => {
+    return {
+        collapseChildrenWrapper: css`
+      padding-left: 18px;
+      width: 100%;
+      height: 100%;
+    `
+
+    };
+};
 export const FilterPanel = ({ data, onFilter, onSimplify, options }: FilterProps) => {
     const [ipsArray, setIpsArray] = useState<string[]>([]);
     // const [portsArray, setPortsArray] = useState<string[]>([]);
@@ -122,7 +132,7 @@ export const FilterPanel = ({ data, onFilter, onSimplify, options }: FilterProps
             }
             {methodsArray.length > 0 &&
                 <MyCollapse label="Method" filterState={filters} filterProperty={'method'} setFilters={setFilters} filterLabel={"response"}>
-                <HorizontalGroup spacing="md" wrap={true}>
+                    <HorizontalGroup spacing="md" wrap={true}>
                     {methodsArray.map((method) => (
                         <Checkbox value={filters?.method?.[method]} key={method} defaultChecked={true} label={method} onChange={(v) => {
                             setFilters({ ...filters, method: { ...filters.method, [method]: (v.target as HTMLInputElement).checked } })
@@ -133,7 +143,7 @@ export const FilterPanel = ({ data, onFilter, onSimplify, options }: FilterProps
             }
             {ipsArray.length > 0 &&
                 <MyCollapse label="IP" filterState={filters} filterProperty={'ip'} setFilters={setFilters} filterLabel={`src_ip" or "dst_ip`}>
-                <HorizontalGroup spacing="md" wrap={true}>
+                    <HorizontalGroup spacing="md" wrap={true}>
                     {ipsArray.map((ip) => (
                         <Checkbox value={filters?.ip?.[ip]} key={ip} defaultChecked={true} label={ip} onChange={(v) => setFilters({ ...filters, ip: { ...filters.ip, [ip]: (v.target as HTMLInputElement).checked } })} />
                     ))}
@@ -212,7 +222,10 @@ const MyCollapse = ({ label, children, filterState, filterProperty, setFilters, 
                     <Checkbox indeterminate={indeterminate} checked={checked} onChange={setFilterState} /> <span style={{ zIndex: 1, marginLeft: '8px' }}>{label}</span>
             </span>
             <Collapse collapsible={true} isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)} label={''}>
-            {children}
+                    <div className={getStyles().collapseChildrenWrapper}>
+
+                        {children}
+                    </div>
         </Collapse>
         </span>
         </Tooltip>
