@@ -4,16 +4,10 @@ import { DateTime } from "luxon";
 import React, { useEffect, useRef, useState } from 'react';
 import ReactJson from 'react-json-view';
 import './../../ngx-flow/widget/ngx-flow.js';
-// @ts-ignore
-import packets from '../libs/packets.js';
 import { Buffer } from 'buffer';
 // @ts-ignore
 import { configure } from 'pcap-generator';
-const ip = packets.ipPacket
-const udp = packets.udpPacket
-const tcp = packets.tcpPacket
-const ethernet = packets.ethernetPacket
-
+import { encodeEthernetFrame } from 'helpers/packets/ethernetPacket';
 
 import {
     Button,
@@ -30,6 +24,9 @@ import { hash } from 'helpers/hash';
 import { labelFormatter } from 'helpers/labelFormatter';
 import { CopyText } from './CopyText/CopyText';
 import { FilterPanel, Filters } from './FilterPanel/FilterPanel';
+import { encodeIPV4Packet, encodeIPV6Packet } from 'helpers/packets/ipPacket';
+import { encodeUDPFrame } from 'helpers/packets/udpPacket';
+import { encodeTCPFrame } from 'helpers/packets/tcpPacket';
 
 
 
@@ -324,7 +321,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
             }).map((labels: Labels, index: number) => {
                 let line = labels.line
                 let proto = ''
-                line = line?.replace('UDP', 'TCP')
                 if (line.includes('UDP')) {
                     proto += "UDP"
                 } else if (line.includes('TCP')) {
@@ -337,44 +333,36 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
                     srcPort: labels.src_port,
                     dstPort: labels.dst_port,
                     ts: fields[0]?.values[index]?.timestamp,
-                    proto: proto === 'UDP' ? 17 : 6,
-                    type: fields[0]?.values[index]?.type,
-                    trafficClass: 0,
-                    flowLabel: 0,
-                    nextHeader: proto === 'UDP' ? 17 : 6
+                    proto: proto === 'UDP' ? 17 : 6 as 6 | 17,
+                    type: fields[0]?.values[index]?.type
                 }
                 const hash = `${fieldObj.srcIp}:${fieldObj.srcPort}->${fieldObj.dstIp}:${fieldObj.dstPort}`
                 const sequence = sequenceMap.get(hash) ?? 1
-                const packet_data = proto === 'UDP' ? udp.encode({
+                const packet_data = proto === 'UDP' ? encodeUDPFrame({
                     sourcePort: fieldObj.srcPort,
                     destinationPort: fieldObj.dstPort,
                     data: Buffer.from(line)
-                }) : tcp.encode({
+                }) : encodeTCPFrame({
                     sourcePort: fieldObj.srcPort,
                     destinationPort: fieldObj.dstPort,
-                    data: Buffer.from(line),
                     sequenceNumber: sequence,
-                    acknowledgmentNumber: 0,
-                    ack: true,
-                    psh: true,
-                    syn: false,
+                    data: Buffer.from(line)
                 })
-
-                let ip_packet = ip.encode({
-                    version: ipv4_regex.test(fieldObj.dstIp) ? 4 : 6,
+                let ip_packet = ipv4_regex.test(fieldObj.dstIp) ? encodeIPV4Packet({
                     protocol: fieldObj.proto,
                     sourceIp: fieldObj.srcIp,
                     destinationIp: fieldObj.dstIp,
                     data: packet_data,
-                    ttl: 112,
-                    nextHeader: fieldObj.nextHeader,
-                    trafficClass: fieldObj.trafficClass,
-                    flowLabel: fieldObj.flowLabel
+                }) : encodeIPV6Packet({
+                    protocol: fieldObj.proto,
+                    sourceIp: fieldObj.srcIp,
+                    destinationIp: fieldObj.dstIp,
+                    data: packet_data,
                 })
-                let ethernetPacket = ethernet.encode({
+                let ethernetPacket = encodeEthernetFrame({
                     data: ip_packet,
                     type: ipv4_regex.test(fieldObj.dstIp) ? '0800' : '86dd'
-                })
+                }) 
                 if (proto === 'TCP') {
                     sequenceMap.set(hash, (sequenceMap.get(hash) ?? 1) + Buffer.from(line).length)
                 }
