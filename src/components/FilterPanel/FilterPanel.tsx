@@ -208,8 +208,8 @@ const MyCollapse = ({ label, children, filterState, filterProperty, setFilters, 
         <Tooltip content={`Filters by "${filterLabel}" label`}>
 
         <span style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: '28px', top: '8px', display: 'flex' }}>
-                <Checkbox indeterminate={indeterminate} checked={checked} onChange={setFilterState} /> <span style={{ zIndex: 1 }}>{label}</span>
+                <span style={{ position: 'absolute', left: '28px', top: '10px', display: 'flex', alignItems: 'center' }}>
+                    <Checkbox indeterminate={indeterminate} checked={checked} onChange={setFilterState} /> <span style={{ zIndex: 1, marginLeft: '8px' }}>{label}</span>
             </span>
             <Collapse collapsible={true} isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)} label={''}>
             {children}
