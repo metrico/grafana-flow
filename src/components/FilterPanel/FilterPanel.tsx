@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { PanelData } from "@grafana/data";
-import { Button, Checkbox, Collapse, HorizontalGroup, InlineSwitch, Toggletip, useTheme2, Tooltip } from "@grafana/ui";
+import { Button, Checkbox, Collapse, HorizontalGroup, InlineSwitch, Toggletip, useTheme2, Tooltip, Icon } from "@grafana/ui";
 import React, { useEffect, useState } from "react";
 
 export interface FilterProps {
@@ -215,11 +215,15 @@ const MyCollapse = ({ label, children, filterState, filterProperty, setFilters, 
 
     } 
     return (
-        <Tooltip content={`Filters by "${filterLabel}" label`}>
 
-        <span style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: '28px', top: '10px', display: 'flex', alignItems: 'center' }}>
-                    <Checkbox indeterminate={indeterminate} checked={checked} onChange={setFilterState} /> <span style={{ zIndex: 1, marginLeft: '8px' }}>{label}</span>
+        <span style={{ position: 'relative', width: '100%' }}>
+            <span style={{ position: 'absolute', left: '28px', right: 0, top: '10px', display: 'flex', alignItems: 'center' }}>
+                <Checkbox indeterminate={indeterminate} checked={checked} onChange={setFilterState} />
+                <span style={{ zIndex: 1, marginLeft: '8px', pointerEvents: 'none' }}>{label}</span>
+
+                <Tooltip content={`Filters by "${filterLabel}" label`}>
+                    <Icon name="question-circle" style={{ zIndex: 1, position: 'absolute', right: '10px' }} size="xl"></Icon>
+                </Tooltip>
             </span>
             <Collapse collapsible={true} isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)} label={''}>
                     <div className={getStyles().collapseChildrenWrapper}>
@@ -228,6 +232,5 @@ const MyCollapse = ({ label, children, filterState, filterProperty, setFilters, 
                     </div>
         </Collapse>
         </span>
-        </Tooltip>
     )
 }
