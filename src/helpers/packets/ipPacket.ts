@@ -83,10 +83,10 @@ const encodeIPV4Address = (ip: string, data: Buffer, offset: number) => {
 export const encodeIPV6Packet = ({ protocol = 6, sourceIp, destinationIp, data }: IpData): Buffer => {
     const offset = 0
     const buffer = Buffer.alloc(encodingLength(data, 40))
-    // Setting IP type to 6 and header length to 40
-    buffer.writeUInt32BE(6 << 28 | 40, offset);
-    // Packet length (header + data)
-    buffer.writeUInt16BE(40 + data.length, offset + 4);
+    // Setting IP type to 6
+    buffer.writeUInt32BE(6 << 28, offset);
+    // Packet length (data)
+    buffer.writeUInt16BE(data.length, offset + 4);
     // Setting protocol, in our case only TCP or UDP
     buffer[offset + 6] = protocol;
     // Packet hop limit not provided in our code, set to 64 as default
