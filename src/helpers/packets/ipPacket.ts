@@ -98,19 +98,20 @@ export const encodeIPV6Packet = ({ protocol = 6, sourceIp, destinationIp, data }
     return buffer
 }
 export const encodeIPV6Address = (ip: string, data: Buffer, offset: number) => {
-    const group = ip.split(':')
-    if (group.length < 8) {
-        if (group[0] === '') {
-            group.unshift(...Array(8 - group.length).fill('0000'));
-        } else if (group[group.length - 1] === '') {
-            group.push(...Array(8 - group.length).fill('0000'));
+    const groups = ip.split(':')
+    if (groups.length < 8) {
+        if (groups.includes('')) {
+            const fillCount = 8 - (groups.length - 1) // -1 to account for the empty string
+            const fillItems = Array(fillCount).fill('0000');
+            const startIndex = groups.indexOf('');
+            groups.splice(startIndex, 1, ...fillItems);
         }
     }
-    for (let i = 0; i < group.length; i++) {
-        if (group[i]) {
-            const hex = parseInt(group[i], 16)
-            data.writeUInt16BE(hex, offset + (i * 2))
-        }
+    let currentOffset = offset
+    for (let i = 0; i < groups.length; i++) {
+        const hex = parseInt(groups[i], 16)
+        data.writeUInt16BE(hex, currentOffset)
+        currentOffset += 2
 
     }
 }
