@@ -53,7 +53,7 @@ export class AppComponent {
         {
             messageID: 'some unique Id as string 1',
             title: 'Title',
-            subTitle: 'subTitle',
+            details: 'details',
             aboveArrow: 'aboveArrow',
             belowArrow: 'belowArrow',
             source: 'B',
