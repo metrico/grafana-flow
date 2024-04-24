@@ -17,7 +17,7 @@ import {
 import { filterFlowItems } from 'helpers/dataProcessors/filterFlowItems';
 import { pcapExporter, textExporter } from 'helpers/exporters';
 import { CopyText } from './CopyText/CopyText';
-import { FilterPanel, Filters } from './FilterPanel/FilterPanel';
+import { FilterPanel, Filters, defaultFilters } from './FilterPanel/FilterPanel';
 
 
 
@@ -232,7 +232,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
     }, [data])
     const themeName: string = useTheme2().name;
     const styles = useStyles2(getStyles);
-    const [filters, setFilters] = useState<Filters>({ ip: {}, port: {}, ipPort: {}, method: {}, type: {}, callid: {} });
+    const [filters, setFilters] = useState<Filters>(defaultFilters);
     // Set flow data and sort
     useEffect(() => {
         if (data && options) {

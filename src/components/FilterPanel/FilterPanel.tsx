@@ -1,7 +1,8 @@
 import { css, cx } from "@emotion/css";
 import { PanelData } from "@grafana/data";
-import { Button, Checkbox, Collapse, HorizontalGroup, InlineSwitch, Toggletip, useTheme2, Tooltip, Icon } from "@grafana/ui";
+import { Button, Toggletip, useTheme2 } from "@grafana/ui";
 import React, { useEffect, useState } from "react";
+import { FilterMenu } from "./FilterMenu";
 
 export interface FilterProps {
     data: PanelData
@@ -9,159 +10,99 @@ export interface FilterProps {
     onSimplify: Function
     options: any
 }
-export interface Filters {
+export type FilterKeys = "ip" /* | "port" | "ipPort"  */ | "method" | "type" | "callid"
+export type Filters = {
+    [key in FilterKeys]: Filter
+}
+const getDefaultFilterTooltip = (label: string): string => {
+    return `Filter by ${label}`
+}
+
+export interface Filter {
+    label: string
+    tooltip: string
+    title: string
+    values: Map<string, boolean>
+}
+
+export const defaultFilters: Filters = {
     ip: {
-        [key: string]: boolean
-    },
-    port: {
-        [key: string]: boolean
-    },
-    ipPort: {
-        [key: string]: boolean
+        label: "ip",
+        tooltip: getDefaultFilterTooltip(`"dst_ip or src_ip"`),
+        values: new Map<string, boolean>(),
+        title: "IP"
     },
     method: {
-        [key: string]: boolean
+        label: "method",
+        tooltip: getDefaultFilterTooltip(`"response"`),
+        values: new Map<string, boolean>(),
+        title: "Method"
     },
     type: {
-        [key: string]: boolean
+        label: "type",
+        tooltip: getDefaultFilterTooltip(`"type"`),
+        values: new Map<string, boolean>(),
+        title: "Payload Type"
     },
     callid: {
-        [key: string]: boolean
-    }
+        label: "callid",
+        tooltip: getDefaultFilterTooltip(`"callid"`),
+        values: new Map<string, boolean>(),
+        title: "Callid"
+    },
 }
-export interface Filter {
-    name: string
-    value: boolean
-}
-const getStyles = () => {
-    return {
-        collapseChildrenWrapper: css`
-      padding-left: 18px;
-      width: 100%;
-      height: 100%;
-    `
-
-    };
-};
 export const FilterPanel = ({ data, onFilter, onSimplify, options }: FilterProps) => {
-    const [ipsArray, setIpsArray] = useState<string[]>([]);
-    // const [portsArray, setPortsArray] = useState<string[]>([]);
-    // const [ipPortsArray, setIpPortsArray] = useState<string[]>([]);
-    const [methodsArray, setMethodsArray] = useState<string[]>([]);
-    const [payloadTypesArray, setPayloadTypesArray] = useState<string[]>([]);
-    const [callidsArray, setCallidsArray] = useState<string[]>([]);
-    const [filters, setFilters] = useState<Filters>({ ip: {}, port: {}, ipPort: {}, method: {}, type: {}, callid: {} });
+    const [filters, setFilters] = useState<Filters>(defaultFilters);
     const [isSimplify, setIsSimplify] = useState(false);
     useEffect(() => {
         const [serie] = data.series || [];
         const fields = serie?.fields || [];
         const labelsField = fields[0]
         const labelValues = labelsField?.values
-        const ips = new Set<string>()
-        const ports = new Set<string>()
-        const ipPorts = new Set<string>()
-        const methods = new Set<string>()
-        const payloadType = new Set<string>()
-        const callid = new Set<string>()
+        const ips = new Map<string, boolean>()
+        const ports = new Map<string, boolean>()
+        const ipPorts = new Map<string, boolean>()
+        const methods = new Map<string, boolean>()
+        const payloadType = new Map<string, boolean>()
+        const callid = new Map<string, boolean>()
         labelValues?.forEach((label) => {
-            ips.add(label.dst_ip)
-            ips.add(label.src_ip)
-            ports.add(label.dst_port)
-            ports.add(label.src_port)
-            ipPorts.add(label.dst_ip + ':' + label.dst_port)
-            ipPorts.add(label.src_ip + ':' + label.src_port)
+            ips.set(label.dst_ip, true)
+            ips.set(label.src_ip, true)
+            ports.set(label.dst_port, true)
+            ports.set(label.src_port, true)
+            ipPorts.set(label.dst_ip + ':' + label.dst_port, true)
+            ipPorts.set(label.src_ip + ':' + label.src_port, true)
             if (label.response !== undefined) {
-                methods.add(label.response)
+                methods.set(label.response, true)
             }
-            payloadType.add(label.type)
+            payloadType.set(label.type, true)
             if (label.callid !== undefined) {
-                callid.add(label.callid)
+                callid.set(label.callid, true)
             }
         })
-        setIpsArray(Array.from(ips))
-        // setPortsArray(Array.from(ports))
-        // setIpPortsArray(Array.from(ipPorts))
-        setMethodsArray(Array.from(methods))
-        setPayloadTypesArray(Array.from(payloadType))
-        setCallidsArray(Array.from(callid))
-        setFilters({
-            ip: Object.fromEntries([...ips].map(ip => [ip, true])),
-            port: Object.fromEntries([...ports].map(port => [port, true])),
-            ipPort: Object.fromEntries([...ipPorts].map(ipPort => [ipPort, true])),
-            method: Object.fromEntries([...methods].map(method => [method, true])),
-            type: Object.fromEntries([...payloadType].map(type => [type, true])),
-            callid: Object.fromEntries([...callid].map(callid => [callid, true])),
-        })
+        const getArrayOfValues = (prevValues: Map<string, boolean>, values: Map<string, boolean>) => {
+            const newMap = new Map<string, boolean>()
+            values.forEach((value, key) => {
+                newMap.set(key, prevValues.get(key) ?? value)
+
+            })
+            return newMap
+        }
+        const newFilters = { ...defaultFilters };
+        newFilters.ip.values = getArrayOfValues(newFilters.ip.values, ips)
+        // newFilters.port.values = getArrayOfValues(ports)
+        // newFilters.ipPort.values = getArrayOfValues(ipPorts)
+        newFilters.method.values = getArrayOfValues(newFilters.method.values, methods)
+        newFilters.type.values = getArrayOfValues(newFilters.type.values, payloadType)
+        newFilters.callid.values = getArrayOfValues(newFilters.callid.values, callid)
+        setFilters((prev) => ({ ...prev, ...newFilters }))
     }, [data])
     useEffect(() => {
         onSimplify(isSimplify)
         onFilter(filters)
     }, [filters, isSimplify, onFilter, onSimplify])
     const menu = (
-        <span
-            className={cx(
-                css`
-                  display: flex;
-                  flex-direction: column;
-                  width: 350px;
-                `
-            )}
-        >
-            <Tooltip
-                content={`Changes display to simple format, which is more compact and doesn't have "${options?.aboveArrow}" ${options?.belowArrow && options?.aboveArrow ? 'and' : ''} "${options?.belowArrow}" labels`} placement="top">
-                <span style={{ display: 'flex', flexDirection: 'column' }}>
-                    <InlineSwitch
-                        showLabel={true}
-                        defaultChecked={false}
-                        value={isSimplify}
-                        onChange={() => { setIsSimplify(!isSimplify); }}
-                        label="Simple format" />
-                </span>
-            </Tooltip>
-            <hr />
-            {payloadTypesArray.length > 0 &&
-                <MyCollapse label="Payload type" filterState={filters} filterProperty={'type'} setFilters={setFilters} filterLabel={"type"}>
-                <HorizontalGroup spacing="md" >
-                    {payloadTypesArray.map((payloadType) => (
-                        <Checkbox value={filters?.type?.[payloadType]} key={payloadType} defaultChecked={true} label={payloadType} onChange={(v) => {
-                            setFilters({ ...filters, type: { ...filters.type, [payloadType]: (v.target as HTMLInputElement).checked } })
-                        }} />
-                    ))}
-                </HorizontalGroup>
-            </MyCollapse>
-            }
-            {methodsArray.length > 0 &&
-                <MyCollapse label="Method" filterState={filters} filterProperty={'method'} setFilters={setFilters} filterLabel={"response"}>
-                    <HorizontalGroup spacing="md" wrap={true}>
-                    {methodsArray.map((method) => (
-                        <Checkbox value={filters?.method?.[method]} key={method} defaultChecked={true} label={method} onChange={(v) => {
-                            setFilters({ ...filters, method: { ...filters.method, [method]: (v.target as HTMLInputElement).checked } })
-                        }} />
-                    ))}
-                </HorizontalGroup>
-            </MyCollapse>
-            }
-            {ipsArray.length > 0 &&
-                <MyCollapse label="IP" filterState={filters} filterProperty={'ip'} setFilters={setFilters} filterLabel={`src_ip" or "dst_ip`}>
-                    <HorizontalGroup spacing="md" wrap={true}>
-                    {ipsArray.map((ip) => (
-                        <Checkbox value={filters?.ip?.[ip]} key={ip} defaultChecked={true} label={ip} onChange={(v) => setFilters({ ...filters, ip: { ...filters.ip, [ip]: (v.target as HTMLInputElement).checked } })} />
-                    ))}
-                </HorizontalGroup>
-            </MyCollapse>
-            }
-            {callidsArray.length > 0 &&
-                <MyCollapse label="Call ID" filterState={filters} filterProperty={'callid'} setFilters={setFilters} filterLabel={`callid`}>
-                    <HorizontalGroup spacing="md" wrap={true}>
-                        {callidsArray.map((callid) => (
-                            <Checkbox value={filters?.callid?.[callid]} key={callid} defaultChecked={true} label={callid} onChange={(v) => setFilters({ ...filters, callid: { ...filters.callid, [callid]: (v.target as HTMLInputElement).checked } })} />
-
-                        ))}
-
-                    </HorizontalGroup>
-                </MyCollapse>
-            }
-        </span>
+        <FilterMenu filters={filters} setFilters={setFilters} isSimplify={isSimplify} setIsSimplify={setIsSimplify} options={options}></FilterMenu>
     );
     const themeName: string = useTheme2().name;
     return (
@@ -178,59 +119,5 @@ export const FilterPanel = ({ data, onFilter, onSimplify, options }: FilterProps
                 `)} id="filter" icon="filter" fill="text" variant="secondary" />
         </Toggletip>
 
-    )
-}
-interface MyCollapseProps {
-    label: string;
-    children: React.ReactNode;
-    filterState: any;
-    filterProperty: string;
-    setFilters: React.Dispatch<React.SetStateAction<any>>;
-    filterLabel: string;
-}
-const MyCollapse = ({ label, children, filterState, filterProperty, setFilters, filterLabel }: MyCollapseProps) => {
-    const [isOpen, setIsOpen] = useState(false)
-    const [indeterminate, setIndeterminate] = useState(false)
-    const [checked, setChecked] = useState(false)
-    useEffect(() => {
-        let count = 0
-        const keys = Object.values(filterState[filterProperty])
-        keys.forEach(item => {
-            if (item) {
-                count += 1
-            }
-        })
-        console.log(count, keys.length, filterState[filterProperty])
-        setIndeterminate(count > 0 && count < keys.length)
-        setChecked(count === keys.length)
-    }, [filterState, filterProperty])
-    const setFilterState = () => {
-
-        setFilters(() => ({
-            ...filterState,
-            [filterProperty]: Object.fromEntries(
-                Object.entries(filterState[filterProperty]).map(([key]) => [key, !checked])
-            ),
-        }));
-
-    } 
-    return (
-
-        <span style={{ position: 'relative', width: '100%' }}>
-            <span style={{ position: 'absolute', left: '28px', right: 0, top: '10px', display: 'flex', alignItems: 'center' }}>
-                <Checkbox indeterminate={indeterminate} checked={checked} onChange={setFilterState} />
-                <span style={{ zIndex: 1, marginLeft: '8px', pointerEvents: 'none' }}>{label}</span>
-
-                <Tooltip content={`Filters by "${filterLabel}" label`}>
-                    <Icon name="question-circle" style={{ zIndex: 1, position: 'absolute', right: '10px' }} size="xl"></Icon>
-                </Tooltip>
-            </span>
-            <Collapse collapsible={true} isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)} label={''}>
-                    <div className={getStyles().collapseChildrenWrapper}>
-
-                        {children}
-                    </div>
-        </Collapse>
-        </span>
     )
 }
