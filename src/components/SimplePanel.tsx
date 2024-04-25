@@ -1,29 +1,27 @@
 import { css, cx } from '@emotion/css';
-import { GrafanaTheme2, PanelProps, StandardEditorProps } from '@grafana/data';
-import React, { useEffect, useRef, useState } from 'react';
-import ReactJson from 'react-json-view';
+import { GrafanaTheme2, PanelProps } from '@grafana/data';
+import React, { useEffect, useState } from 'react';
 import './../../ngx-flow/widget/ngx-flow.js';
 
 import {
     Button,
-    Collapse,
     Dropdown,
     Menu,
-    Modal,
-    MultiSelect,
     useStyles2,
     useTheme2
 } from '@grafana/ui';
 import { filterFlowItems } from 'helpers/dataProcessors/filterFlowItems';
 import { pcapExporter, textExporter } from 'helpers/exporters';
-import { CopyText } from './CopyText/CopyText';
+import { FlowOptions } from 'types.js';
 import { FilterPanel, Filters, defaultFilters } from './FilterPanel/FilterPanel';
+import { FlowModal } from './FlowModal/FlowModal';
 
 
 
-interface Props extends PanelProps {
-    options: any
+export interface MyPanelProps extends PanelProps {
+    options: FlowOptions
 }
+
 
 type CustomElement<T> = Partial<T & React.DOMAttributes<T> & { children: any }>;
 
@@ -35,58 +33,6 @@ declare global {
         }
     }
 }
-
-export const TemplateEditor = ({ value, onChange }: StandardEditorProps<string>) => {
-    const [isOpen, setIsOpen] = React.useState(false);
-    const themeName: string = useTheme2().name;
-    const styles = useStyles2(getStyles);
-
-    const templateData = JSON.stringify({
-        actors: [], data: [{
-            messageID: 'messageID',
-            details: 'details',
-            source: 'source',
-            destination: 'destination',
-            title: 'title',
-            aboveArrow: 'aboveArrow',
-            belowArrow: 'belowArrow',
-            sourceLabel: 'sourceLabel',
-            destinationLabel: 'destinationLabel',
-        }]
-    });
-    return <Collapse label="Template" isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)}>
-        <div className={cx(
-            styles.wrapper, css`
-    height: 250px;
-    `)}>
-            <ngx-flow-out data-flow={templateData} theme={themeName} />
-        </div>
-    </Collapse>;
-}
-export const SimpleEditor = ({ value, onChange, context: { data } }: StandardEditorProps<string[]>) => {
-    const [selectValue, setSelectValue] = React.useState<any>();
-    const [labels, setLabels] = useState<string[]>([])
-
-    useEffect(() => {
-        const dataEntry = data?.[0];
-        if (dataEntry && dataEntry.fields) {
-            const labelField = dataEntry.fields[0];
-            const labels = Object.keys(labelField.values[0])
-            setLabels(labels)
-        }
-    }, [data])
-    useEffect(() => {
-        setSelectValue(value)
-    }, [value])
-    return <MultiSelect
-        options={labels.map((i: any) => ({ label: i, value: i }))}
-        value={selectValue}
-        onChange={(v: any[]) => {
-            setSelectValue(v);
-            onChange(v.map((j: any) => j.value));
-        }}
-    />;
-};
 
 const getStyles = ({ name: themeName }: GrafanaTheme2) => {
     return {
@@ -128,91 +74,22 @@ const getStyles = ({ name: themeName }: GrafanaTheme2) => {
     };
 };
 
-export const DetailItem: React.FC<any> = ({ item, theme }: any): JSX.Element | null => {
-    let [key, value]: any = item;
-    const themeName: any = theme === 'Dark' ? 'railscasts' : 'rjv-default'
-    let isJSON = false;
-    const styles = useStyles2(getStyles);
-    const isTimestamp = (new Date(value)).getTime() > 0;
-    if (isTimestamp) {
-        value = `${new Date(value).toISOString()} | ${value}`;
-    }
-    try {
-        isJSON = typeof JSON.parse(value) === 'object';
-    } catch (e) { }
-    const textAreaRef: any = useRef(null);
 
-    function copyToClipboard() {
-        if (textAreaRef && textAreaRef.current) {
-            textAreaRef.current.focus();
-            textAreaRef.current.select();
-            document.execCommand('copy');
-        }
-    };
-    const [copyValue, setCopyValue] = useState('')
-    return (<div>
-        <textarea
-            ref={textAreaRef} value={copyValue} style={{ pointerEvents: 'none', opacity: 0, position: 'fixed', left: 0, top: 0, border: 0, padding: 0 }} />
-        {value ? <>
-            <strong className={styles.label}>{key}</strong>
-            {isJSON ?
-                <pre>
-                    <ReactJson
-                        src={JSON.parse(value)}
-                        theme={themeName}
-                        displayDataTypes={false}
-                        displayObjectSize={false}
-                        enableClipboard={({ src }) => {
-                            let textToCopy = JSON.stringify(src);
-                            if (textToCopy.startsWith("\"") && textToCopy.endsWith("\"")) {
-                                textToCopy = textToCopy.substring(1, textToCopy.length - 1);
-                            }
-                            if (navigator.clipboard) {
-                                navigator.clipboard.writeText(textToCopy)
-                            } else {
-                                setCopyValue(textToCopy)
-                                setTimeout(() => {
-                                    copyToClipboard()
-                                }, 0);
-                            }
-                        }}
-                        quotesOnKeys={false}
-                        name={false}
 
-                    />
-                </pre> :
-                <span style={{ position: 'relative' }}>
-                    <pre className={styles.pre}>
-                        {value}
-                    </pre>
-                    <span style={{ position: 'absolute', right: 15, top: 32 }}>
 
-                        <CopyText text={value} />
-                    </span>
-                </span>
-            }
-        </> : <>
-        </>}
-
-    </div>);
-}
-let ngxFlowClickHandler: Function = function () { };
-
-document.addEventListener('ngx-flow-click-item', function (e: any) {
-    ngxFlowClickHandler(e)
-});
-export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) => {
-    const [flowData, setFlowData] = React.useState({ actors: [], data: [] });
-    const [modalIsOpen, setModalIsOpen] = React.useState(false);
-    const [modalData, setModalData] = React.useState({});
-    const [modalDataFields, setModalDataFields] = React.useState<Map<string, any>>();
+export const FlowPanel = ({ options, data, width, height }: MyPanelProps) => {
+    console.log(options)
+    const [flowData, setFlowData] = useState({ actors: [], data: [] });
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [modalData, setModalData] = useState({});
+    const [modalDataFields, setModalDataFields] = useState<Map<string, any>>();
     const [isSimplify, setIsSimplify] = useState(false);
     const onModalClose = () => {
         setModalIsOpen(false);
     };
     // Export .txt
     useEffect(() => {
-        const handler = (e: any) => {
+        const handler = () => {
             textExporter(data);
         }
         document.addEventListener('export-flow-as-text', handler);
@@ -222,7 +99,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
     }, [data])
     // Export .pcap
     useEffect(() => {
-        const handler = (e: any) => {
+        const handler = () => {
             pcapExporter(data);
         }
         document.addEventListener('export-flow-as-pcap', handler);
@@ -239,15 +116,24 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
             filterFlowItems(data, options, setFlowData, setModalDataFields, filters);
         }
     }, [data, options, filters]);
-    console.log(flowData)
-    ngxFlowClickHandler = (e: any) => {
-        const details: any = modalDataFields?.get(e.detail)
-        if (typeof details.labels === 'object') {
-            details.labels = JSON.stringify(details.labels);
+    useEffect(() => {
+        const ngxFlowClickHandler = (e: any) => {
+            const details: any = modalDataFields?.get(e.detail)
+            if (typeof details.labels === 'object') {
+                details.labels = JSON.stringify(details.labels);
+            }
+            setModalData(details);
+            setModalIsOpen(true);
+        };
+        document.addEventListener('ngx-flow-click-item', function (e: any) {
+            ngxFlowClickHandler(e)
+        });
+
+        return () => {
+            document.removeEventListener('ngx-flow-click-item', ngxFlowClickHandler);
         }
-        setModalData(details);
-        setModalIsOpen(true);
-    };
+    }, [modalDataFields]);
+
     const flowDataJSON = JSON.stringify(flowData);
     const menu = (
         <Menu>
@@ -303,15 +189,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height }) =
             {/* <FlowMemo flowData={flowData} themeName={themeName} /> */}
             <ngx-flow-out data-flow={flowDataJSON} is-simplify={isSimplify} theme={themeName} />
 
-            <Modal title="Message Details" isOpen={modalIsOpen} onDismiss={onModalClose}>
-                {modalData && Object.entries(modalData).map((item: any, key: number) => (
-                    // <p>{item} | {key}</p>
-                    <DetailItem item={item} key={key} theme={themeName} />
-                ))}
-                <Button variant="primary" onClick={onModalClose}>
-                    Close
-                </Button>
-            </Modal>
+            <FlowModal modalIsOpen={modalIsOpen} modalData={modalData} onModalClose={onModalClose} themeName={themeName} />
 
         </div>
     );
