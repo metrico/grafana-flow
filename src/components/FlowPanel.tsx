@@ -1,7 +1,7 @@
 import { css, cx } from '@emotion/css';
 import { GrafanaTheme2, PanelProps } from '@grafana/data';
 import React, { useEffect, useState } from 'react';
-import './../../ngx-flow/widget/ngx-flow.js';
+import '../../ngx-flow/widget/ngx-flow.js';
 
 import {
     Button,

@@ -1,5 +1,5 @@
 import { PanelPlugin } from '@grafana/data';
-import { FlowPanel } from './components/SimplePanel';
+import { FlowPanel } from './components/FlowPanel';
 import { FlowOptions } from './types';
 import { TemplateEditor, MultiSelectEditor } from 'components/PluginSettings';
 
