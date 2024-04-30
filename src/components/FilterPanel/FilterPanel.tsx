@@ -88,14 +88,16 @@ export const FilterPanel = ({ data, onFilter, onSimplify, options }: FilterProps
             })
             return newMap
         }
-        const newFilters = { ...defaultFilters };
-        newFilters.ip.values = getArrayOfValues(newFilters.ip.values, ips)
-        // newFilters.port.values = getArrayOfValues(ports)
-        // newFilters.ipPort.values = getArrayOfValues(ipPorts)
-        newFilters.method.values = getArrayOfValues(newFilters.method.values, methods)
-        newFilters.type.values = getArrayOfValues(newFilters.type.values, payloadType)
-        newFilters.callid.values = getArrayOfValues(newFilters.callid.values, callid)
-        setFilters((prev) => ({ ...prev, ...newFilters }))
+        setFilters((prev) => {
+            const newFilters = { ...defaultFilters };
+            newFilters.ip.values = getArrayOfValues(prev.ip.values, ips)
+            // newFilters.port.values = getArrayOfValues(ports)
+            // newFilters.ipPort.values = getArrayOfValues(ipPorts)
+            newFilters.method.values = getArrayOfValues(prev.method.values, methods)
+            newFilters.type.values = getArrayOfValues(prev.type.values, payloadType)
+            newFilters.callid.values = getArrayOfValues(prev.callid.values, callid)
+            return newFilters
+        })
     }, [data])
     useEffect(() => {
         onSimplify(isSimplify)
