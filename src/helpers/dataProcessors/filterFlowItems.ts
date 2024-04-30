@@ -25,12 +25,11 @@ export const filterFlowItems = (data: PanelData, options: any, setFlowData: Func
                     };
                     const itemHash = hash(JSON.stringify(item))
                     map.set(itemHash, item);
-
-                    const isCallidDisabled = !filters.callid.values.get(labelItem.callid) ?? true
-                    const isTypeDisabled = !filters.type.values.get(labelItem.type) ?? true
-                    const isMethodDisabled = !filters.method.values.get(labelItem.response) ?? true
-                    const isSrcIPDisabled = !filters.ip.values.get(labelItem.src_ip) ?? true
-                    const isDstIPDisabled = !filters.ip.values.get(labelItem.dst_ip) ?? true
+                    const isCallidDisabled = !(filters.callid.values.get(labelItem.callid) ?? true)
+                    const isTypeDisabled = !(filters.type.values.get(labelItem.type) ?? true)
+                    const isMethodDisabled = !(filters.method.values.get(labelItem.response) ?? true)
+                    const isSrcIPDisabled = !(filters.ip.values.get(labelItem.src_ip) ?? true)
+                    const isDstIPDisabled = !(filters.ip.values.get(labelItem.dst_ip) ?? true)
                     const hidden = isSrcIPDisabled ||
                         isDstIPDisabled ||
                         isMethodDisabled ||
