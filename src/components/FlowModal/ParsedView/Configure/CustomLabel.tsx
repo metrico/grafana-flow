@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MultiValueGenericProps } from 'react-select';
 
-export const MultiValueLabel = (props: MultiValueGenericProps<any>) => {
-    const [label, setLabel] = useState(props.data.label)
-    if (props.data && props.data.label && typeof props.data.label === 'string') {
+export const MultiValueLabel = ({ data: { label }, innerProps }: MultiValueGenericProps<any>) => {
+    const [labelState, setLabel] = useState(label)
+    useEffect(() => {
         setLabel(label.replace('Full `', '').replace('` object', ''))
-    }
+    }, [label])
     return (
-        <div {...props.innerProps}>{label}</div>
+        <div {...innerProps}>{labelState}</div>
     );
 };
 
