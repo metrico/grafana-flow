@@ -77,8 +77,8 @@ const getStyles = ({ name: themeName }: GrafanaTheme2) => {
 
 
 
-export const FlowPanel = ({ options, data, width, height }: MyPanelProps) => {
-    console.log(options)
+export const FlowPanel = (props: MyPanelProps) => {
+    const { options, data, width, height } = props
     const [flowData, setFlowData] = useState({ actors: [], data: [] });
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalData, setModalData] = useState({});
@@ -119,7 +119,7 @@ export const FlowPanel = ({ options, data, width, height }: MyPanelProps) => {
     useEffect(() => {
         const ngxFlowClickHandler = (e: any) => {
             const details: any = modalDataFields?.get(e.detail)
-            if (typeof details.labels === 'object') {
+            if (typeof details?.labels === 'object') {
                 details.labels = JSON.stringify(details.labels);
             }
             setModalData(details);
@@ -189,7 +189,7 @@ export const FlowPanel = ({ options, data, width, height }: MyPanelProps) => {
             {/* <FlowMemo flowData={flowData} themeName={themeName} /> */}
             <ngx-flow-out data-flow={flowDataJSON} is-simplify={isSimplify} theme={themeName} />
 
-            <FlowModal modalIsOpen={modalIsOpen} modalData={modalData} onModalClose={onModalClose} themeName={themeName} />
+            <FlowModal fullData={data} modalIsOpen={modalIsOpen} modalData={modalData} onModalClose={onModalClose} themeName={themeName} />
 
         </div>
     );
