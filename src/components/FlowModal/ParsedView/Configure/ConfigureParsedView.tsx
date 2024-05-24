@@ -1,4 +1,4 @@
-import { PanelData } from "@grafana/data";
+import { AppEvents, PanelData } from "@grafana/data";
 import { Button, Icon, Modal, ToolbarButton, ToolbarButtonRow } from "@grafana/ui";
 import { parseDataIntoListOfFields } from "helpers/dataProcessors/parseDataIntoListOfFields";
 import React, { useCallback, useEffect, useState } from "react";
@@ -8,6 +8,9 @@ import { ParsedLabel } from "../DataScheme";
 import { ParsedViewEntry } from "./Entry";
 import { uuid } from "helpers/uuid";
 import { saveAs } from "helpers/saveAs";
+import { validateDataScheme } from "./validateDataScheme";
+// @ts-ignore
+import appEvents from 'grafana/app/core/app_events';
 interface Props {
     isModalOpen: boolean
     onModalClose: (doSave: boolean) => void
@@ -61,9 +64,9 @@ export const ConfigureParsedViewModal = ({ isModalOpen, onModalClose, data, setD
                 const text = e.target.result;
                 try {
                     const data = JSON.parse(text);
-                    if (data.length > 0) {
-                        console.log(data)
+                    if (validateDataScheme(data)) {
                         setDataSchemeValue(data)
+                        appEvents.emit(AppEvents.alertSuccess, ["Imported successfully"])
                     }
                 } catch (error) {
 
