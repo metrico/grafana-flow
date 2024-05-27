@@ -49,8 +49,8 @@ export const DetailItem = ({ item, theme, tooltip }: Props): JSX.Element | null 
         {value && (
             (isJSON || isMultiLine) ?
                 <>
-                    <InlineLabel tooltip={key.length > 15 ? `${key}: ${tooltip}` : tooltip} style={{ height: '41px', borderRadius: '4px', marginBottom: '4px' }}>
-                        {key.length > 15 ? key.slice(0, 12) + '...' : key}
+                    <InlineLabel tooltip={tooltip} style={{ height: '41px', borderRadius: '4px', marginBottom: '4px' }}>
+                        {key}
                     </InlineLabel>
             {isJSON ?
                 <pre>
