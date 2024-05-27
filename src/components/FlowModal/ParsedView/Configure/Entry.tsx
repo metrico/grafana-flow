@@ -36,7 +36,7 @@ export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separat
     const ref = useRef<HTMLSpanElement>(null)
     const styles = getStyles()
     const [optionsState, setOptionsState] = useState<Array<SelectableValue<any>>>([])
-
+    const [preventDrag, setPreventDrag] = useState(false)
     useEffect(() => {
         const groups = new Map<string, any>()
         const options2: Array<SelectableValue<any>> = []
@@ -133,6 +133,7 @@ export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separat
         collect: (monitor: any) => ({
             isDragging: monitor.isDragging(),
         }),
+        canDrag: () => !preventDrag
     })
     setIsDragMode(isDragging)
     drag(drop(ref))
@@ -142,7 +143,9 @@ export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separat
             <Card>
                 <Card.Description>
                     <InlineField label="Title" labelWidth={labelWidth} grow={true}>
-                        <Input value={title} onChange={(e) => {
+                        <Input
+                            onMouseDown={() => { setPreventDrag(true) }} onMouseUp={() => { setPreventDrag(false) }}
+                            value={title} onChange={(e) => {
                             setDataSchemeValue(prev => {
                                 const newValue = [...prev]
                                 newValue[index].title = e.currentTarget.value
@@ -151,7 +154,9 @@ export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separat
                         }} />
                     </InlineField>
                     <InlineField label="Tooltip" labelWidth={labelWidth} grow={true}>
-                        <Input value={tooltip} onChange={(e) => {
+                        <Input
+                            onMouseDown={() => { setPreventDrag(true) }} onMouseUp={() => { setPreventDrag(false) }}
+                            value={tooltip} onChange={(e) => {
                             setDataSchemeValue(prev => {
                                 const newValue = [...prev]
                                 newValue[index].tooltip = e.currentTarget.value
@@ -160,7 +165,7 @@ export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separat
                         }} />
                     </InlineField>
                     <InlineField label="Labels" labelWidth={labelWidth} grow={true}>
-                        <MultiSelect
+                        <MultiSelect 
                             isClearable={true}
                             options={optionsState}
                             value={labels}
@@ -178,7 +183,9 @@ export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separat
 
                     {labels.length > 1 &&
                         <InlineField label="Separator" labelWidth={labelWidth} grow={true}>
-                            <Input value={separator} onChange={(e) => {
+                            <Input
+                                onMouseDown={() => { setPreventDrag(true) }} onMouseUp={() => { setPreventDrag(false) }}
+                                value={separator} onChange={(e) => {
                                 setDataSchemeValue(prev => {
                                     const newValue = [...prev]
                                     newValue[index].separator = e.currentTarget.value
