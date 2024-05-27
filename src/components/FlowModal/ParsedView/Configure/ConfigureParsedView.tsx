@@ -1,16 +1,16 @@
-import { AppEvents, PanelData } from "@grafana/data";
+import { PanelData } from "@grafana/data";
 import { Button, Icon, Modal, ToolbarButton, ToolbarButtonRow } from "@grafana/ui";
 import { parseDataIntoListOfFields } from "helpers/dataProcessors/parseDataIntoListOfFields";
+import { saveAs } from "helpers/saveAs";
+import { uuid } from "helpers/uuid";
 import React, { useCallback, useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ParsedLabel } from "../DataScheme";
 import { ParsedViewEntry } from "./Entry";
-import { uuid } from "helpers/uuid";
-import { saveAs } from "helpers/saveAs";
 import { validateDataScheme } from "./validateDataScheme";
 // @ts-ignore
-import appEvents from 'grafana/app/core/app_events';
+import { useNotification } from "hooks/useNotification";
 interface Props {
     isModalOpen: boolean
     onModalClose: (doSave: boolean) => void
@@ -22,6 +22,7 @@ interface Props {
 export const ConfigureParsedViewModal = ({ isModalOpen, onModalClose, data, setDataSchemeValue, dataScheme, fullData }: Props) => {
 
     const [labelList, setLabelList] = useState<any[]>([])
+    const { success } = useNotification()
     useEffect(() => {
         const labelMap = new Map<string, string>()
         fullData.series.forEach((item) => {
@@ -66,7 +67,7 @@ export const ConfigureParsedViewModal = ({ isModalOpen, onModalClose, data, setD
                     const data = JSON.parse(text);
                     if (validateDataScheme(data)) {
                         setDataSchemeValue(data)
-                        appEvents.emit(AppEvents.alertSuccess, ["Imported successfully"])
+                        success('Imported successfully')
                     }
                 } catch (error) {
 

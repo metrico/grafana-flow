@@ -6,6 +6,7 @@ import { ConfigureParsedViewModal } from "./ParsedView/Configure/ConfigureParsed
 import { ParsedLabel, dataScheme } from "./ParsedView/DataScheme"
 import { PanelData } from "@grafana/data"
 import { getBackendSrv } from "@grafana/runtime"
+import { useNotification } from "hooks/useNotification"
 
 interface FlowModalProps {
     modalIsOpen: boolean
@@ -18,6 +19,8 @@ export const FlowModal = ({ modalIsOpen, modalData, onModalClose, themeName, ful
     const [isParsed, setIsParsed] = useState(true)
     const [isParsedViewModalOpen, setIsParsedViewModalOpen] = useState(false)
     const [dataSchemeValue, setDataSchemeValue] = useState<ParsedLabel[]>([])
+    const { success, error } = useNotification()
+
     useEffect(() => {
         setDataSchemeValue(dataScheme)
         getBackendSrv().get(`api/plugins/qxip-flow-panel/settings`).then((data: any) => {
@@ -30,17 +33,19 @@ export const FlowModal = ({ modalIsOpen, modalData, onModalClose, themeName, ful
         setIsParsedViewModalOpen(false)
         const fitleredDataScheme = dataSchemeValue.filter((item) => item.labels.length > 0)
         setDataSchemeValue(fitleredDataScheme)
-        console.log(fitleredDataScheme)
         if (doSave) {
             getBackendSrv().post(`api/plugins/qxip-flow-panel/settings`,
                 {
                     jsonData: {
                         parsedViewConfiguration: fitleredDataScheme
                     },
-                    pinned: true
-                });
+                    pinned: true,
+
+                }, { showSuccessAlert: false }).then(() => {
+                    success('Parsed view configuration saved successfully')
+                })
         }
-    }, [dataSchemeValue])
+    }, [dataSchemeValue, success])
     return (
         <Modal title="Message Details" isOpen={modalIsOpen} onDismiss={onModalClose}>
             <Tooltip
