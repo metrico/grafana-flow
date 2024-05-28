@@ -43,6 +43,12 @@ export const FilterCollapse = ({ title, children, filterState, label, setFilters
             filter.values.forEach((value, key) => {
                 newFilterValues.set(key, !checked)
             })
+            const filterArray = Array.from(newFilterValues.values())
+            const isAnyChecked = filterArray.includes(true)
+            if (!isAnyChecked) {
+                const first = newFilterValues.keys().next().value
+                newFilterValues.set(first, true)
+            }
             return {
                 ...prevState,
                 [label]: {

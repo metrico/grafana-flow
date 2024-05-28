@@ -19,7 +19,7 @@ export const FlowModal = ({ modalIsOpen, modalData, onModalClose, themeName, ful
     const [isParsed, setIsParsed] = useState(true)
     const [isParsedViewModalOpen, setIsParsedViewModalOpen] = useState(false)
     const [dataSchemeValue, setDataSchemeValue] = useState<ParsedLabel[]>([])
-    const { success, error } = useNotification()
+    const { success } = useNotification()
 
     useEffect(() => {
         setDataSchemeValue(dataScheme)

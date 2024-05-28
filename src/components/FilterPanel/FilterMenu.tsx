@@ -3,6 +3,7 @@ import { Tooltip, InlineSwitch, HorizontalGroup, Checkbox } from "@grafana/ui";
 import React from "react";
 import { FilterCollapse } from "./Collapse";
 import { FilterKeys, Filters } from "./FilterPanel";
+import { useNotification } from "hooks/useNotification";
 interface Props {
 
     filters: Filters
@@ -12,6 +13,7 @@ interface Props {
     options: any
 }
 export function FilterMenu({ filters, setFilters, isSimplify, setIsSimplify, options }: Props) {
+    const { warning } = useNotification()
     return (<span
         className={cx(
             css`
@@ -43,6 +45,11 @@ export function FilterMenu({ filters, setFilters, isSimplify, setIsSimplify, opt
                                 const filter = prevState[key as FilterKeys]
                                 const newFilterValues = new Map(filter.values)
                                 newFilterValues.set(label, (v.target as HTMLInputElement).checked)
+                                const isAnyChecked = Array.from(newFilterValues.values()).includes(true)
+                                if (!isAnyChecked) {
+                                    warning('There must be at least one checked option')
+                                    return prevState
+                                }
                                 return {
                                     ...prevState,
                                     [key]: {
