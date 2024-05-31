@@ -7,6 +7,7 @@ import { encodeUDPFrame } from "helpers/packets/udpPacket";
 import { Buffer } from 'buffer';
 // @ts-ignore
 import { configure } from 'pcap-generator';
+import { saveAs } from "helpers/saveAs";
 
 export const pcapExporter = (data: PanelData) => {
     const [serie]: any = (data as any)?.series || [];
@@ -78,10 +79,6 @@ export const pcapExporter = (data: PanelData) => {
     const generator = configure({ Buffer: Buffer, snapshotLength: 102400, linkLayerType: 1 })
     const pcapFile = generator(packets2)
     const blob = new Blob([pcapFile], { type: 'application/vnd.tcpdump.pcap' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    const date = new Date();
-    link.download = `${convertDateToFileName(date)}.pcap`;
-    link.click();
+    saveAs(blob, `${convertDateToFileName(new Date())}.pcap`);
     return data;
 }

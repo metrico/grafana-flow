@@ -5,7 +5,6 @@ import { labelFormatter } from "helpers/labelFormatter";
 import { formatAndSortFlowItems } from "./formatAndSortFlowItems";
 
 export const filterFlowItems = (data: PanelData, options: any, setFlowData: Function, setModalDataFields: Function, filters: Filters) => {
-    console.log(filters)
     const [serie] = (data)?.series || [];
     const fields = serie?.fields || [];
     if (fields) {
@@ -26,17 +25,16 @@ export const filterFlowItems = (data: PanelData, options: any, setFlowData: Func
                     };
                     const itemHash = hash(JSON.stringify(item))
                     map.set(itemHash, item);
-
-                    const isSrcIPDisabled = !(filters?.['ip']?.[labelItem.src_ip] ?? true)
-                    const isDstIPDisabled = !(filters?.['ip']?.[labelItem.dst_ip] ?? true)
-                    const isSrcPortDisabled = !(filters?.['port']?.[labelItem.src_port] ?? true)
-                    const isDstPortDisabled = !(filters?.['port']?.[labelItem.dst_port] ?? true)
-                    const isSrcIpPortDisabled = !(filters?.['ipPort']?.[labelItem.src_ip + ':' + labelItem.src_port] ?? true)
-                    const isDstIpPortDisabled = !(filters?.['ipPort']?.[labelItem.dst_ip + ':' + labelItem.dst_port] ?? true)
-                    const isMethodDisabled = !(filters?.['method']?.[labelItem.response] ?? true)
-                    const isTypeDisabled = !(filters?.['type']?.[labelItem.type] ?? true)
-                    const isCallidDisabled = !(filters?.['callid']?.[labelItem.callid] ?? true)
-                    const hidden = isSrcIPDisabled || isDstIPDisabled || isSrcPortDisabled || isDstPortDisabled || isSrcIpPortDisabled || isDstIpPortDisabled || isMethodDisabled || isTypeDisabled || isCallidDisabled
+                    const isCallidDisabled = !(filters.callid.values.get(labelItem.callid) ?? true)
+                    const isTypeDisabled = !(filters.type.values.get(labelItem.type) ?? true)
+                    const isMethodDisabled = !(filters.method.values.get(labelItem.response) ?? true)
+                    const isSrcIPDisabled = !(filters.ip.values.get(labelItem.src_ip) ?? true)
+                    const isDstIPDisabled = !(filters.ip.values.get(labelItem.dst_ip) ?? true)
+                    const hidden = isSrcIPDisabled ||
+                        isDstIPDisabled ||
+                        isMethodDisabled ||
+                        isTypeDisabled ||
+                        isCallidDisabled
 
                     return {
                         messageID: getOptionValue(options.colorGenerator) || 'Title',
