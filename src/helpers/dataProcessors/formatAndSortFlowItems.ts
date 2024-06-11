@@ -35,8 +35,10 @@ export enum Type {
     SIP = "sip",
 }
 
-export const formatAndSortFlowItems = (data: PanelData, sortType: "none" | "time_old" | "time_new" = 'none'): FlowItem[] => {
-
+export const formatAndSortFlowItems = (data: PanelData | undefined, sortType: "none" | "time_old" | "time_new" = 'none'): FlowItem[] => {
+    if (typeof data === 'undefined') {
+        return [];
+    }
     const [serie] = data?.series || [];
     const fields = serie?.fields || [];
     if (fields) {
@@ -67,10 +69,12 @@ export const formatAndSortFlowItems = (data: PanelData, sortType: "none" | "time
             }
         });
         if (sortType === 'time_old') {
+            console.log(sortData);
             return sortData;
         }
 
         if (sortType === 'time_new') {
+            console.log(sortData.reverse());
             return sortData.reverse();
         }
 

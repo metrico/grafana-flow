@@ -13,7 +13,7 @@ export const filterFlowItems = (data: PanelData, options: any, setFlowData: Func
         const outData = firstField?.values;
         const map = new Map();
         if (outData) {
-            setFlowData({
+            const filteredData = {
                 actors: [], data: sortData.map((item: any) => {
                     const message: string = item.Line || '';
                     const labelItem: any = item.labels || {};
@@ -35,7 +35,7 @@ export const filterFlowItems = (data: PanelData, options: any, setFlowData: Func
                         isMethodDisabled ||
                         isTypeDisabled ||
                         isCallidDisabled
-
+                    console.log(getOptionValue(options.details))
                     return {
                         messageID: getOptionValue(options.colorGenerator) || 'Title',
                         details: getOptionValue(options.details) || '',
@@ -51,8 +51,14 @@ export const filterFlowItems = (data: PanelData, options: any, setFlowData: Func
                         hash: itemHash
                     }
                 }).filter((item: any) => !item.hidden)
-            })
+            }
+            setFlowData(filteredData)
             setModalDataFields(map);
+            return filteredData
         }
+    }
+
+    return {
+        actors: [], data: []
     }
 }
