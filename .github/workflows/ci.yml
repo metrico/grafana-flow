@@ -98,4 +98,4 @@ jobs:
       - name: Install Jest
         run: npm install -g jest
       - name: Unit test
-        run: npm run test
+        run: npm run test:ci
