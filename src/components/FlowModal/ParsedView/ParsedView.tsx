@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { DetailItem } from '../DetailItem';
 import { ParsedLabel } from './DataScheme';
 import { parseDataIntoListOfFields } from 'helpers/dataProcessors/parseDataIntoListOfFields';
-import { sampleParsedViewConfig, sampleParsedViewConfig2 } from 'test-samples/sample-parsed-view-config';
 interface Value {
     value: string
     title: string
@@ -14,9 +13,7 @@ interface Props {
     dataScheme: ParsedLabel[]
 }
 export const ParsedView: React.FC<any> = ({ data, theme, dataScheme }: Props): JSX.Element | null => {
-    console.log(data)
     const [values, setValues] = useState<Value[]>([])
-    dataScheme = sampleParsedViewConfig2
     useEffect(() => {
         parseData(data, dataScheme, setValues);
     }, [data, dataScheme])
