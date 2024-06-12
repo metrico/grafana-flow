@@ -5,7 +5,7 @@ export const validateDataScheme = (dataScheme: ParsedLabel[]): boolean => {
         return false
     }
     if (dataScheme.every((item) => {
-        return Array.isArray(item.labels) && typeof item.title === 'string'
+        return Array.isArray(item.labels) && item.labels.length > 0 && typeof item.title === 'string'
     })) {
         return true
     }
