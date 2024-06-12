@@ -15,6 +15,7 @@ import { pcapExporter, textExporter } from 'helpers/exporters';
 import { FlowOptions } from 'types.js';
 import { FilterPanel, Filters, defaultFilters } from './FilterPanel/FilterPanel';
 import { FlowModal } from './FlowModal/FlowModal';
+import { sampleData } from 'test-samples/sample-data';
 
 
 
@@ -77,8 +78,8 @@ const getStyles = ({ name: themeName }: GrafanaTheme2) => {
 
 
 
-export const FlowPanel = (props: MyPanelProps) => {
-    const { options, data, width, height } = props
+export const FlowPanel = ({ options, data, width, height }: MyPanelProps) => {
+    data = sampleData    
     const [flowData, setFlowData] = useState({ actors: [], data: [] });
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalData, setModalData] = useState({});

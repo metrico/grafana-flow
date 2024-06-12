@@ -35,7 +35,6 @@ export const filterFlowItems = (data: PanelData, options: any, setFlowData: Func
                         isMethodDisabled ||
                         isTypeDisabled ||
                         isCallidDisabled
-                    console.log(getOptionValue(options.details))
                     return {
                         messageID: getOptionValue(options.colorGenerator) || 'Title',
                         details: getOptionValue(options.details) || '',
