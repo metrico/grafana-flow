@@ -1,5 +1,5 @@
 import { SelectableValue } from "@grafana/data";
-import { Card, InlineField, Input, MultiSelect } from "@grafana/ui";
+import { Card, InlineField, Input, MultiSelect, Select } from "@grafana/ui";
 import React, { useEffect, useRef, useState } from "react";
 import { XYCoord, useDrag, useDrop } from "react-dnd";
 import type { Identifier } from 'dnd-core'
@@ -7,6 +7,7 @@ import { ParsedLabel } from "../DataScheme";
 import { css } from "@emotion/css";
 import { CustomOption } from "./CustomOption";
 import { MultiValueLabel } from "./CustomLabel";
+import { parserConfigs, parsers } from "../Parsers/parsers";
 interface Props {
     parsedLabel: ParsedLabel
     labelList: any[]
@@ -32,11 +33,13 @@ const getStyles = () => {
         `
     }
 }
-export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separator }, labelList, index, setDataSchemeValue, moveCard, isDragMode, setIsDragMode }: Props) => {
+export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separator, parser, parserConfig }, labelList, index, setDataSchemeValue, moveCard, isDragMode, setIsDragMode }: Props) => {
     const ref = useRef<HTMLSpanElement>(null)
     const styles = getStyles()
-    const [optionsState, setOptionsState] = useState<Array<SelectableValue<any>>>([])
+    const [labelOptionsState, setLabelOptionsState] = useState<Array<SelectableValue<any>>>([])
     const [preventDrag, setPreventDrag] = useState(false)
+    const [parserOptionsState, _setParsersOptionsState] = useState<Array<SelectableValue<any>>>(Object.keys(parsers).map((key) => ({ label: key, value: key })))
+    const [parserConfigOptionsState, setParserConfigOptionsState] = useState<Array<SelectableValue<any>>>([])
     useEffect(() => {
         const groups = new Map<string, any>()
         const options2: Array<SelectableValue<any>> = []
@@ -63,9 +66,14 @@ export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separat
         groups.forEach((item, key) => {
             groupArray.push(item)
         })
-        setOptionsState(groupArray.concat(options2));
+        setLabelOptionsState(groupArray.concat(options2));
 
     }, [labelList])
+    useEffect(() => {
+        if (typeof parser !== 'undefined' && parserConfigs[parser as keyof typeof parserConfigs]) {
+            setParserConfigOptionsState(parserConfigs[parser as keyof typeof parserConfigs])
+        }
+    }, [parser])
     const [{ handlerId }, drop] = useDrop<
         any,
         void,
@@ -164,10 +172,45 @@ export const ParsedViewEntry = ({ parsedLabel: { title, tooltip, labels, separat
                             })
                         }} />
                     </InlineField>
+                    <InlineField label="Parser" labelWidth={labelWidth} grow={true}>
+                        <Select
+                            isClearable={true}
+                            options={parserOptionsState}
+                            value={parser}
+                            maxMenuHeight={480}
+                            components={{ Option: CustomOption, MultiValueLabel: MultiValueLabel }}
+                            onChange={(v) => {
+                                setDataSchemeValue(prev => {
+                                    const newValue = [...prev]
+                                    newValue[index].parser = v.value
+                                    delete newValue[index].parserConfig
+                                    return newValue
+                                })
+                            }}
+                        />
+                    </InlineField>
+                    {parser && parserConfigOptionsState.length > 0 &&
+                        <InlineField label="Parser" labelWidth={labelWidth} grow={true}>
+                            <Select
+                                isClearable={true}
+                                options={parserConfigOptionsState}
+                                value={parserConfig}
+                                maxMenuHeight={480}
+                                components={{ Option: CustomOption, MultiValueLabel: MultiValueLabel }}
+                                onChange={(v) => {
+                                    setDataSchemeValue(prev => {
+                                        const newValue = [...prev]
+                                        newValue[index].parserConfig = v.value
+                                        return newValue
+                                    })
+                                }}
+                            />
+                        </InlineField>
+                    }
                     <InlineField label="Labels" labelWidth={labelWidth} grow={true}>
                         <MultiSelect 
                             isClearable={true}
-                            options={optionsState}
+                            options={labelOptionsState}
                             value={labels}
                             maxMenuHeight={480}
                             components={{ Option: CustomOption, MultiValueLabel: MultiValueLabel }}

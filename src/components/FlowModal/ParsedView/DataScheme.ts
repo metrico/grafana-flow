@@ -1,9 +1,12 @@
+import { parsers } from "./Parsers/parsers"
+
 export interface ParsedLabel {
     title: string
     labels: string[]
     separator?: string
     tooltip: string
-    parser?: (input: string) => string
+    parser?: keyof typeof parsers
+    parserConfig?: any
     isJSON?: boolean
     UUID: string
 }
@@ -39,7 +42,7 @@ export const dataScheme: DataScheme = [{
     title: "Payload Type",
     tooltip: "Data extracted from the `type` label",
     labels: ["labels.type"],
-    parser: (input: string) => input.toUpperCase(),
+    parser: 'Uppercase',
     UUID: "1b2bfa59-4444-4444-b7ce-6116bab380b2",
 }, {
     title: "Message",

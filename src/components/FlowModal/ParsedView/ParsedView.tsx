@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { DetailItem } from '../DetailItem';
 import { ParsedLabel } from './DataScheme';
 import { parseDataIntoListOfFields } from 'helpers/dataProcessors/parseDataIntoListOfFields';
+import { parsers } from './Parsers/parsers';
 interface Value {
     value: string
     title: string
     tooltip: string
+    hasCustomParser?: boolean
 }
 interface Props {
     data: any
@@ -21,7 +23,7 @@ export const ParsedView: React.FC<any> = ({ data, theme, dataScheme }: Props): J
     return (
         <>
             {values.map((item) => (
-                <DetailItem item={[item.title, item.value]} theme={theme} tooltip={item.tooltip} key={item.value} />
+                <DetailItem item={[item.title, item.value]} theme={theme} tooltip={item.tooltip} key={item.value} hasCustomParser={item.hasCustomParser} />
             ))}
         </>
     );
@@ -43,13 +45,16 @@ export function parseData(data: any, dataScheme: ParsedLabel[], setValues: React
 
             value = labelData.join(item.separator ?? ' | ');
         }
-        if (item.parser) {
-            value = item.parser(value);
+        let hasCustomParser = false
+        if (item.parser && parsers[item.parser]) {
+            value = parsers[item.parser](value, item)
+            hasCustomParser = true
         }
         return {
             value: value,
             tooltip: item.tooltip,
-            title: item.title
+            title: item.title,
+            hasCustomParser: hasCustomParser
         };
     });
     setValues(parsedValues);

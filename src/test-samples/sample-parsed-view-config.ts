@@ -1,8 +1,8 @@
-import { dataScheme } from "components/FlowModal/ParsedView/DataScheme";
+import { ParsedLabel, dataScheme } from "components/FlowModal/ParsedView/DataScheme";
 
 export const sampleParsedViewConfig = dataScheme;
 
-export const sampleParsedViewConfig2 = [{
+export const sampleParsedViewConfig2: ParsedLabel[] = [{
     title: "Call ID",
     tooltip: "Data extracted from the `callid` label",
     labels: ["callid"],
@@ -24,16 +24,12 @@ export const sampleParsedViewConfig2 = [{
     tooltip: "Data extracted from the `response` label",
     labels: ["labels.response", "labels.method"],
     separator: "|",
-    parser: (input: string) => {
-        const [method, cseq] = input.split("|");
-        return `Method: ${method}\nCSeq: ${cseq}`
-    },
     UUID: "1b2bfa59-4444-4444-b7ce-6116bab380b0",
 }, {
     title: "Payload Type",
     tooltip: "Data extracted from the `type` label",
     labels: ["labels.type"],
-    parser: (input: string) => input.toUpperCase(),
+    parser: 'Uppercase',
     UUID: "1b2bfa59-4444-4444-b7ce-6116bab380b2",
 }, {
     title: "Message",

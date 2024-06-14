@@ -809,85 +809,102 @@ export const parsedViewSampleDataSIPAfterParse = [
     {
         "value": "b7jl7s@127.0.0.1",
         "tooltip": "Data extracted from the `callid` label",
-        "title": "Call ID"
+        "title": "Call ID",
+        "hasCustomParser": false,
     },
     {
         "value": "8.76.6.57:5064",
         "tooltip": "Data extracted from the `dst_ip` and `dst_port` labels",
-        "title": "Destination"
+        "title": "Destination",
+        "hasCustomParser": false,
     },
     {
         "value": "17.103.77.199:5060",
         "tooltip": "Data extracted from the `src_ip` and `src_port` labels",
-        "title": "Source"
+        "title": "Source",
+        "hasCustomParser": false,
     },
     {
         "value": "407",
         "tooltip": "Data extracted from the `response` label",
-        "title": "Method"
+        "title": "Method",
+        "hasCustomParser": false,
     },
     {
         "value": "INVITE",
         "tooltip": "Data extracted from the `response` label",
-        "title": "CSeq"
+        "title": "CSeq",
+        "hasCustomParser": false,
     },
     {
         "value": "SIP",
         "tooltip": "Data extracted from the `type` label",
-        "title": "Payload Type"
+        "title": "Payload Type",
+        "hasCustomParser": true,
     },
     {
         "value": "SIP/2.0 407 Proxy Authentication Required\r\nVia: SIP/2.0/UDP 192.168.10.129:5064;received=8.76.6.57;branch=z9hG4bK923381359;rport=5064\r\nFrom: <sip:hepgenjs@sipcapture.org;user=phone>;tag=415746302\r\nTo: <sip:123@sipcapture.org;user=phone>;tag=1d24a28a0bded6c40d31e6db8aab9ac6.0385\r\nCall-ID: b7jl7s@127.0.0.1\r\nCSeq: 440 INVITE\r\nProxy-Authenticate: Digest realm=\"sipcapture.org\", nonce=\"VuRZ5VbkWLkkVKJ9B1rBIN9Q3nRbqc9z\"\r\nServer: SIP Proxy\r\nContent-Length: 0\r\n\r\n\r\n",
         "tooltip": "Data extracted from the `Line` field",
-        "title": "Message"
+        "title": "Message",
+        "hasCustomParser": false,
     },
     {
         "tooltip": "Data extracted from the `sender_information` field",
-        "title": "Sender Information"
+        "title": "Sender Information",
+        "hasCustomParser": false,
     },
     {
         "tooltip": "Data extracted from the `report_blocks` field",
-        "title": "Report Blocks"
+        "title": "Report Blocks",
+        "hasCustomParser": false,
     }
 ]
 export const parsedViewSampleDataSIPAfterParseSecondConfig = [
     {
         "value": "b7jl7s@127.0.0.1",
         "tooltip": "Data extracted from the `callid` label",
-        "title": "Call ID"
+        "title": "Call ID",
+        "hasCustomParser": false,
     },
     {
         "value": "8.76.6.57:5064",
         "tooltip": "Data extracted from the `dst_ip` and `dst_port` labels",
-        "title": "Destination"
+        "title": "Destination",
+        "hasCustomParser": false,
     },
     {
         "value": "17.103.77.199:5060",
         "tooltip": "Data extracted from the `src_ip` and `src_port` labels",
-        "title": "Source"
+        "title": "Source",
+        "hasCustomParser": false,
     },
     {
-        "value": "Method: 407\nCSeq: INVITE",
+        "value": "407|INVITE",
         "tooltip": "Data extracted from the `response` label",
-        "title": "Method and CSeq method"
+        "title": "Method and CSeq method",
+        "hasCustomParser": false,
     },
     {
         "value": "SIP",
         "tooltip": "Data extracted from the `type` label",
-        "title": "Payload Type"
+        "title": "Payload Type",
+        "hasCustomParser": true,
     },
     {
         "value": "SIP/2.0 407 Proxy Authentication Required\r\nVia: SIP/2.0/UDP 192.168.10.129:5064;received=8.76.6.57;branch=z9hG4bK923381359;rport=5064\r\nFrom: <sip:hepgenjs@sipcapture.org;user=phone>;tag=415746302\r\nTo: <sip:123@sipcapture.org;user=phone>;tag=1d24a28a0bded6c40d31e6db8aab9ac6.0385\r\nCall-ID: b7jl7s@127.0.0.1\r\nCSeq: 440 INVITE\r\nProxy-Authenticate: Digest realm=\"sipcapture.org\", nonce=\"VuRZ5VbkWLkkVKJ9B1rBIN9Q3nRbqc9z\"\r\nServer: SIP Proxy\r\nContent-Length: 0\r\n\r\n\r\n",
         "tooltip": "Data extracted from the `Line` field",
-        "title": "Message"
+        "title": "Message",
+        "hasCustomParser": false,
     },
     {
         "tooltip": "Data extracted from the `sender_information` field",
-        "title": "Sender Information"
+        "title": "Sender Information",
+        "hasCustomParser": false,
     },
     {
         "tooltip": "Data extracted from the `report_blocks` field",
-        "title": "Report Blocks"
+        "title": "Report Blocks",
+        "hasCustomParser": false,
     }
 ]
 export const parsedViewSampleDataRTCP = {
@@ -905,46 +922,56 @@ export const parsedViewSampleDataRTCPAfterParse = [
     {
         "value": "",
         "tooltip": "Data extracted from the `callid` label",
-        "title": "Call ID"
+        "title": "Call ID",
+        "hasCustomParser": false,
     },
     {
         "value": "93.172.7.63:0",
         "tooltip": "Data extracted from the `dst_ip` and `dst_port` labels",
-        "title": "Destination"
+        "title": "Destination",
+        "hasCustomParser": false,
     },
     {
         "value": "216.187.19.159:0",
         "tooltip": "Data extracted from the `src_ip` and `src_port` labels",
-        "title": "Source"
+        "title": "Source",
+        "hasCustomParser": false,
     },
     {
         "value": "",
         "tooltip": "Data extracted from the `response` label",
-        "title": "Method"
+        "title": "Method",
+        "hasCustomParser": false,
     },
     {
         "value": "",
         "tooltip": "Data extracted from the `response` label",
-        "title": "CSeq"
+        "title": "CSeq",
+        "hasCustomParser": false,
     },
     {
         "value": "RTCP",
         "tooltip": "Data extracted from the `type` label",
-        "title": "Payload Type"
+        "title": "Payload Type",
+        "hasCustomParser": true,
     },
     {
         "value": "{\"type\":200,\"ssrc\":1814766290,\"report_count\":0,\"report_blocks\":[],\"sender_information\":{\"packets\":2,\"ntp_timestamp_sec\":\"3373905459\",\"ntp_timestamp_usec\":\"4280379832\",\"rtp_timestamp\":-210833031,\"octets\":40}} ",
         "tooltip": "Data extracted from the `Line` field",
-        "title": "Message"
+        "title": "Message",
+        "hasCustomParser": false,
     },
     {
         "value": "{\n  \"value\": {\n    \"packets\": 2,\n    \"ntp_timestamp_sec\": \"3373905459\",\n    \"ntp_timestamp_usec\": \"4280379832\",\n    \"rtp_timestamp\": -210833031,\n    \"octets\": 40\n  },\n  \"key\": \"Line.sender_information\",\n  \"label\": \"sender_information\",\n  \"group\": \"Line\",\n  \"parentGroup\": \"\",\n  \"depth\": 1\n}",
         "tooltip": "Data extracted from the `sender_information` field",
-        "title": "Sender Information"
+        "title": "Sender Information",
+        "hasCustomParser": false,
     },
     {
         "value": "{\n  \"value\": [],\n  \"key\": \"Line.report_blocks\",\n  \"label\": \"report_blocks\",\n  \"group\": \"Line\",\n  \"parentGroup\": \"\",\n  \"depth\": 1\n}",
         "tooltip": "Data extracted from the `report_blocks` field",
-        "title": "Report Blocks"
+        "title": "Report Blocks",
+        "hasCustomParser": false,
     }
 ]
+

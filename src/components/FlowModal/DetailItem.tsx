@@ -20,14 +20,15 @@ interface Props {
     item: any;
     theme: string;
     tooltip?: string;
+    hasCustomParser?: boolean
 }
-export const DetailItem = ({ item, theme, tooltip }: Props): JSX.Element | null => {
+export const DetailItem = ({ item, theme, tooltip, hasCustomParser }: Props): JSX.Element | null => {
     let [key, value]: any = item;
     const themeName: any = theme === 'Dark' ? 'railscasts' : 'rjv-default'
     let isJSON = false;
     const styles = useStyles2(getStyles);
     const isTimestamp = (new Date(value)).getTime() > 0;
-    if (isTimestamp) {
+    if (isTimestamp && !hasCustomParser) {
         value = `${new Date(value).toISOString()} | ${value}`;
     }
     try {

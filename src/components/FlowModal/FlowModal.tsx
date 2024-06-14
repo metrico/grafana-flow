@@ -58,7 +58,6 @@ export const FlowModal = ({ modalIsOpen, modalData, onModalClose, themeName, ful
             </Tooltip>
             {isParsed && <ParsedView data={modalData} theme={themeName} dataScheme={dataSchemeValue} />}
             {!isParsed && modalData && Object.entries(modalData).map((item: any, index: number) => (
-                // <p>{item} | {key}</p>
                 <DetailItem item={item} key={index} theme={themeName} />
             ))}
             <Button variant="primary" onClick={onModalClose}>
