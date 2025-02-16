@@ -35,7 +35,6 @@ export const ConfigureParsedViewModal = ({ isModalOpen, onModalClose, data, setD
             })
         })
         setLabelList(Array.from(labelMap.values()))
-        console.log(labelMap)
     }, [fullData])
     const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
         setDataSchemeValue((prevCards: ParsedLabel[]) => {
@@ -76,7 +75,6 @@ export const ConfigureParsedViewModal = ({ isModalOpen, onModalClose, data, setD
         };
         input.click();
     }
-    console.log(dataScheme)
     const [isDragMode, setIsDragMode] = useState(false)
     return (
         <DndProvider backend={HTML5Backend}>
