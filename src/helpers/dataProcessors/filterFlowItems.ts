@@ -21,6 +21,7 @@ export const filterFlowItems = (data: PanelData, options: any, setFlowData: Func
                         if (optionArr instanceof Array) {
                             return optionArr.map((option: string) => labelFormatter(labelItem[option], option)).filter((a: any) => !!a).join(':');
                         }
+
                         return labelItem[optionArr] || '';
                     };
                     const itemHash = hash(JSON.stringify(item))

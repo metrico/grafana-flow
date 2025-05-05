@@ -41,6 +41,7 @@ export const FlowModal = ({ modalIsOpen, modalData, onModalClose, themeName, ful
                 });
         }
     }, [dataSchemeValue])
+    const IconButton_: any = IconButton;
     return (
         <Modal title="Message Details" isOpen={modalIsOpen} onDismiss={onModalClose}>
             <Tooltip
@@ -52,7 +53,7 @@ export const FlowModal = ({ modalIsOpen, modalData, onModalClose, themeName, ful
                         value={isParsed}
                         onChange={() => { setIsParsed(!isParsed); }}
                         label="Parsed view" />
-                    <IconButton style={{ position: 'absolute', right: '10px', top: '7px' }} name="cog" variant="secondary" onClick={() => setIsParsedViewModalOpen(true)} />
+                    <IconButton_ style={{ position: 'absolute', right: '10px', top: '7px' }} name="cog" variant="secondary" onClick={() => setIsParsedViewModalOpen(true)} />
                     <ConfigureParsedViewModal fullData={fullData} dataScheme={dataSchemeValue} setDataSchemeValue={setDataSchemeValue} isModalOpen={isParsedViewModalOpen} onModalClose={onConfigureModalClose} data={modalData} />
                 </span>
             </Tooltip>

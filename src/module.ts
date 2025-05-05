@@ -1,11 +1,53 @@
 import { PanelPlugin } from '@grafana/data';
 import { FlowPanel } from './components/FlowPanel';
 import { FlowOptions } from './types';
-import { TemplateEditor, MultiSelectEditor } from 'components/PluginSettings';
+import { TemplateEditor, MultiSelectEditor, MultiSelectEditorAPI } from 'components/PluginSettings';
+
+
 
 
 export const plugin = new PanelPlugin<FlowOptions>(FlowPanel).setPanelOptions((builder) => {
     return builder
+        .addCustomEditor({
+            id: 'db_table',
+            path: 'db_table',
+            name: 'DB TABLE',
+            description: 'DB NAME OF TABLE',
+            defaultValue: '',
+            editor: MultiSelectEditorAPI,
+        })
+        // SEARCH FIELDS
+        .addTextInput({
+            path: 'call_id',
+            name: 'CALL ID',
+            // description: 'Label used to determine end of an arrow',
+            defaultValue: '',
+        })
+        .addTextInput({
+            path: 'from_user',
+            name: 'From-User',
+            // description: 'Label used to determine end of an arrow',
+            defaultValue: '',
+        })
+        .addTextInput({
+            path: 'to_user',
+            name: 'To-User',
+            // description: 'Label used to determine end of an arrow',
+            defaultValue: '',
+        })
+        .addTextInput({
+            
+            path: 'method',
+            name: 'METHOD',
+            
+            defaultValue: '',
+            
+        })
+        
+        
+
+        // [END] SEARCH FIELDS
+
         .addCustomEditor({
             id: 'Template',
             path: 'Template',
@@ -75,6 +117,7 @@ export const plugin = new PanelPlugin<FlowOptions>(FlowPanel).setPanelOptions((b
             defaultValue: '',
             editor: MultiSelectEditor,
         })
+        
         .addSelect({
             // id: 'sortoption',
             path: 'sortoption',
