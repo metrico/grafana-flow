@@ -2,6 +2,7 @@ import { PanelPlugin } from '@grafana/data';
 import { FlowPanel } from './components/FlowPanel';
 import { FlowOptions } from './types';
 import { TemplateEditor, MultiSelectEditor, MultiSelectEditorAPI } from 'components/PluginSettings';
+;
 
 
 
@@ -15,6 +16,14 @@ export const plugin = new PanelPlugin<FlowOptions>(FlowPanel).setPanelOptions((b
             description: 'DB NAME OF TABLE',
             defaultValue: '',
             editor: MultiSelectEditorAPI,
+        })
+        .addCustomEditor({
+            id: 'search_fields',
+            path: 'search_fields',
+            name: 'Set Search Fields',
+            description: 'Search fields for search by column of db',
+            defaultValue: '',
+            editor: MultiSelectEditor,
         })
         // SEARCH FIELDS
         .addTextInput({
@@ -36,16 +45,10 @@ export const plugin = new PanelPlugin<FlowOptions>(FlowPanel).setPanelOptions((b
             defaultValue: '',
         })
         .addTextInput({
-            
             path: 'method',
             name: 'METHOD',
-            
             defaultValue: '',
-            
         })
-        
-        
-
         // [END] SEARCH FIELDS
 
         .addCustomEditor({
@@ -117,7 +120,7 @@ export const plugin = new PanelPlugin<FlowOptions>(FlowPanel).setPanelOptions((b
             defaultValue: '',
             editor: MultiSelectEditor,
         })
-        
+
         .addSelect({
             // id: 'sortoption',
             path: 'sortoption',

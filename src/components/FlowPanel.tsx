@@ -4,7 +4,7 @@ import { GrafanaTheme2, PanelData, PanelProps } from '@grafana/data';
 import React, { useEffect, useState } from 'react';
 import '../../ngx-flow/widget/ngx-flow.js';
 
-import { Button, Dropdown, Menu, useStyles2, useTheme2, Input, Icon, Label, Field } from '@grafana/ui';
+import { Button, Dropdown, Menu, useStyles2, useTheme2, Input, Icon, InlineField } from '@grafana/ui';
 import { filterFlowItems } from 'helpers/dataProcessors/filterFlowItems';
 import { pcapExporter, textExporter } from 'helpers/exporters';
 import { FlowOptions } from 'types.js';
@@ -27,42 +27,61 @@ declare global {
   }
 }
 
-const getStyles = ({ name: themeName }: GrafanaTheme2) => {
-  return {
-    wrapper: css`
-      font-family: Open Sans;
-      position: relative;
-    `,
-    textBox: css`
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      padding: 10px;
-    `,
-    label: css`
-      background-color: rgba(128, 128, 128, 0.1);
-    `,
-    pre: css`
-      white-space: pre-wrap;
-    `,
-    buttonWrapper: css`
-      position: absolute;
-      right: 20px;
-      top: -15px;
-      display: flex;
-      z-index: 3;
-      border: 1px solid ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
-      border-radius: 2px;
-      padding: 0.2em;
-      > * {
-        margin: 0 5px;
-      }
-      &:hover {
-        background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.8)' : 'hsla(0, 0%, 100%, 0.8)'};
-      }
-    `,
-  };
-};
+const getStyles = ({ name: themeName }: GrafanaTheme2) => ({
+  wrapper: css`
+    font-family: Open Sans;
+    position: relative;
+  `,
+  textBox: css`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 10px;
+  `,
+  label: css`
+    background-color: rgba(128, 128, 128, 0.1);
+  `,
+  pre: css`
+    white-space: pre-wrap;
+  `,
+  searchContainer: css`
+    border: 0px solid red;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  `,
+  searchContainerWrapper: css`
+    border: 0px solid red;
+    padding: 0.5rem;
+    flex: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  `,
+  searchFlowWrapper: css`
+    border: 0px solid red;
+    padding: 0rem;
+    overflow: hidden;
+    position: relative;
+    flex: 1;
+  `,
+  buttonWrapper: css`
+    display: flex;
+    flex: 1,
+    z-index: 3;
+    border-radius: 2px;
+    padding: 0;
+    > * {
+      margin: 0 5px;
+    }
+  `,
+});
 
 export const FlowPanel = (props: MyPanelProps) => {
   const { options, data, width, height, timeRange } = props;
@@ -100,7 +119,7 @@ export const FlowPanel = (props: MyPanelProps) => {
     setSearchFields(_filters);
     setSearchFieldsDoRequest(searchFields);
   }, [options]);
-  
+
   // Export .txt
   useEffect(() => {
     setIsLoadingData(false);
@@ -229,81 +248,41 @@ export const FlowPanel = (props: MyPanelProps) => {
         `
       )}
     >
-      <div id="buttons" className={styles.buttonWrapper}>
-        <FilterPanel data={data} onFilter={setFilters} onSimplify={setIsSimplify} options={options} />
-        {data?.request?.app !== 'app' && (
-          // <span >
-          <Dropdown overlay={menu}>
-            <Button
-              className={cx(
-                css`
-                  border: 1px solid
-                    ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
-                  border-radius: 2px;
-                  background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.5)' : 'hsla(0, 0%, 100%, 0.5)'};
-                `
-              )}
-              icon="bars"
-              fill="text"
-              variant="secondary"
-            />
-          </Dropdown>
-          // </span>/
-        )}
-      </div>
-      {/* <pre style={{maxHeight: '100%', overflow: 'auto'}}>{JSON.stringify(flowData, null, 2)}</pre> */}
-      {/* <FlowMemo flowData={flowData} themeName={themeName} /> */}
-      <div
-        style={{
-          border: '0px solid red',
-          padding: '0',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-        }}
-      >
-        <div style={{ border: '0px solid red', padding: '0.5rem', flex: 0, display: 'flex', alignItems: 'flex-end' }}>
-          <Input
-            name="call_id"
-            // value={searchFieldsDoRequest.find((i) => Object.keys(i)[0] === 'call_id')?.call_id || ''}
-            onChange={(e) => handlerInput(e)}
-            style={{ padding: '0.5rem' }}
-            placeholder="CALL-ID"
-            prefix={<Icon name="search" />}
-          />
-          <Input
-            name="sip_from"
-            // value={searchFieldsDoRequest.find((i) => Object.keys(i)[0] === 'sip_from')?.sip_from || ''}
-            onChange={(e) => handlerInput(e)}
-            style={{ padding: '0.5rem' }}
-            placeholder="From User"
-            prefix={<Icon name="search" />}
-          />
-          <Input
-            name="sip_to"
-            // value={searchFieldsDoRequest.find((i) => Object.keys(i)[0] === 'sip_to')?.sip_to || ''}
-            onChange={(e) => handlerInput(e)}
-            style={{ padding: '0.5rem' }}
-            placeholder="To User"
-            prefix={<Icon name="search" />}
-          />
-          <Input
-            name="sip_method"
-            // value={searchFieldsDoRequest.find((i) => Object.keys(i)[0] === 'sip_method')?.sip_method || ''}
-            onChange={(e) => handlerInput(e)}
-            style={{ padding: '0.5rem' }}
-            placeholder="METHOD"
-            prefix={<Icon name="search" />}
-          />
-          <Button style={{ padding: '0.5rem' }} icon="sync" onClick={(e) => handlerSearch(e)}>
-            Run query
-          </Button>
+      <div className={styles.searchContainer}>
+        <div className={styles.searchContainerWrapper}>
+          {(options.search_fields as any || [])?.map((i: any) => (
+            <SearchField name={i} key={i} onChange={handlerInput} />
+          ))}
+          {!!options.search_fields && options.search_fields?.length > 0 && (
+            <Button style={{ padding: '0.5rem' }} icon="sync" onClick={(e) => handlerSearch(e)}>
+              Run query
+            </Button>
+          )}
+          <span style={{ flex: 1 }}></span>
+          <div id="buttons" className={styles.buttonWrapper}>
+            <FilterPanel data={data} onFilter={setFilters} onSimplify={setIsSimplify} options={options} />
+            {data?.request?.app !== 'app' && (
+              // <span >
+              <Dropdown overlay={menu}>
+                <Button
+                  className={cx(
+                    css`
+                      border: 1px solid
+                        ${themeName === 'Dark' ? 'hsla(240, 18.6%, 83.1%, 0.12)' : 'hsla(210, 12.2%, 16.1%, 0.12)'};
+                      border-radius: 2px;
+                      background-color: ${themeName === 'Dark' ? 'hsla(0, 0%, 0%, 0.5)' : 'hsla(0, 0%, 100%, 0.5)'};
+                    `
+                  )}
+                  icon="bars"
+                  fill="text"
+                  variant="secondary"
+                />
+              </Dropdown>
+              // </span>/
+            )}
+          </div>
         </div>
-        <div style={{ border: '0px solid red', padding: '0rem', overflow: 'hidden', position: 'relative', flex: 1 }}>
+        <div className={styles.searchFlowWrapper}>
           <ngx-flow-out data-flow={flowDataJSON} is-simplify={isSimplify} theme={themeName} />
         </div>
       </div>
@@ -316,5 +295,19 @@ export const FlowPanel = (props: MyPanelProps) => {
         themeName={themeName}
       />
     </div>
+  );
+};
+export const SearchField = ({ _label, name, onChange }: any) => {
+  const label = _label || name.split('_').join('-').toUpperCase();
+  return (
+    <InlineField grow={false} label={label}>
+      <Input
+        name={name}
+        onChange={onChange}
+        style={{ padding: '0.5rem', maxWidth: '150px' }}
+        placeholder={label}
+        prefix={<Icon name="search" />}
+      />
+    </InlineField>
   );
 };

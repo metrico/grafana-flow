@@ -5,7 +5,7 @@ const sql_SHOW_TABLES = 'SHOW TABLES';
 const sql_DESCRIBE_SELECT = (table_name: string) => `DESCRIBE SELECT * FROM ${table_name} LIMIT 1`;
 function addFilterToSQL (obj: any, table_name: string) {
     const [[columnName, filterString]] = Object.entries(obj)
-    return `AND instr(${columnName}, '${filterString}') > 0 `
+    return `AND instr("${columnName}", '${filterString}') > 0 `
 }
 export const getSQLRequest = async ({ table_name, from, to, filters = [] }: any) => {
     // SHOW TABLES
@@ -121,9 +121,9 @@ export async function getData(table_name: string, { from, to }: any, filters: an
     const des_res = await getDescribeTable(table_name);
     console.log('des_res', { des_res });
     const res: any = await getSQLRequest({ table_name, from, to, filters });
-    if (!(res?.results?.length > 0)) {
-        return [];
-    };
+    // if (!(res?.results?.length > 0)) {
+    //     return [];
+    // };
     const parsedJSONvalues = parseJSONValues(res.results)
     const outData = formattedDataFromCustomApi(parsedJSONvalues);
     console.log('outData', outData)
