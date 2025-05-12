@@ -26,29 +26,29 @@ export const plugin = new PanelPlugin<FlowOptions>(FlowPanel).setPanelOptions((b
             editor: MultiSelectEditor,
         })
         // SEARCH FIELDS
-        .addTextInput({
-            path: 'call_id',
-            name: 'CALL ID',
-            // description: 'Label used to determine end of an arrow',
-            defaultValue: '',
-        })
-        .addTextInput({
-            path: 'from_user',
-            name: 'From-User',
-            // description: 'Label used to determine end of an arrow',
-            defaultValue: '',
-        })
-        .addTextInput({
-            path: 'to_user',
-            name: 'To-User',
-            // description: 'Label used to determine end of an arrow',
-            defaultValue: '',
-        })
-        .addTextInput({
-            path: 'method',
-            name: 'METHOD',
-            defaultValue: '',
-        })
+        // .addTextInput({
+        //     path: 'call_id',
+        //     name: 'CALL ID',
+        //     // description: 'Label used to determine end of an arrow',
+        //     defaultValue: '',
+        // })
+        // .addTextInput({
+        //     path: 'from_user',
+        //     name: 'From-User',
+        //     // description: 'Label used to determine end of an arrow',
+        //     defaultValue: '',
+        // })
+        // .addTextInput({
+        //     path: 'to_user',
+        //     name: 'To-User',
+        //     // description: 'Label used to determine end of an arrow',
+        //     defaultValue: '',
+        // })
+        // .addTextInput({
+        //     path: 'method',
+        //     name: 'METHOD',
+        //     defaultValue: '',
+        // })
         // [END] SEARCH FIELDS
 
         .addCustomEditor({

@@ -1,6 +1,8 @@
 
 import { hash } from 'helpers/hash';
 
+const API_URL = "http://de5.sipcapture.io:7972/query";
+
 const sql_SHOW_TABLES = 'SHOW TABLES';
 const sql_DESCRIBE_SELECT = (table_name: string) => `DESCRIBE SELECT * FROM ${table_name} LIMIT 1`;
 function addFilterToSQL (obj: any, table_name: string) {
@@ -53,7 +55,7 @@ export const formattedDataFromCustomApi = (data: any[]) => {
 
 export const getOutSideData = async (SQL: string, DB = 'hep') => {
     return new Promise((resolve, reject) => {
-        const url = 'http://de5.sipcapture.io:7972/query?db=' + DB;
+        const url = API_URL + '?db=' + DB;
         const headers = {
             'Content-Type': 'application/json',
 

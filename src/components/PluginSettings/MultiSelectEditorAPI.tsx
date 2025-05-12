@@ -1,5 +1,5 @@
 import { StandardEditorProps } from '@grafana/data';
-import {  Select } from '@grafana/ui';
+import { Select } from '@grafana/ui';
 // import { apiDataContext } from "./../../helpers/apiDataContext";
 import React, { useState, useEffect } from 'react';
 import { getTableList } from 'services/api-service';
@@ -20,11 +20,10 @@ export const MultiSelectEditorAPI = ({ value, onChange, context: { data } }: Sta
   }, []);
 
   useEffect(() => {
-   if(newData) {
-
-     const labels = newData?.map((i: any) => i.table_name);
-     setLabels(labels);
-   }
+    if (newData) {
+      const labels = newData?.map((i: any) => i.table_name);
+      setLabels(labels);
+    }
   }, [data, newData]);
 
   useEffect(() => {
@@ -35,10 +34,11 @@ export const MultiSelectEditorAPI = ({ value, onChange, context: { data } }: Sta
     <Select
       options={labels.map((i: any) => ({ label: i, value: i }))}
       value={selectValue}
-      onChange={(v: any[]) => {
-        console.log('v', v)
+      onChange={(v: any) => {
+        console.log('v', v);
         setSelectValue(v);
-        onChange(v.value);
+        const { value }: any = v as any;
+        onChange(value);
       }}
     />
   );
