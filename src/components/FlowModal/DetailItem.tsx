@@ -34,7 +34,10 @@ export const DetailItem = ({ item, theme, tooltip }: Props): JSX.Element | null 
         isJSON = typeof JSON.parse(value) === 'object';
     } catch (e) { }
     const textAreaRef: any = useRef(null);
-    const isMultiLine = !!value?.includes('\n') || value?.length > 50;
+    let isMultiLine = false;
+    if(typeof value === 'string' ) {
+        isMultiLine = !!value?.includes('\n') || value?.length > 50;
+    }
     function copyToClipboard() {
         if (textAreaRef && textAreaRef.current) {
             textAreaRef.current.focus();

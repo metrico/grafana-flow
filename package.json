@@ -3,7 +3,6 @@
     "version": "10.2.0",
     "description": "Plugin providing Flow diagram for Grafana",
     "scripts": {
-        "build:component": "cd ./ngx-flow && npm run build:component",
         "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
         "dev": "webpack -w -c ./.config/webpack/webpack.config.ts --env development",
         "test": "jest --watch --onlyChanged",
@@ -35,6 +34,7 @@
         "@types/node": "^18.15.11",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.7.3",
+        "eslint-plugin-react-hooks": "^5.2.0",
         "eslint-webpack-plugin": "^4.0.1",
         "fork-ts-checker-webpack-plugin": "^8.0.0",
         "glob": "^10.1.0",
