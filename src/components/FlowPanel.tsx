@@ -2,7 +2,6 @@
 import { css, cx } from '@emotion/css';
 import { GrafanaTheme2, PanelData, PanelProps } from '@grafana/data';
 import React, { useEffect, useState } from 'react';
-import '../../ngx-flow/widget/ngx-flow.js';
 
 import { Button, Dropdown, Menu, useStyles2, useTheme2, Input, Icon, InlineField } from '@grafana/ui';
 import { filterFlowItems } from 'helpers/dataProcessors/filterFlowItems';
@@ -17,16 +16,6 @@ export interface MyPanelProps extends PanelProps {
   options: FlowOptions;
 }
 
-type CustomElement<T> = Partial<T & React.DOMAttributes<T> & { children: any }>;
-
-declare global {
-  /* eslint-disable-next-line */
-  namespace JSX {
-    interface IntrinsicElements {
-      ['ngx-flow-out']: CustomElement<any>;
-    }
-  }
-}
 
 const getStyles = ({ name: themeName }: GrafanaTheme2) => ({
   wrapper: css`
@@ -181,15 +170,7 @@ export const FlowPanel = (props: MyPanelProps) => {
     setModalData(details);
     setModalIsOpen(true);
   };
-  // useEffect(() => {
-  //   // document.addEventListener('ngx-flow-click-item', function (e: any) {
-  //   //   ngxFlowClickHandler(e);
-  //   // });
-
-  //   return () => {
-  //     // document.removeEventListener('ngx-flow-click-item', ngxFlowClickHandler);
-  //   };
-  // }, [modalDataFields, isLoadingData]);
+  
   console.log({ flowData });
   // const flowDataJSON = JSON.stringify(flowData);
   const menu = (
@@ -292,7 +273,6 @@ export const FlowPanel = (props: MyPanelProps) => {
           onClickRow={
             (id: any) => ngxFlowClickHandler(id)
           }></Flow>
-          {/* <ngx-flow-out data-flow={flowDataJSON} is-simplify={isSimplify} theme={themeName} /> */}
         </div>
 
       </div>

@@ -1,6 +1,6 @@
 {
   "extends": "./.config/.eslintrc",
-  "ignorePatterns" : ["ngx-flow/**/*.*"],
+  "ignorePatterns" : [],
   "plugins": [
     // ...
     "react-hooks"

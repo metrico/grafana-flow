@@ -14,14 +14,6 @@ dev: install & run
 
 ./grafana-flow> npm install
 
-./grafana-flow> cd ./ngx-flow
-
-./grafana-flow/ngx-flow> npm install
-
-./grafana-flow/ngx-flow> cd ..
-
-./grafana-flow> npm run build:component
-
 ./grafana-flow> npm run dev
 
 ```
