@@ -11,6 +11,7 @@ import { FlowOptions } from 'types.js';
 import { FilterPanel, Filters, defaultFilters } from './FilterPanel/FilterPanel';
 import { FlowModal } from './FlowModal/FlowModal';
 import { getData } from 'services/api-service';
+import { Flow } from 'components/flow-component/Flow';
 
 export interface MyPanelProps extends PanelProps {
   options: FlowOptions;
@@ -29,7 +30,7 @@ declare global {
 
 const getStyles = ({ name: themeName }: GrafanaTheme2) => ({
   wrapper: css`
-    font-family: Open Sans;
+    font-family: Inter, Helvetica, Arial, sans-serif;
     position: relative;
   `,
   textBox: css`
@@ -155,6 +156,8 @@ export const FlowPanel = (props: MyPanelProps) => {
     };
   }, [newData, timeRange, isLoadingData]);
   const themeName: string = useTheme2().name;
+  // console.log({themeName})
+
   const styles = useStyles2(getStyles);
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   // Set flow data and sort
@@ -169,25 +172,26 @@ export const FlowPanel = (props: MyPanelProps) => {
       //   }, 2000);
     }
   }, [newData, options, filters, isLoadingData]);
-  useEffect(() => {
-    const ngxFlowClickHandler = (e: any) => {
-      const details: any = modalDataFields?.get(e.detail);
-      if (typeof details?.labels === 'object') {
-        details.labels = JSON.stringify(details.labels);
-      }
-      setModalData(details);
-      setModalIsOpen(true);
-    };
-    document.addEventListener('ngx-flow-click-item', function (e: any) {
-      ngxFlowClickHandler(e);
-    });
+  const ngxFlowClickHandler = (e: any) => {
+    console.log('ngxFlowClickHandler', {e})
+    const details: any = modalDataFields?.get(e);
+    if (typeof details?.labels === 'object') {
+      details.labels = JSON.stringify(details.labels);
+    }
+    setModalData(details);
+    setModalIsOpen(true);
+  };
+  // useEffect(() => {
+  //   // document.addEventListener('ngx-flow-click-item', function (e: any) {
+  //   //   ngxFlowClickHandler(e);
+  //   // });
 
-    return () => {
-      document.removeEventListener('ngx-flow-click-item', ngxFlowClickHandler);
-    };
-  }, [modalDataFields, isLoadingData]);
+  //   return () => {
+  //     // document.removeEventListener('ngx-flow-click-item', ngxFlowClickHandler);
+  //   };
+  // }, [modalDataFields, isLoadingData]);
   console.log({ flowData });
-  const flowDataJSON = JSON.stringify(flowData);
+  // const flowDataJSON = JSON.stringify(flowData);
   const menu = (
     <Menu>
       <Menu.Item
@@ -211,7 +215,7 @@ export const FlowPanel = (props: MyPanelProps) => {
     </Menu>
   );
 
-  const handlerInput = (e: any) => {
+  const handlerInput = (e: any) => { 
     const { name, value }: any = e?.target || {};
     console.log('handlerInput', { name, value });
     setSearchFields((prevState: any[]): any[] => {
@@ -283,8 +287,14 @@ export const FlowPanel = (props: MyPanelProps) => {
           </div>
         </div>
         <div className={styles.searchFlowWrapper}>
-          <ngx-flow-out data-flow={flowDataJSON} is-simplify={isSimplify} theme={themeName} />
+          <Flow filters={filters} formattingData={flowData} isSimplify={isSimplify} 
+          theme={themeName}
+          onClickRow={
+            (id: any) => ngxFlowClickHandler(id)
+          }></Flow>
+          {/* <ngx-flow-out data-flow={flowDataJSON} is-simplify={isSimplify} theme={themeName} /> */}
         </div>
+
       </div>
 
       <FlowModal
