@@ -201,14 +201,7 @@ export function getAMF(field: any): string {
 export function isAMIP(field: string): boolean {
     return ['source_ip', 'destination_ip', 'IPs'].includes(field);
 }
-export function isExternalUrl(url: string): boolean {
-    const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
-    if (urlRegex.test(url)) {
-        return true
-    } else {
-        return false
-    }
-}
+
 export function log(...arg: any) {
     /** DEBUG PERFORMANCE */
     arg.forEach((_a: any, i: number) => {
