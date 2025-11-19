@@ -1,6 +1,6 @@
 {
     "name": "qxip-flow-panel",
-    "version": "10.2.0",
+    "version": "10.2.1",
     "description": "Plugin providing Flow diagram for Grafana",
     "scripts": {
         "build:component": "cd ./ngx-flow && npm run build:component",
