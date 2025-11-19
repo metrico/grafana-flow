@@ -36,9 +36,9 @@ export const pcapExporter = (data: PanelData) => {
             dstIp: labels.dst_ip,
             srcPort: labels.src_port,
             dstPort: labels.dst_port,
-            ts: fields[0]?.values[index]?.timestamp,
+            ts: labels.timestamp,
             proto: proto === 'UDP' ? 17 : 6 as 6 | 17,
-            type: fields[0]?.values[index]?.type
+            type: labels.type // always 'sip' here
         }
         const hash = `${fieldObj.srcIp}:${fieldObj.srcPort}->${fieldObj.dstIp}:${fieldObj.dstPort}`
         const sequence = sequenceMap.get(hash) ?? 1
@@ -73,7 +73,7 @@ export const pcapExporter = (data: PanelData) => {
         return {
             timestamp: fieldObj.ts,
             buffer: ethernetPacket,
-            type: fields[0]?.values[index]?.type
+            type: fieldObj.type
         }
     })
     const generator = configure({ Buffer: Buffer, snapshotLength: 102400, linkLayerType: 1 })
