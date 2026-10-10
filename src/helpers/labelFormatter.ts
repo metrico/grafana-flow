@@ -4,6 +4,10 @@ export const labelFormatter = (labelData: string, label: string) => {
     if (label === 'timestamp') {
         return timestampFormatter(labelData)
     }
+    if (typeof labelData === 'object') {
+        const d: any = (labelData)
+        return d?.parsed || d?.raw || JSON.stringify(d);
+    }
     return labelData
 }
 

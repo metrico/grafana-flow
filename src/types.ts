@@ -1,4 +1,5 @@
 export interface FlowOptions {
+    search_fields: OptionValue;
     title: OptionValue;
     aboveArrow: OptionValue;
     belowArrow: OptionValue;

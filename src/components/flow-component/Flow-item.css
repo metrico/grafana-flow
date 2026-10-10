@@ -1,0 +1,173 @@
+.item-flow-packet-container {
+	 display: flex;
+	 justify-content: space-between;
+	 position: relative;
+	 overflow: inherit;
+	 opacity: 1;
+	 font-family: Inter, Helvetica, Arial, sans-serif;
+	 margin: 0 calc(77px - var(--webkit-scrollbar-width)) 0 60px;
+}
+ .item-flow-packet-container .bg-color-polygon {
+	 position: absolute;
+	 z-index: 0;
+	 top: 0;
+	 left: 0;
+	 right: 0;
+	 bottom: 0;
+	 margin: 0px -4rem;
+}
+ .item-flow-packet-container .bg-color-tab {
+	 position: absolute;
+	 left: -60px;
+	 top: 0;
+	 bottom: 0;
+	 width: 5px;
+}
+ .item-flow-packet-container .item-flow-packet {
+	 position: relative;
+	 width: 150px;
+}
+ .item-flow-packet-container .item-flow-packet:hover {
+	 background-color: rgba(0, 0, 0, 0.2);
+	 border-radius: 4px;
+	 cursor: pointer;
+}
+ .item-flow-packet-container .item-flow-packet .radial-arrow {
+	 position: relative;
+	 margin-left: 0;
+	 width: 60%;
+	 height: 30px;
+	 border: 2px solid;
+	 border-left: 0px;
+	 border-top-right-radius: 5rem;
+	 border-bottom-right-radius: 5rem;
+}
+ .item-flow-packet-container .item-flow-packet .radial-arrow::before {
+	 content: "";
+	 border: 7px solid transparent;
+	 border-right: 14px solid;
+	 position: absolute;
+	 left: -9px;
+	 top: 20px;
+}
+ .item-flow-packet-container .item-flow-packet .radial-arrow-end {
+	 position: relative;
+	 margin-left: auto;
+	 margin-right: 0;
+	 width: 25px;
+	 height: 30px;
+	 border: 2px solid;
+	 border-right: 0px;
+	 border-top-left-radius: 5rem;
+	 border-bottom-left-radius: 5rem;
+}
+ .item-flow-packet-container .item-flow-packet .radial-arrow-end::before {
+	 content: "";
+	 border: 7px solid transparent;
+	 border-left: 14px solid;
+	 position: absolute;
+	 right: -9px;
+	 top: 20px;
+}
+ .item-flow-packet-container .item-flow-packet .radial-arrow-end.rtp, 
+ .item-flow-packet-container .item-flow-packet .radial-arrow.rtp {
+	 border-style: dotted;
+}
+ .item-flow-packet-container .item-flow-packet .blinkLamp {
+	 display: inline-block;
+	 padding: 6px;
+	 margin: 0;
+	 border-radius: 1rem;
+}
+ .item-flow-packet-container .item-flow-packet .call_text {
+	 font-size: 14px;
+	 font-weight: 600;
+	 color: #24465f;
+	 padding: 0 4px;
+}
+ .item-flow-packet-container .item-flow-packet .call_text-mini {
+	 font-size: 0.7em;
+	 color: #24465f;
+	 text-overflow: ellipsis;
+	 white-space: nowrap;
+	 overflow: hidden;
+	 padding: 0 4px;
+}
+ .item-flow-packet-container .item-flow-packet .call_text-mini.right {
+	 text-align: right;
+}
+ .item-flow-packet-container .item-flow-packet .port-label-left, 
+ .item-flow-packet-container .item-flow-packet .port-label-right {
+	 color: #000;
+	 width: 50px;
+	 position: absolute;
+	 padding: 2px 6px;
+	 border-radius: 32px;
+	 margin-top: -11px;
+	 text-align: center;
+	 font-size: 12px;
+	 color: rgba(0, 0, 0, 0.5);
+}
+ .item-flow-packet-container .item-flow-packet .port-label-right {
+	 right: -47px;
+}
+ .item-flow-packet-container .item-flow-packet .port-label-left {
+	 left: -47px;
+}
+ .item-flow-packet-container .item-flow-packet .call-text-date {
+	 font-size: 12px;
+	 color: #7e7e7e !important;
+	 overflow: hidden;
+	 padding: 0 4px;
+}
+ .item-flow-packet-container .item-flow-packet .call-text-diff {
+	 color: #555;
+}
+ .item-flow-packet-container .item-flow-packet .arrow {
+	 padding-right: 3px;
+	 padding-left: 3px;
+	 position: relative;
+}
+ .item-flow-packet-container .item-flow-packet .arrow.arrow-solid {
+	 border-bottom: 2px solid;
+}
+ .item-flow-packet-container .item-flow-packet .arrow.arrow-dotted {
+	 border-bottom: 2px dotted;
+}
+ .item-flow-packet-container .item-flow-packet .arrow:before {
+	 content: "";
+	 border: 5px solid transparent;
+	 border-left: 20px solid;
+	 position: absolute;
+	 right: -5px;
+	 bottom: -6px;
+}
+ .item-flow-packet-container .item-flow-packet .arrow.left:before {
+	 content: "";
+	 border: 5px solid transparent;
+	 border-right: 20px solid;
+	 position: absolute;
+	 right: initial;
+	 left: -5px;
+	 bottom: -6px;
+}
+ .flow-grid-lines {
+	 display: flex;
+	 justify-content: space-between;
+	 margin: 0px 0rem;
+	 position: absolute;
+	 top: 0;
+	 z-index: 0;
+	 left: 0px;
+	 bottom: -1px;
+	 right: 0px;
+}
+ .flow-grid-lines .line {
+	 margin-right: -1px;
+	 border: 0px dotted #ccc;
+	 border-right-width: 1px;
+	 border-left-width: 1px;
+	 min-width: 149px;
+	 flex: 1;
+}
+ 

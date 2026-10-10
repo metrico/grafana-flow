@@ -63,16 +63,7 @@ run docker-image of grafana
 ```
 npm run server
 ```
-run dev mode NGX-FLOW plugin (Angular Project)
-[3] run command on parallel terminal on same time
 
-```
-cd ./ngx-flow
-
-npm install
-
-npm start
-```
 
 
 after all open link http://localhost:3000/ 
